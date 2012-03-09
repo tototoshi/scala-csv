@@ -5,7 +5,7 @@ import java.io.FileReader
 import org.scalatest.FunSpec
 import org.scalatest.matchers._
 
-class CSVReaderSpec extends FunSpec with ShouldMatchers {
+class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
   def fixture = new {
 
   }

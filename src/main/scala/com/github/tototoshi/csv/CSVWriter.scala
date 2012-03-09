@@ -13,7 +13,7 @@ class CSVWriter(writer: Writer) {
   def writeAll(allLines: List[List[String]]) =
     csvWriter.writeAll(allLines.map(_.toArray))
 
-  def writeNext(fields: List[String]) =
+  def writeRow(fields: List[String]) =
     csvWriter.writeNext(fields.toArray)
 
 }
