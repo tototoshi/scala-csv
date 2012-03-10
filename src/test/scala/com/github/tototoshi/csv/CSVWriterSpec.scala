@@ -5,12 +5,21 @@ import java.io.FileWriter
 import org.scalatest.FunSpec
 import org.scalatest.matchers._
 
+import java.io.File
+
 class CSVWriterSpec extends FunSpec with ShouldMatchers with Using {
   def fixture = new {
 
   }
 
-  describe("CSVSpec") {
+  describe("CSVWriter") {
+
+    it("should be constructed with java.io.File") {
+      using (new CSVWriter(new File("test.csv"))) { writer =>
+        writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+      }
+      new java.io.File("test.csv").delete()
+    }
 
     it("write all lines to file") {
       using (new CSVWriter(new FileWriter("test.csv"))) { writer =>

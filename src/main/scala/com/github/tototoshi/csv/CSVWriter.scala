@@ -2,9 +2,12 @@ package com.github.tototoshi.csv
 
 import scala.collection.JavaConversions._
 import au.com.bytecode.opencsv.{ CSVWriter => JCSVWriter }
-import java.io.Writer
+import java.io.{ File, Writer, FileOutputStream, OutputStreamWriter }
 
 class CSVWriter(writer: Writer) {
+
+  def this(file: File, enc: String = "UTF-8") =
+    this(new OutputStreamWriter(new FileOutputStream(file), enc))
 
   val csvWriter = new JCSVWriter(writer)
 

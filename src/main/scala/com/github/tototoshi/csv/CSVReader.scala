@@ -1,11 +1,13 @@
 package com.github.tototoshi.csv
 
 import scala.collection.JavaConversions._
-import java.io.File
-import java.io.Reader
+import java.io._
 import au.com.bytecode.opencsv.{ CSVReader => JCSVReader }
 
 class CSVReader(reader: Reader) {
+
+  def this(file: File, enc: String = "UTF-8") =
+    this(new InputStreamReader(new FileInputStream(file), enc))
 
   val csvReader = new JCSVReader(reader)
 
