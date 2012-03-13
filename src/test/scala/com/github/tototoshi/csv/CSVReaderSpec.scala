@@ -32,7 +32,14 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       res.mkString should be ("abcdef")
     }
 
-    it("read all") {
+    it("has #readNext") {
+      using (new CSVReader(new File("src/test/resources/simple.csv"))) { reader =>
+        reader.readNext()
+        reader.readNext.get.mkString should be ("def")
+      }
+    }
+
+    it("has #all") {
       using (new CSVReader(new FileReader("src/test/resources/simple.csv"))) { reader =>
         reader.all should be (List(List("a", "b", "c"), List("d", "e", "f")))
       }

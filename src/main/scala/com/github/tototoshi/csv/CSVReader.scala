@@ -1,8 +1,8 @@
 package com.github.tototoshi.csv
 
-import scala.collection.JavaConversions._
-import java.io._
 import au.com.bytecode.opencsv.{ CSVReader => JCSVReader }
+import java.io._
+import scala.collection.JavaConversions._
 
 class CSVReader(reader: Reader) {
 
@@ -11,10 +11,12 @@ class CSVReader(reader: Reader) {
 
   val csvReader = new JCSVReader(reader)
 
+  def readNext(): Option[List[String]] = Option(csvReader.readNext).map(_.toList)
+
   def foreach(f: List[String] => Unit): Unit = {
-    var fields: Array[String] = null
-    while ({ fields = csvReader.readNext(); fields } != null) {
-      f(fields.toList)
+    readNext match {
+      case Some(next) => f(next); foreach(f)
+      case None => ()
     }
   }
 
