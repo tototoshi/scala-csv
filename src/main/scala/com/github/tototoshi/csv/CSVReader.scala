@@ -20,9 +20,11 @@ class CSVReader(reader: Reader) {
     }
   }
 
-  def all(): List[List[String]] = {
+  def toStream(): Stream[List[String]] =
+    Stream.continually(readNext).takeWhile(_.isDefined).map(_.get)
+
+  def all(): List[List[String]] =
     csvReader.readAll().map(_.toList).toList
-  }
 
   def close(): Unit = csvReader.close()
 
