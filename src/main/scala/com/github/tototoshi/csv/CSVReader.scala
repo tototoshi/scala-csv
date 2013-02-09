@@ -4,10 +4,7 @@ import au.com.bytecode.opencsv.{ CSVReader => JCSVReader }
 import java.io._
 import scala.collection.JavaConversions._
 
-class CSVReader(reader: Reader) {
-
-  def this(file: File, enc: String = "UTF-8") =
-    this(new InputStreamReader(new FileInputStream(file), enc))
+class CSVReader protected (reader: Reader) {
 
   val csvReader = new JCSVReader(reader)
 
@@ -27,5 +24,17 @@ class CSVReader(reader: Reader) {
     csvReader.readAll().map(_.toList).toList
 
   def close(): Unit = csvReader.close()
+
+}
+
+object CSVReader {
+
+  def apply(reader: Reader): CSVReader = new CSVReader(reader)
+
+  def apply(file: File, enc: String = "UTF-8"): CSVReader = {
+    val fin = new FileInputStream(file)
+    val reader = new InputStreamReader(fin, enc)
+    apply(reader)
+  }
 
 }

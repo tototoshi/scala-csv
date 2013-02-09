@@ -4,10 +4,7 @@ import scala.collection.JavaConversions._
 import au.com.bytecode.opencsv.{ CSVWriter => JCSVWriter }
 import java.io.{ File, Writer, FileOutputStream, OutputStreamWriter }
 
-class CSVWriter(writer: Writer) {
-
-  def this(file: File, enc: String = "UTF-8") =
-    this(new OutputStreamWriter(new FileOutputStream(file), enc))
+class CSVWriter protected (writer: Writer) {
 
   val csvWriter = new JCSVWriter(writer)
 
@@ -18,5 +15,17 @@ class CSVWriter(writer: Writer) {
 
   def writeRow(fields: List[String]) =
     csvWriter.writeNext(fields.toArray)
+
+}
+
+object CSVWriter {
+
+  def apply(writer: Writer): CSVWriter = new CSVWriter(writer)
+
+  def apply(file: File, enc: String = "UTF-8"): CSVWriter = {
+    val fos = new FileOutputStream(file)
+    val writer = new OutputStreamWriter(fos, enc)
+    apply(writer)
+  }
 
 }
