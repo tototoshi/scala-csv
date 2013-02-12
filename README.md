@@ -14,7 +14,7 @@ libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "0.4.0"
 ### import
 
 ```scala
-scala> import com.github.tototoshi.csv.{ CSVReader, CSVWriter }
+scala> import com.github.tototoshi.csv.CSVReader
 ```
 
 ### Reading a csv file
