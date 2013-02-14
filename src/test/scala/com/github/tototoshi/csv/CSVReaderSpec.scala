@@ -52,6 +52,12 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       }
     }
 
+    it("has #allWithHeaders") {
+      using (CSVReader(new FileReader("src/test/resources/with-headers.csv"))) { reader =>
+        reader.allWithHeaders should be (List(Map("Foo" -> "a", "Bar" -> "b", "Baz" -> "c"), Map("Foo" -> "d", "Bar" -> "e", "Baz" ->  "f")))
+      }
+    }
+
   }
 }
 

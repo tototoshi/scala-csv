@@ -82,6 +82,21 @@ res5: Option[List[String]] = None
 scala> reader.close()
 ```
 
+### Reading a csv file with column headers
+
+with-headers.csv
+```
+a,b,c
+d,e,f
+```
+
+````scala
+scala> val reader = CSVReader(new File("with-headers.csv"))
+reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@1a64e307
+
+scala> reader.allWithHeaders()
+res0: List[Map[String,String]] = List(Map(Foo -> a, Bar -> b, Baz -> c), Map(Foo -> d, Bar -> e, Baz -> f))
+````
 
 ### Writing example
 
