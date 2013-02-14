@@ -39,6 +39,13 @@ class CSVReader protected (reader: Reader) {
   def all(): List[List[String]] =
     csvReader.readAll().map(_.toList).toList
 
+  def allWithHeaders(): List[Map[String, String]] = {
+    readNext() map { headers =>
+      val lines = all()
+      lines.map(l => headers.zip(l).toMap)
+    } getOrElse List()
+  }
+
   def close(): Unit = csvReader.close()
 
 }
