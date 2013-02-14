@@ -26,11 +26,11 @@ class CSVWriter protected (writer: Writer) {
 
   def close() = csvWriter.close()
 
-  def writeAll(allLines: List[List[String]]) =
-    csvWriter.writeAll(allLines.map(_.toArray))
+  def writeAll(allLines: Seq[Seq[Any]]) =
+    csvWriter.writeAll(allLines.map(_.toArray.map(_.toString)))
 
-  def writeRow(fields: List[String]) =
-    csvWriter.writeNext(fields.toArray)
+  def writeRow(fields: Seq[Any]) =
+    csvWriter.writeNext(fields.map(_.toString).toArray)
 
 }
 
