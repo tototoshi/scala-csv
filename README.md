@@ -25,15 +25,15 @@ a,b,c
 d,e,f
 ```
 
-You can create CSVReader instance with CSVReader#apply.
+You can create CSVReader instance with CSVReader#open.
 
 ```scala
-scala> val reader = CSVReader(new File("sample.csv"))
+scala> val reader = CSVReader.open(new File("sample.csv"))
 ```
 
 #### Reading all lines
 ```scala
-scala> val reader = CSVReader(new File("sample.csv"))
+scala> val reader = CSVReader.open(new File("sample.csv"))
 reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@36d0c6dd
 
 scala> reader.all()
@@ -44,7 +44,7 @@ scala> reader.close()
 
 #### Reading all lines as Stream
 ```scala
-scala> val reader = CSVReader(new File("sample.csv"))
+scala> val reader = CSVReader.open(new File("sample.csv"))
 reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@7dae76b4
 
 scala> reader.toStream
@@ -56,7 +56,7 @@ res7: Stream[List[String]] = Stream(List(a, b, c), ?)
 There a two ways available. #foreach and #readNext.
 
 ```scala
-scala> val reader = CSVReader(new File("sample.csv"))
+scala> val reader = CSVReader.open(new File("sample.csv"))
 reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@4720a918
 
 scala> reader.foreach(fields => println(fields))
@@ -67,7 +67,7 @@ scala> reader.close()
 ```
 
 ```scala
-scala> val reader = CSVReader(new File("sample.csv"))
+scala> val reader = CSVReader.open(new File("sample.csv"))
 reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@4b545701
 
 scala> reader.readNext()
@@ -92,7 +92,7 @@ d,e,f
 ```
 
 ````scala
-scala> val reader = CSVReader(new File("with-headers.csv"))
+scala> val reader = CSVReader.open(new File("with-headers.csv"))
 reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@1a64e307
 
 scala> reader.allWithHeaders()
@@ -113,7 +113,7 @@ import com.github.tototoshi.csv.CSVWriter
 ```scala
 scala> val f = new File("out.csv")
 
-scala> val writer = CSVWriter(f)
+scala> val writer = CSVWriter.open(f)
 writer: com.github.tototoshi.csv.CSVWriter = com.github.tototoshi.csv.CSVWriter@783f77f1
 
 scala> writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
@@ -126,7 +126,7 @@ scala> writer.close()
 ```scala
 scala> val f = new File("out.csv")
 
-scala> val writer = CSVWriter(f)
+scala> val writer = CSVWriter.open(f)
 writer: com.github.tototoshi.csv.CSVWriter = com.github.tototoshi.csv.CSVWriter@41ad4de1
 
 scala> writer.writeRow(List("a", "b", "c"))
