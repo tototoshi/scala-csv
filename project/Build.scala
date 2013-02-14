@@ -15,6 +15,7 @@ object ScalaCSVProject extends Build {
         "net.sf.opencsv" % "opencsv" % "2.3",
         "org.scalatest" %% "scalatest" % "1.9.1" % "test"
       ),
+      scalacOptions ++= Seq("-deprecation"),
       publishMavenStyle := true,
       publishTo <<= version { (v: String) =>
         val nexus = "https://oss.sonatype.org/"
