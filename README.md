@@ -136,5 +136,19 @@ scala> writer.writeRow(List("d", "e", "f"))
 scala> writer.close()
 ```
 
+### Append lines to the file that already exists
+The default behavior of CSVWriter#open is overwriting.
+To append lines to the file that already exists, Set the append flag true.
+
+```scala
+scala> val writer = CSVWriter.open("a.csv", append = true)
+writer: com.github.tototoshi.csv.CSVWriter = com.github.tototoshi.csv.CSVWriter@67a84246
+
+scala> writer.writeRow(List("4", "5", "6"))
+
+scala> writer.close()
+```
+
+
 ## License
 [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
