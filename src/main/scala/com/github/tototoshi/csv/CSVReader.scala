@@ -52,12 +52,24 @@ class CSVReader protected (reader: Reader) {
 
 object CSVReader {
 
-  def apply(reader: Reader): CSVReader = new CSVReader(reader)
+  @deprecated("Use #open instead", "0.5.0")
+  def apply(file: File, enc: String = "UTF-8"): CSVReader = open(file, enc)
 
-  def apply(file: File, enc: String = "UTF-8"): CSVReader = {
+  @deprecated("Use #open instead", "0.5.0")
+  def apply(reader: Reader): CSVReader = open(reader)
+
+  def open(reader: Reader): CSVReader = new CSVReader(reader)
+
+  def open(file: File): CSVReader = open(file, "UTF-8")
+
+  def open(file: File, enc: String): CSVReader = {
     val fin = new FileInputStream(file)
     val reader = new InputStreamReader(fin, enc)
-    apply(reader)
+    open(reader)
   }
+
+  def open(file: String): CSVReader = open(new File(file), "UTF-8")
+
+  def open(file: String, enc: String): CSVReader = open(new File(file), enc)
 
 }

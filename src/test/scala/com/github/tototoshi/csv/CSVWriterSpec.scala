@@ -15,14 +15,21 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with Using {
   describe("CSVWriter") {
 
     it("should be constructed with java.io.File") {
-      using (CSVWriter(new File("test.csv"))) { writer =>
+      using (CSVWriter.open(new File("test.csv"))) { writer =>
+        writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+      }
+      new java.io.File("test.csv").delete()
+    }
+
+    it("should be constructed with filename string") {
+      using (CSVWriter.open("test.csv")) { writer =>
         writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
       }
       new java.io.File("test.csv").delete()
     }
 
     it("write all lines to file") {
-      using (CSVWriter(new FileWriter("test.csv"))) { writer =>
+      using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
         writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
       }
 
@@ -32,7 +39,7 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with Using {
     }
 
     it("write single line to file") {
-      using (CSVWriter(new FileWriter("test.csv"))) { writer =>
+      using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
         writer.writeRow(List("a", "b", "c"))
         writer.writeRow(List("d", "e", "f"))
       }

@@ -36,12 +36,23 @@ class CSVWriter protected (writer: Writer) {
 
 object CSVWriter {
 
-  def apply(writer: Writer): CSVWriter = new CSVWriter(writer)
+  @deprecated("Use #open instead", "0.5.0")
+  def apply(file: File, enc: String = "UTF-8"): CSVWriter = open(file, enc)
 
-  def apply(file: File, enc: String = "UTF-8"): CSVWriter = {
+  @deprecated("Use #open instead", "0.5.0")
+  def apply(writer: Writer): CSVWriter = open(writer)
+
+  def open(writer: Writer): CSVWriter = new CSVWriter(writer)
+
+  def open(file: File): CSVWriter = open(file, "UTF-8")
+
+  def open(file: File, enc: String): CSVWriter = {
     val fos = new FileOutputStream(file)
     val writer = new OutputStreamWriter(fos, enc)
-    apply(writer)
+    open(writer)
   }
 
+  def open(file: String): CSVWriter = open(file, "UTF-8")
+
+  def open(file: String, enc: String): CSVWriter = open(new File(file), enc)
 }
