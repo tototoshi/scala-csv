@@ -86,6 +86,7 @@ scala> reader.close()
 
 with-headers.csv
 ```
+Foo,Bar,Baz
 a,b,c
 d,e,f
 ```
