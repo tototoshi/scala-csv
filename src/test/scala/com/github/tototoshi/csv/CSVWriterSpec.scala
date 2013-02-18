@@ -61,6 +61,19 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
       readFileAsString("test.csv") should be (expected)
     }
 
+    describe("#flush") {
+      it ("flush stream") {
+        using (CSVWriter.open("test.csv")) { writer =>
+          writer.writeRow(List("a", "b", "c"))
+          writer.flush()
+          val content = using (CSVReader.open("test.csv")) { reader =>
+            reader.all
+          }
+          content should be (List(List("a", "b", "c")))
+        }
+      }
+    }
+
     describe("When append=true") {
       it ("append lines") {
         using (CSVWriter.open("test.csv")) { writer =>

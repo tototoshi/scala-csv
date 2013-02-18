@@ -26,6 +26,8 @@ class CSVWriter protected (writer: Writer) {
 
   def close(): Unit = underlying.close()
 
+  def flush(): Unit = underlying.close()
+
   def writeAll(allLines: Seq[Seq[Any]]): Unit =
     underlying.writeAll(allLines.map(_.toArray.map(_.toString)))
 
