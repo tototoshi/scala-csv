@@ -22,9 +22,9 @@ import scala.collection.JavaConversions._
 
 class CSVReader protected (reader: Reader) {
 
-  val csvReader = new JCSVReader(reader)
+  private val underlying: JCSVReader = new JCSVReader(reader)
 
-  def readNext(): Option[List[String]] = Option(csvReader.readNext).map(_.toList)
+  def readNext(): Option[List[String]] = Option(underlying.readNext).map(_.toList)
 
   def foreach(f: List[String] => Unit): Unit = {
     readNext match {
@@ -37,7 +37,7 @@ class CSVReader protected (reader: Reader) {
     Stream.continually(readNext).takeWhile(_.isDefined).map(_.get)
 
   def all(): List[List[String]] =
-    csvReader.readAll().map(_.toList).toList
+    underlying.readAll().map(_.toList).toList
 
   def allWithHeaders(): List[Map[String, String]] = {
     readNext() map { headers =>
@@ -46,7 +46,7 @@ class CSVReader protected (reader: Reader) {
     } getOrElse List()
   }
 
-  def close(): Unit = csvReader.close()
+  def close(): Unit = underlying.close()
 
 }
 

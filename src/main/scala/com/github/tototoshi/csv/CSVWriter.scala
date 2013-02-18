@@ -22,15 +22,15 @@ import java.io.{ File, Writer, FileOutputStream, OutputStreamWriter }
 
 class CSVWriter protected (writer: Writer) {
 
-  val csvWriter = new JCSVWriter(writer)
+  private val underlying: JCSVWriter = new JCSVWriter(writer)
 
-  def close() = csvWriter.close()
+  def close(): Unit = underlying.close()
 
-  def writeAll(allLines: Seq[Seq[Any]]) =
-    csvWriter.writeAll(allLines.map(_.toArray.map(_.toString)))
+  def writeAll(allLines: Seq[Seq[Any]]): Unit =
+    underlying.writeAll(allLines.map(_.toArray.map(_.toString)))
 
-  def writeRow(fields: Seq[Any]) =
-    csvWriter.writeNext(fields.map(_.toString).toArray)
+  def writeRow(fields: Seq[Any]): Unit =
+    underlying.writeNext(fields.map(_.toString).toArray)
 
 }
 
