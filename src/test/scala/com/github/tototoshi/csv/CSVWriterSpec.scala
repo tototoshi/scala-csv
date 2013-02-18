@@ -24,16 +24,43 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
 
   describe("CSVWriter") {
 
-    it("should be constructed with java.io.File") {
-      using (CSVWriter.open(new File("test.csv"))) { writer =>
-        writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+    describe ("#open") {
+      it("should be constructed with java.io.File") {
+        using (CSVWriter.open(new File("test.csv"))) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
       }
-    }
 
-    it("should be constructed with filename string") {
-      using (CSVWriter.open("test.csv")) { writer =>
-        writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+      it("should be constructed with filename string") {
+        using (CSVWriter.open("test.csv")) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
       }
+
+      it("should be constructed with filename string and encoding") {
+        using (CSVWriter.open("test.csv", "utf-8")) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
+      }
+
+      it("should be constructed with filename string, append flag and encoding") {
+        using (CSVWriter.open("test.csv", false, "utf-8")) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
+      }
+
+      it("should be constructed with file and encoding") {
+        using (CSVWriter.open(new File("test.csv"), "utf-8")) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
+      }
+
+      it("should be constructed with file, append flag and encoding") {
+        using (CSVWriter.open(new File("test.csv"), false, "utf-8")) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
+      }
+
     }
 
     it("write all lines to file") {

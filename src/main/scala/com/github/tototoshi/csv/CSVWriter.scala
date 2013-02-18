@@ -48,6 +48,8 @@ object CSVWriter {
 
   def open(file: File): CSVWriter = open(file, false, "UTF-8")
 
+  def open(file: File, enc: String): CSVWriter = open(file, false, enc)
+
   def open(file: File, append: Boolean): CSVWriter = open(file, append, "UTF-8")
 
   def open(file: File, append: Boolean, enc: String): CSVWriter = {
@@ -57,6 +59,8 @@ object CSVWriter {
   }
 
   def open(file: String): CSVWriter = open(file, false, "UTF-8")
+
+  def open(file: String, enc: String): CSVWriter = open(file, false, enc)
 
   def open(file: String, append: Boolean): CSVWriter = open(file, append, "UTF-8")
 
