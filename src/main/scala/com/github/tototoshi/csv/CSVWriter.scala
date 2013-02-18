@@ -39,7 +39,7 @@ class CSVWriter protected (writer: Writer) {
 object CSVWriter {
 
   @deprecated("Use #open instead", "0.5.0")
-  def apply(file: File, enc: String = "UTF-8"): CSVWriter = open(file, false, enc)
+  def apply(file: File, encoding: String = "UTF-8"): CSVWriter = open(file, false, encoding)
 
   @deprecated("Use #open instead", "0.5.0")
   def apply(writer: Writer): CSVWriter = open(writer)
@@ -48,21 +48,21 @@ object CSVWriter {
 
   def open(file: File): CSVWriter = open(file, false, "UTF-8")
 
-  def open(file: File, enc: String): CSVWriter = open(file, false, enc)
+  def open(file: File, encoding: String): CSVWriter = open(file, false, encoding)
 
   def open(file: File, append: Boolean): CSVWriter = open(file, append, "UTF-8")
 
-  def open(file: File, append: Boolean, enc: String): CSVWriter = {
+  def open(file: File, append: Boolean, encoding: String): CSVWriter = {
     val fos = new FileOutputStream(file, append)
-    val writer = new OutputStreamWriter(fos, enc)
+    val writer = new OutputStreamWriter(fos, encoding)
     open(writer)
   }
 
   def open(file: String): CSVWriter = open(file, false, "UTF-8")
 
-  def open(file: String, enc: String): CSVWriter = open(file, false, enc)
+  def open(file: String, encoding: String): CSVWriter = open(file, false, encoding)
 
   def open(file: String, append: Boolean): CSVWriter = open(file, append, "UTF-8")
 
-  def open(file: String, append: Boolean, enc: String): CSVWriter = open(new File(file), append, enc)
+  def open(file: String, append: Boolean, encoding: String): CSVWriter = open(new File(file), append, encoding)
 }
