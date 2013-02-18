@@ -16,6 +16,7 @@ object ScalaCSVProject extends Build {
         "org.scalatest" %% "scalatest" % "1.9.1" % "test"
       ),
       scalacOptions ++= Seq("-deprecation"),
+      initialCommands := "import com.github.tototoshi.csv._",
       publishMavenStyle := true,
       publishTo <<= version { (v: String) =>
         val nexus = "https://oss.sonatype.org/"
