@@ -62,6 +62,48 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       }
     }
 
+    describe("iterator fetched from #iterator") {
+
+      it ("has #hasNext") {
+        using (CSVReader.open("src/test/resources/simple.csv")) { reader =>
+          val it = reader.iterator
+          it.hasNext should be (true)
+          it.hasNext should be (true)
+          it.hasNext should be (true)
+          it.foreach(x => ()) // cosume
+          it.hasNext should be (false)
+        }
+      }
+
+      describe ("#next") {
+        it ("should return the next line") {
+          using (CSVReader.open("src/test/resources/simple.csv")) { reader =>
+            val it = reader.iterator
+            it.next should be (List("a", "b", "c"))
+            it.next should be (List("d", "e", "f"))
+          }
+        }
+        it ("should throw NoSuchElementException") {
+          using (CSVReader.open("src/test/resources/simple.csv")) { reader =>
+            val it = reader.iterator
+            it.next
+            it.next
+            intercept[java.util.NoSuchElementException] {
+              it.next
+            }
+          }
+        }
+      }
+
+      it ("iterate all lines") {
+        var lineCount = 0
+        using (CSVReader.open("src/test/resources/simple.csv")) { reader =>
+          val it = reader.iterator
+          it.foreach { line => lineCount += 1 }
+        }
+        lineCount should be (2)
+      }
+    }
     describe("#allHeaders") {
       describe("When the file is empty") {
         it("returns an empty list") {

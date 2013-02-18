@@ -19,6 +19,7 @@ package com.github.tototoshi.csv
 import au.com.bytecode.opencsv.{ CSVReader => JCSVReader }
 import java.io._
 import scala.collection.JavaConversions._
+import java.util.NoSuchElementException
 
 class CSVReader protected (reader: Reader) {
 
@@ -31,6 +32,30 @@ class CSVReader protected (reader: Reader) {
       case Some(next) => f(next); foreach(f)
       case None => ()
     }
+  }
+
+  def iterator: Iterator[Seq[String]] = new Iterator[Seq[String]] {
+
+    private var _next: Option[Seq[String]] = None
+
+    def hasNext: Boolean = {
+      _next match {
+        case Some(row) => true
+        case None => { _next = readNext;  _next.isDefined }
+      }
+    }
+
+    def next(): Seq[String] = {
+      _next match {
+        case Some(row) => {
+          val _row = row
+          _next = None
+          _row
+        }
+        case None => readNext.getOrElse(throw new NoSuchElementException("next on empty iterator"))
+      }
+    }
+
   }
 
   def toStream(): Stream[List[String]] =
