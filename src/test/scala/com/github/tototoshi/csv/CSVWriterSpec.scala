@@ -12,6 +12,12 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
 
   }
 
+  def readFileAsString(file: String) = {
+    using (io.Source.fromFile(file)) { src =>
+      src.getLines.mkString("", "\n", "\n")
+    }
+  }
+
   after {
     new java.io.File("test.csv").delete()
   }
@@ -35,7 +41,11 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
         writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
       }
 
-      io.Source.fromFile("test.csv").getLines.mkString should be (""""a","b","c""d","e","f"""")
+      val expected = """|"a","b","c"
+                        |"d","e","f"
+                        |""".stripMargin
+
+      readFileAsString("test.csv") should be (expected)
     }
 
     it("write single line to file") {
@@ -44,7 +54,11 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
         writer.writeRow(List("d", "e", "f"))
       }
 
-      io.Source.fromFile("test.csv").getLines.mkString should be (""""a","b","c""d","e","f"""")
+      val expected = """|"a","b","c"
+                        |"d","e","f"
+                        |""".stripMargin
+
+      readFileAsString("test.csv") should be (expected)
     }
 
     describe("When append=true") {
@@ -60,7 +74,12 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
           writer.writeRow(List("h", "i", "j"))
         }
 
-        io.Source.fromFile("test.csv").getLines.mkString should be (""""a","b","c""d","e","f""h","i","j"""")
+        val expected = """|"a","b","c"
+                          |"d","e","f"
+                          |"h","i","j"
+                          |""".stripMargin
+
+        readFileAsString("test.csv") should be (expected)
       }
     }
 
@@ -73,13 +92,19 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
           writer.writeRow(List("d", "e", "f"))
         }
 
-        io.Source.fromFile("test.csv").getLines.mkString should be (""""d","e","f"""")
+        val expected = """|"d","e","f"
+                          |""".stripMargin
+
+        readFileAsString("test.csv") should be (expected)
 
         using (CSVWriter.open(new File("test.csv"), append = false)) { writer =>
           writer.writeRow(List("h", "i", "j"))
         }
 
-        io.Source.fromFile("test.csv").getLines.mkString should be (""""h","i","j"""")
+        val expected2 = """|"h","i","j"
+                          |""".stripMargin
+
+        readFileAsString("test.csv") should be (expected2)
       }
     }
 
