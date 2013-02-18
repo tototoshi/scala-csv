@@ -42,6 +42,29 @@ res0: List[List[String]] = List(List(a, b, c), List(d, e, f))
 scala> reader.close()
 ```
 
+#### Using iterator
+```scala
+scala> val reader = CSVReader.open("sample.csv")
+reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@22d568da
+
+scala> val it = reader.iterator
+it: Iterator[Seq[String]] = non-empty iterator
+
+scala> it.next
+res0: Seq[String] = List(a, b, c)
+
+scala> it.next
+res1: Seq[String] = List(d, e, f)
+
+scala> it.next
+java.util.NoSuchElementException: next on empty iterator
+        at com.github.tototoshi.csv.CSVReader$$anon$1$$anonfun$next$1.apply(CSVReader.scala:55)
+        at com.github.tototoshi.csv.CSVReader$$anon$1$$anonfun$next$1.apply(CSVReader.scala:55)
+        at scala.Option.getOrElse(Option.scala:108)
+
+scala> reader.close()
+```
+
 #### Reading all lines as Stream
 ```scala
 scala> val reader = CSVReader.open(new File("sample.csv"))
