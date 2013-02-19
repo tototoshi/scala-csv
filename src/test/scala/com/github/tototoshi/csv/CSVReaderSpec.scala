@@ -16,7 +16,7 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       var res: List[String] = Nil
       using (CSVReader.open(new File("src/test/resources/simple.csv"))) { reader =>
         reader foreach { fields =>
-          res = res ::: fields
+          res = res ++ fields
         }
       }
       res.mkString should be ("abcdef")
@@ -26,7 +26,7 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       var res: List[String] = Nil
       using (CSVReader.open("src/test/resources/simple.csv")) { reader =>
         reader foreach { fields =>
-          res = res ::: fields
+          res = res ++ fields
         }
       }
       res.mkString should be ("abcdef")
@@ -36,7 +36,7 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       var res: List[String] = Nil
       using (CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
         reader foreach { fields =>
-          res = res ::: fields
+          res = res ++ fields
         }
       }
       res.mkString should be ("abcdef")
@@ -102,6 +102,25 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
           it.foreach { line => lineCount += 1 }
         }
         lineCount should be (2)
+      }
+
+      describe ("When the file to be parsed is huge") {
+        it ("should iterate all lines without any trouble") {
+          val tmpfile: File = File.createTempFile("csv", "test")
+          tmpfile.deleteOnExit()
+          using(new java.io.PrintWriter(tmpfile)) { writer =>
+            (1 to 100000).foreach { i =>
+              writer.println(i)
+            }
+          }
+          var count = 0
+          using (CSVReader.open(tmpfile)) { reader =>
+            reader.foreach { row =>
+              count += 1
+            }
+          }
+          count should be (100000)
+        }
       }
     }
     describe("#allHeaders") {

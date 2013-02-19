@@ -27,12 +27,7 @@ class CSVReader protected (reader: Reader) {
 
   def readNext(): Option[List[String]] = Option(underlying.readNext).map(_.toList)
 
-  def foreach(f: List[String] => Unit): Unit = {
-    readNext match {
-      case Some(next) => f(next); foreach(f)
-      case None => ()
-    }
-  }
+  def foreach(f: Seq[String] => Unit): Unit = iterator.foreach(f)
 
   def iterator: Iterator[Seq[String]] = new Iterator[Seq[String]] {
 
