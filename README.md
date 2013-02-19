@@ -1,12 +1,14 @@
 # scala-csv
 
+[![Build Status](https://travis-ci.org/tototoshi/scala-csv.png)](https://travis-ci.org/tototoshi/scala-csv)
+
 A simple opencsv wrapper
 
 ## build.sbt
 If you use Scala 2.9.1, 2.9.2 or 2.10.0, you can get scala-csv with the following line in your build.sbt.
 
 ```scala
-libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "0.5.0"
+libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "0.6.0"
 ```
 
 ## Example
@@ -38,6 +40,29 @@ reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@
 
 scala> reader.all()
 res0: List[List[String]] = List(List(a, b, c), List(d, e, f))
+
+scala> reader.close()
+```
+
+#### Using iterator
+```scala
+scala> val reader = CSVReader.open("sample.csv")
+reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@22d568da
+
+scala> val it = reader.iterator
+it: Iterator[Seq[String]] = non-empty iterator
+
+scala> it.next
+res0: Seq[String] = List(a, b, c)
+
+scala> it.next
+res1: Seq[String] = List(d, e, f)
+
+scala> it.next
+java.util.NoSuchElementException: next on empty iterator
+        at com.github.tototoshi.csv.CSVReader$$anon$1$$anonfun$next$1.apply(CSVReader.scala:55)
+        at com.github.tototoshi.csv.CSVReader$$anon$1$$anonfun$next$1.apply(CSVReader.scala:55)
+        at scala.Option.getOrElse(Option.scala:108)
 
 scala> reader.close()
 ```
