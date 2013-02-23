@@ -24,6 +24,14 @@ class CSVWriter protected (writer: Writer) {
 
   private val underlying: JCSVWriter = new JCSVWriter(writer)
 
+  def apply[A](f: CSVWriter => A): A = {
+    try {
+      f(this)
+    } finally {
+      this.close()
+    }
+  }
+
   def close(): Unit = underlying.close()
 
   def flush(): Unit = underlying.close()

@@ -8,9 +8,6 @@ import org.scalatest.matchers._
 import java.io.File
 
 class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with Using {
-  def fixture = new {
-
-  }
 
   def readFileAsString(file: String) = {
     using (io.Source.fromFile(file)) { src =>
@@ -23,6 +20,23 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
   }
 
   describe("CSVWriter") {
+
+    describe ("#apply") {
+      it ("should provide loan pattern") {
+        CSVWriter.open("test.csv") { writer =>
+          writer.writeRow(List(1, 2, 3))
+          writer.writeRow(List(4, 5, 6))
+        }
+        readFileAsString("test.csv") should be ("\"1\",\"2\",\"3\"\n\"4\",\"5\",\"6\"\n")
+      }
+      it ("should close csv writer") {
+        val writer = CSVWriter.open("test.csv")
+        writer(w => ())
+        intercept[java.io.IOException] {
+          writer.writeRow(List(1))
+        }
+      }
+    }
 
     describe ("#open") {
       it("should be constructed with java.io.File") {

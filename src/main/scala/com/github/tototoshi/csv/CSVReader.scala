@@ -25,6 +25,14 @@ class CSVReader protected (reader: Reader) {
 
   private val underlying: JCSVReader = new JCSVReader(reader)
 
+  def apply[A](f: Iterator[Seq[String]] => A): A = {
+    try {
+      f(this.iterator)
+    } finally {
+      this.close()
+    }
+  }
+
   def readNext(): Option[List[String]] = Option(underlying.readNext).map(_.toList)
 
   def foreach(f: Seq[String] => Unit): Unit = iterator.foreach(f)

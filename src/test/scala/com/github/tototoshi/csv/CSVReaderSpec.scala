@@ -10,7 +10,23 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
 
   }
 
-  describe("CSVSpec") {
+  describe("CSVReader") {
+
+    describe ("#apply") {
+      it ("should provide the syntax of loan pattern") {
+        val content = CSVReader.open("src/test/resources/simple.csv") { lines =>
+          lines.map(_.mkString).mkString
+        }
+        content should be ("abcdef")
+      }
+      it ("should close csv reader") {
+        val reader = CSVReader.open("src/test/resources/simple.csv")
+        reader.apply { lines => () }
+        intercept[java.io.IOException] {
+          reader.readNext()
+        }
+      }
+    }
 
     it("should be constructed with java.io.File") {
       var res: List[String] = Nil
