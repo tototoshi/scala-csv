@@ -28,12 +28,19 @@ class CSVWriter protected (writer: Writer) {
 
   def flush(): Unit = underlying.close()
 
-  def writeAll(allLines: Seq[Seq[Any]]): Unit =
+  def writeAll(allLines: Seq[Seq[Any]]): Unit = {
     underlying.writeAll(allLines.map(_.toArray.map(_.toString)))
+    if (underlying.checkError) {
+      throw new java.io.IOException("Failed to write")
+    }
+  }
 
-  def writeRow(fields: Seq[Any]): Unit =
+  def writeRow(fields: Seq[Any]): Unit = {
     underlying.writeNext(fields.map(_.toString).toArray)
-
+    if (underlying.checkError) {
+      throw new java.io.IOException("Failed to write")
+    }
+  }
 }
 
 object CSVWriter {

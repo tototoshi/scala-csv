@@ -63,29 +63,51 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
 
     }
 
-    it("write all lines to file") {
-      using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
-        writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+    describe ("#writeAll") {
+      it("write all lines to file") {
+        using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
+
+        val expected = """|"a","b","c"
+        |"d","e","f"
+        |""".stripMargin
+
+        readFileAsString("test.csv") should be (expected)
       }
-
-      val expected = """|"a","b","c"
-                        |"d","e","f"
-                        |""".stripMargin
-
-      readFileAsString("test.csv") should be (expected)
+      describe ("When stream is already closed") {
+        it ("throws an Exception") {
+          val writer = CSVWriter.open("test.csv")
+          writer.close()
+          intercept[java.io.IOException] {
+            writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+          }
+        }
+      }
     }
 
-    it("write single line to file") {
-      using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
-        writer.writeRow(List("a", "b", "c"))
-        writer.writeRow(List("d", "e", "f"))
+    describe ("#writeNext") {
+      it("write single line to file") {
+        using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+          writer.writeRow(List("a", "b", "c"))
+          writer.writeRow(List("d", "e", "f"))
+        }
+
+        val expected = """|"a","b","c"
+        |"d","e","f"
+        |""".stripMargin
+
+        readFileAsString("test.csv") should be (expected)
       }
-
-      val expected = """|"a","b","c"
-                        |"d","e","f"
-                        |""".stripMargin
-
-      readFileAsString("test.csv") should be (expected)
+      describe ("When stream is already closed") {
+        it ("throws an Exception") {
+          val writer = CSVWriter.open("test.csv")
+          writer.close()
+          intercept[java.io.IOException] {
+            writer.writeRow(List("a", "b", "c"))
+          }
+        }
+      }
     }
 
     describe("#flush") {
