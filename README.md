@@ -19,7 +19,7 @@ libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "0.7.0"
 scala> import com.github.tototoshi.csv.CSVReader
 ```
 
-### Reading a csv file
+### Reading example
 
 sample.csv
 ```
@@ -107,7 +107,7 @@ res5: Option[List[String]] = None
 scala> reader.close()
 ```
 
-### Reading a csv file with column headers
+#### Reading a csv file with column headers
 
 with-headers.csv
 ```
@@ -124,7 +124,7 @@ scala> reader.allWithHeaders()
 res0: List[Map[String,String]] = List(Map(Foo -> a, Bar -> b, Baz -> c), Map(Foo -> d, Bar -> e, Baz -> f))
 ````
 
-### Using loan pattern
+#### Using loan pattern
 
 ```scala
 scala> CSVReader.open("src/test/resources/simple.csv") { lines =>
@@ -157,7 +157,7 @@ scala> writer.close()
 ```
 
 
-### Writing one line at a time with #writeRow
+#### Writing one line at a time with #writeRow
 ```scala
 scala> val f = new File("out.csv")
 
@@ -171,7 +171,7 @@ scala> writer.writeRow(List("d", "e", "f"))
 scala> writer.close()
 ```
 
-### Append lines to the file that already exists
+#### Appending lines to the file that already exists
 The default behavior of CSVWriter#open is overwriting.
 To append lines to the file that already exists, Set the append flag true.
 
@@ -184,7 +184,7 @@ scala> writer.writeRow(List("4", "5", "6"))
 scala> writer.close()
 ```
 
-### Using loan pattern
+#### Using loan pattern
 
 ```scala
 scala> CSVWriter.open("a.csv") { writer =>
