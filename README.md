@@ -5,7 +5,7 @@
 A simple opencsv wrapper
 
 ## build.sbt
-If you use Scala 2.9.1, 2.9.2 or 2.10.0, you can get scala-csv with the following line in your build.sbt.
+If you use Scala 2.9.1, 2.9.2, 2.9.3 or 2.10.0, you can get scala-csv with the following line in your build.sbt.
 
 ```scala
 libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "0.7.0"
