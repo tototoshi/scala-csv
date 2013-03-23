@@ -48,6 +48,34 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       res.mkString should be ("abcdef")
     }
 
+    it("should be constructed with separators") {
+      var res: List[String] = Nil
+
+      using (CSVReader.openFromPath("src/test/resources/hash-separated.csv", separator = '#')) { reader =>
+        reader foreach { fields =>
+          res = res ++ fields
+        }
+      }
+
+      res.mkString should be ("abcdef")
+    }
+
+    it("should be consutrcted with separators and quotes") {
+      using (CSVReader.openFromPath("src/test/resources/hash-separated-dollar-quote.csv", separator = '#', quote = '$')) { reader => {
+          val map = reader.allWithHeaders()
+          map(0)("Foo ") should be ("a")
+        }
+      }
+    }
+
+    it("should be constructed with separators, quotes, and line skipping") {
+      using (CSVReader.openFromPath("src/test/resources/beginning-junk-hash-separated-dollar-quote.csv", separator = '#', quote = '$', numberOfLinesToSkip = 3)) { reader => {
+          val map = reader.allWithHeaders()
+          map(0)("Foo ") should be ("a")
+        }
+      }
+    }
+
     it("read CSV from file") {
       var res: List[String] = Nil
       using (CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
