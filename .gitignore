@@ -1,3 +1,5 @@
 target/
 .ensime*
 publish.sbt
+.idea
+.idea_modules
