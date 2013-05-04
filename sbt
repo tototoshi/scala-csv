@@ -1,2 +1,2 @@
 #!/bin/sh
-java -Xdebug -Xmx2048M -XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -jar ./sbt-launch-0.12.2.jar "$@"
+java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=384M -Dsbt.ivy.home=/Users/toshi/.ivy2 -jar `dirname $0`/sbt-launch-0.12.3.jar "$@"
