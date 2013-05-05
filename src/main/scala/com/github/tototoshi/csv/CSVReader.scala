@@ -16,14 +16,14 @@
 
 package com.github.tototoshi.csv
 
-import au.com.bytecode.opencsv.{ CSVReader => JCSVReader }
+import au.com.bytecode.opencsv.{CSVReader => JCSVReader}
 import java.io._
 import scala.collection.JavaConversions._
 import java.util.NoSuchElementException
+import au.com.bytecode.opencsv
+import opencsv.CSVParser
 
-class CSVReader protected (reader: Reader) {
-
-  private val underlying: JCSVReader = new JCSVReader(reader)
+class CSVReader protected (private val underlying: JCSVReader) {
 
   def apply[A](f: Iterator[Seq[String]] => A): A = {
     try {
@@ -84,9 +84,21 @@ object CSVReader {
   def apply(file: File, encoding: String = "UTF-8"): CSVReader = open(file, encoding)
 
   @deprecated("Use #open instead", "0.5.0")
-  def apply(reader: Reader): CSVReader = open(reader)
+  def apply(reader: Reader): CSVReader = openFromReader(reader)
 
-  def open(reader: Reader): CSVReader = new CSVReader(reader)
+  def openFromReader(reader: Reader, separator: Char = CSVParser.DEFAULT_SEPARATOR, quote: Char = CSVParser.DEFAULT_QUOTE_CHARACTER, numberOfLinesToSkip: Int = JCSVReader.DEFAULT_SKIP_LINES): CSVReader =
+    new CSVReader(new JCSVReader(reader, separator, quote, numberOfLinesToSkip))
+
+  def openFromFile(file: File, encoding: String = "UTF-8", separator: Char = CSVParser.DEFAULT_SEPARATOR, quote: Char = CSVParser.DEFAULT_QUOTE_CHARACTER, numberOfLinesToSkip: Int = JCSVReader.DEFAULT_SKIP_LINES): CSVReader = {
+    val fin = new FileInputStream(file)
+    val reader = new InputStreamReader(fin, encoding)
+    openFromReader(reader, separator, quote, numberOfLinesToSkip)
+  }
+
+  def openFromPath(filename: String, encoding: String = "UTF-8", separator: Char = CSVParser.DEFAULT_SEPARATOR, quote: Char = CSVParser.DEFAULT_QUOTE_CHARACTER, numberOfLinesToSkip: Int = JCSVReader.DEFAULT_SKIP_LINES) : CSVReader =
+    openFromFile(new File(filename), encoding, separator, quote, numberOfLinesToSkip)
+
+  def open(reader: Reader): CSVReader = openFromReader(reader)
 
   def open(file: File): CSVReader = open(file, "UTF-8")
 
@@ -99,5 +111,4 @@ object CSVReader {
   def open(file: String): CSVReader = open(new File(file), "UTF-8")
 
   def open(file: String, encoding: String): CSVReader = open(new File(file), encoding)
-
 }
