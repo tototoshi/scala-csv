@@ -24,7 +24,7 @@ import au.com.bytecode.opencsv
 
 class CSVReader protected (private val underlying: JCSVReader) {
 
-  @deprecated("0.8.0")
+  @deprecated("No longer supported", "0.8.0")
   def apply[A](f: Iterator[Seq[String]] => A): A = {
     try {
       f(this.iterator)
@@ -83,13 +83,13 @@ object CSVReader {
   val DEFAULT_ENCODING = "UTF-8"
 
   @deprecated("Use #open instead", "0.5.0")
-  def apply(file: File, encoding: String = "UTF-8"): CSVReader = open(file, encoding)
+  def apply(file: File, encoding: String = "UTF-8"): CSVReader = open(file, encoding)(defaultCSVFormat)
 
   @deprecated("Use #open instead", "0.5.0")
   def apply(reader: Reader): CSVReader = open(reader)(defaultCSVFormat)
 
   def open(reader: Reader)(implicit format: CSVFormat): CSVReader =
-    new CSVReader(new JCSVReader(reader, format.separator, format.quote, format.numberOfLinesToSkip))
+    new CSVReader(new JCSVReader(reader, format.separator, format.quoteChar, format.numberOfLinesToSkip))
 
   def open(file: File)(implicit format: CSVFormat): CSVReader = {
     open(file, this.DEFAULT_ENCODING)(format)

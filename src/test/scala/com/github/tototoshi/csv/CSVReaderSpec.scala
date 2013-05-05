@@ -63,7 +63,7 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
     it("should be consutrcted with separators and quotes") {
       implicit object format extends DefaultCSVFormat {
         override val separator: Char = '#'
-        override val quote: Char = '$'
+        override val quoteChar: Char = '$'
       }
 
       using (CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv")) { reader => {
@@ -76,7 +76,7 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
     it("should be constructed with separators, quotes, and line skipping") {
       implicit object format extends DefaultCSVFormat {
         override val separator: Char = '#'
-        override val quote: Char = '$'
+        override val quoteChar: Char = '$'
         override val numberOfLinesToSkip: Int = 3
       }
       using (CSVReader.open("src/test/resources/beginning-junk-hash-separated-dollar-quote.csv")) { reader => {

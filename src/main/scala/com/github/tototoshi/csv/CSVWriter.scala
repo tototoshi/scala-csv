@@ -20,10 +20,9 @@ import scala.collection.JavaConversions._
 import au.com.bytecode.opencsv.{ CSVWriter => JCSVWriter }
 import java.io.{ File, Writer, FileOutputStream, OutputStreamWriter }
 
-class CSVWriter protected (writer: Writer) {
+class CSVWriter protected (protected val underlying: JCSVWriter) {
 
-  private val underlying: JCSVWriter = new JCSVWriter(writer)
-
+  @deprecated("No longer supported","0.8.0")
   def apply[A](f: CSVWriter => A): A = {
     try {
       f(this)
@@ -54,30 +53,36 @@ class CSVWriter protected (writer: Writer) {
 object CSVWriter {
 
   @deprecated("Use #open instead", "0.5.0")
-  def apply(file: File, encoding: String = "UTF-8"): CSVWriter = open(file, false, encoding)
+  def apply(file: File, encoding: String = "UTF-8")(implicit format: CSVFormat): CSVWriter =
+    open(file, false, encoding)(defaultCSVFormat)
 
   @deprecated("Use #open instead", "0.5.0")
-  def apply(writer: Writer): CSVWriter = open(writer)
+  def apply(writer: Writer): CSVWriter = open(writer)(defaultCSVFormat)
 
-  def open(writer: Writer): CSVWriter = new CSVWriter(writer)
-
-  def open(file: File): CSVWriter = open(file, false, "UTF-8")
-
-  def open(file: File, encoding: String): CSVWriter = open(file, false, encoding)
-
-  def open(file: File, append: Boolean): CSVWriter = open(file, append, "UTF-8")
-
-  def open(file: File, append: Boolean, encoding: String): CSVWriter = {
-    val fos = new FileOutputStream(file, append)
-    val writer = new OutputStreamWriter(fos, encoding)
-    open(writer)
+  def open(writer: Writer)(implicit format: CSVFormat): CSVWriter = {
+    val jcsvWriter = new JCSVWriter(writer, format.separator, format.quoteChar, format.escapeChar, format.lineEnd)
+    new CSVWriter(jcsvWriter)
   }
 
-  def open(file: String): CSVWriter = open(file, false, "UTF-8")
 
-  def open(file: String, encoding: String): CSVWriter = open(file, false, encoding)
+  def open(file: File)(implicit format: CSVFormat): CSVWriter = open(file, false, "UTF-8")(format)
 
-  def open(file: String, append: Boolean): CSVWriter = open(file, append, "UTF-8")
+  def open(file: File, encoding: String)(implicit format: CSVFormat): CSVWriter = open(file, false, encoding)(format)
 
-  def open(file: String, append: Boolean, encoding: String): CSVWriter = open(new File(file), append, encoding)
+  def open(file: File, append: Boolean)(implicit format: CSVFormat): CSVWriter = open(file, append, "UTF-8")(format)
+
+  def open(file: File, append: Boolean, encoding: String)(implicit format: CSVFormat): CSVWriter = {
+    val fos = new FileOutputStream(file, append)
+    val writer = new OutputStreamWriter(fos, encoding)
+    open(writer)(format)
+  }
+
+  def open(file: String)(implicit format: CSVFormat): CSVWriter = open(file, false, "UTF-8")(format)
+
+  def open(file: String, encoding: String)(implicit format: CSVFormat): CSVWriter = open(file, false, encoding)(format)
+
+  def open(file: String, append: Boolean)(implicit format: CSVFormat): CSVWriter = open(file, append, "UTF-8")(format)
+
+  def open(file: String, append: Boolean, encoding: String)(implicit format: CSVFormat): CSVWriter =
+    open(new File(file), append, encoding)(format)
 }

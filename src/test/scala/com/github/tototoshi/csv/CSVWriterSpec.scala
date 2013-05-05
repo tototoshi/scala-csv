@@ -22,13 +22,6 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
   describe("CSVWriter") {
 
     describe ("#apply") {
-      it ("should provide loan pattern") {
-        CSVWriter.open("test.csv") { writer =>
-          writer.writeRow(List(1, 2, 3))
-          writer.writeRow(List(4, 5, 6))
-        }
-        readFileAsString("test.csv") should be ("\"1\",\"2\",\"3\"\n\"4\",\"5\",\"6\"\n")
-      }
       it ("should close csv writer") {
         val writer = CSVWriter.open("test.csv")
         writer(w => ())

@@ -20,9 +20,9 @@ trait CSVFormat {
 
   val separator: Char
 
-  val quote: Char
+  val quoteChar: Char
 
-  val escape: Char
+  val escapeChar: Char
 
   val numberOfLinesToSkip: Int
 
@@ -30,4 +30,5 @@ trait CSVFormat {
 
   val ignoreLeadingWhiteSpace: Boolean
 
+  val lineEnd: String
 }
