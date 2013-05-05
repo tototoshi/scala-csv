@@ -16,14 +16,15 @@
 
 package com.github.tototoshi.csv
 
-import au.com.bytecode.opencsv.{ CSVReader => JCSVReader }
+import au.com.bytecode.opencsv.{CSVReader => JCSVReader, CSVParser}
 import java.io._
 import scala.collection.JavaConversions._
 import java.util.NoSuchElementException
+import au.com.bytecode.opencsv
 
-class CSVReader protected (reader: Reader) {
+class CSVReader protected (reader: => JCSVReader) {
 
-  private val underlying: JCSVReader = new JCSVReader(reader)
+  private val underlying: JCSVReader = reader
 
   def apply[A](f: Iterator[Seq[String]] => A): A = {
     try {
@@ -86,7 +87,9 @@ object CSVReader {
   @deprecated("Use #open instead", "0.5.0")
   def apply(reader: Reader): CSVReader = open(reader)
 
-  def open(reader: Reader): CSVReader = new CSVReader(reader)
+  def open(reader: => JCSVReader) = new CSVReader(reader)
+
+  def open(reader: Reader): CSVReader = new CSVReader(new opencsv.CSVReader(reader))
 
   def open(file: File): CSVReader = open(file, "UTF-8")
 

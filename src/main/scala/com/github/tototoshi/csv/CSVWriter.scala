@@ -19,10 +19,11 @@ package com.github.tototoshi.csv
 import scala.collection.JavaConversions._
 import au.com.bytecode.opencsv.{ CSVWriter => JCSVWriter }
 import java.io.{ File, Writer, FileOutputStream, OutputStreamWriter }
+import au.com.bytecode.opencsv
 
-class CSVWriter protected (writer: Writer) {
+class CSVWriter protected (writer: => JCSVWriter) {
 
-  private val underlying: JCSVWriter = new JCSVWriter(writer)
+  private val underlying: JCSVWriter = writer
 
   def apply[A](f: CSVWriter => A): A = {
     try {
@@ -59,7 +60,9 @@ object CSVWriter {
   @deprecated("Use #open instead", "0.5.0")
   def apply(writer: Writer): CSVWriter = open(writer)
 
-  def open(writer: Writer): CSVWriter = new CSVWriter(writer)
+  def open(writer: => JCSVWriter) = new CSVWriter(writer)
+
+  def open(writer: Writer): CSVWriter = new CSVWriter(new JCSVWriter(writer))
 
   def open(file: File): CSVWriter = open(file, false, "UTF-8")
 
