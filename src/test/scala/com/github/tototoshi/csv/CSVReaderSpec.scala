@@ -4,8 +4,10 @@ import java.io.{ FileReader, File }
 
 import org.scalatest.FunSpec
 import org.scalatest.matchers._
+import javax.swing.colorchooser.DefaultColorSelectionModel
 
 class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
+
   def fixture = new {
 
   }
@@ -13,12 +15,6 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
   describe("CSVReader") {
 
     describe ("#apply") {
-      it ("should provide the syntax of loan pattern") {
-        val content = CSVReader.open("src/test/resources/simple.csv") { lines =>
-          lines.map(_.mkString).mkString
-        }
-        content should be ("abcdef")
-      }
       it ("should close csv reader") {
         val reader = CSVReader.open("src/test/resources/simple.csv")
         reader.apply { lines => () }
@@ -51,7 +47,11 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
     it("should be constructed with separators") {
       var res: List[String] = Nil
 
-      using (CSVReader.openFromPath("src/test/resources/hash-separated.csv", separator = '#')) { reader =>
+      implicit object format extends DefaultCSVFormat {
+        override val separator: Char = '#'
+      }
+
+      using (CSVReader.open("src/test/resources/hash-separated.csv")) { reader =>
         reader foreach { fields =>
           res = res ++ fields
         }
@@ -61,7 +61,12 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
     }
 
     it("should be consutrcted with separators and quotes") {
-      using (CSVReader.openFromPath("src/test/resources/hash-separated-dollar-quote.csv", separator = '#', quote = '$')) { reader => {
+      implicit object format extends DefaultCSVFormat {
+        override val separator: Char = '#'
+        override val quote: Char = '$'
+      }
+
+      using (CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv")) { reader => {
           val map = reader.allWithHeaders()
           map(0)("Foo ") should be ("a")
         }
@@ -69,7 +74,12 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
     }
 
     it("should be constructed with separators, quotes, and line skipping") {
-      using (CSVReader.openFromPath("src/test/resources/beginning-junk-hash-separated-dollar-quote.csv", separator = '#', quote = '$', numberOfLinesToSkip = 3)) { reader => {
+      implicit object format extends DefaultCSVFormat {
+        override val separator: Char = '#'
+        override val quote: Char = '$'
+        override val numberOfLinesToSkip: Int = 3
+      }
+      using (CSVReader.open("src/test/resources/beginning-junk-hash-separated-dollar-quote.csv")) { reader => {
           val map = reader.allWithHeaders()
           map(0)("Foo ") should be ("a")
         }

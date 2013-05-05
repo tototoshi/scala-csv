@@ -13,11 +13,21 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+package com.github.tototoshi.csv
 
-package com.github.tototoshi
 
-package object csv {
+trait CSVFormat {
 
-  implicit val defaultCSVFormat = new DefaultCSVFormat {}
+  val separator: Char
+
+  val quote: Char
+
+  val escape: Char
+
+  val numberOfLinesToSkip: Int
+
+  val strictQuotes: Boolean
+
+  val ignoreLeadingWhiteSpace: Boolean
 
 }

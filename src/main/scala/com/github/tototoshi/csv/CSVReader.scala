@@ -21,10 +21,10 @@ import java.io._
 import scala.collection.JavaConversions._
 import java.util.NoSuchElementException
 import au.com.bytecode.opencsv
-import opencsv.CSVParser
 
 class CSVReader protected (private val underlying: JCSVReader) {
 
+  @deprecated("0.8.0")
   def apply[A](f: Iterator[Seq[String]] => A): A = {
     try {
       f(this.iterator)
@@ -80,35 +80,31 @@ class CSVReader protected (private val underlying: JCSVReader) {
 
 object CSVReader {
 
+  val DEFAULT_ENCODING = "UTF-8"
+
   @deprecated("Use #open instead", "0.5.0")
   def apply(file: File, encoding: String = "UTF-8"): CSVReader = open(file, encoding)
 
   @deprecated("Use #open instead", "0.5.0")
-  def apply(reader: Reader): CSVReader = openFromReader(reader)
+  def apply(reader: Reader): CSVReader = open(reader)(defaultCSVFormat)
 
-  def openFromReader(reader: Reader, separator: Char = CSVParser.DEFAULT_SEPARATOR, quote: Char = CSVParser.DEFAULT_QUOTE_CHARACTER, numberOfLinesToSkip: Int = JCSVReader.DEFAULT_SKIP_LINES): CSVReader =
-    new CSVReader(new JCSVReader(reader, separator, quote, numberOfLinesToSkip))
+  def open(reader: Reader)(implicit format: CSVFormat): CSVReader =
+    new CSVReader(new JCSVReader(reader, format.separator, format.quote, format.numberOfLinesToSkip))
 
-  def openFromFile(file: File, encoding: String = "UTF-8", separator: Char = CSVParser.DEFAULT_SEPARATOR, quote: Char = CSVParser.DEFAULT_QUOTE_CHARACTER, numberOfLinesToSkip: Int = JCSVReader.DEFAULT_SKIP_LINES): CSVReader = {
-    val fin = new FileInputStream(file)
-    val reader = new InputStreamReader(fin, encoding)
-    openFromReader(reader, separator, quote, numberOfLinesToSkip)
+  def open(file: File)(implicit format: CSVFormat): CSVReader = {
+    open(file, this.DEFAULT_ENCODING)(format)
   }
 
-  def openFromPath(filename: String, encoding: String = "UTF-8", separator: Char = CSVParser.DEFAULT_SEPARATOR, quote: Char = CSVParser.DEFAULT_QUOTE_CHARACTER, numberOfLinesToSkip: Int = JCSVReader.DEFAULT_SKIP_LINES) : CSVReader =
-    openFromFile(new File(filename), encoding, separator, quote, numberOfLinesToSkip)
-
-  def open(reader: Reader): CSVReader = openFromReader(reader)
-
-  def open(file: File): CSVReader = open(file, "UTF-8")
-
-  def open(file: File, encoding: String): CSVReader = {
+  def open(file: File, encoding: String)(implicit format: CSVFormat): CSVReader = {
     val fin = new FileInputStream(file)
     val reader = new InputStreamReader(fin, encoding)
-    open(reader)
+    open(reader)(format)
   }
 
-  def open(file: String): CSVReader = open(new File(file), "UTF-8")
+  def open(filename: String)(implicit format: CSVFormat) : CSVReader =
+    open(new File(filename), this.DEFAULT_ENCODING)(format)
 
-  def open(file: String, encoding: String): CSVReader = open(new File(file), encoding)
+  def open(filename: String, encoding: String)(implicit format: CSVFormat) : CSVReader =
+    open(new File(filename), encoding)(format)
+
 }

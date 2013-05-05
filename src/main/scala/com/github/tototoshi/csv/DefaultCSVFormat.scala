@@ -13,11 +13,22 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+package com.github.tototoshi.csv
 
-package com.github.tototoshi
+import au.com.bytecode.opencsv.{ CSVParser, CSVReader => JCSVReader }
 
-package object csv {
+trait DefaultCSVFormat extends CSVFormat {
 
-  implicit val defaultCSVFormat = new DefaultCSVFormat {}
+  val separator: Char = CSVParser.DEFAULT_SEPARATOR
+
+  val quote: Char = CSVParser.DEFAULT_QUOTE_CHARACTER
+
+  val escape: Char = CSVParser.DEFAULT_ESCAPE_CHARACTER
+
+  val numberOfLinesToSkip: Int = JCSVReader.DEFAULT_SKIP_LINES
+
+  val strictQuotes: Boolean = CSVParser.DEFAULT_STRICT_QUOTES
+
+  val ignoreLeadingWhiteSpace: Boolean = CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE
 
 }
