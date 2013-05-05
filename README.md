@@ -8,7 +8,7 @@ A simple opencsv wrapper
 If you use Scala 2.9.1, 2.9.2, 2.9.3 or 2.10.0, you can get scala-csv with the following line in your build.sbt.
 
 ```scala
-libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "0.7.1"
+libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "0.8.0"
 ```
 
 ## Example
@@ -169,6 +169,9 @@ scala> writer.close()
 
 ### Customizing the format
 
+CSVReader/Writer#open takes CSVFormat implicitly.
+Define your own CSVFormat when you want to change the CSV's format.
+
 ```scala
 scala> :paste
 // Entering paste mode (ctrl-D to finish)
@@ -186,9 +189,6 @@ w: com.github.tototoshi.csv.CSVWriter = com.github.tototoshi.csv.CSVWriter@6cd66
 scala> w.writeRow(List(1, 2, 3))
 "1"#"2"#"3"
 ```
-
-CSVReader/Writer#open takes CSVFormat implicitly.
-Define your own CSVFormat when you want to change the CSV's format.
 
 ## License
 [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
