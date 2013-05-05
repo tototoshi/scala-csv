@@ -124,16 +124,6 @@ scala> reader.allWithHeaders()
 res0: List[Map[String,String]] = List(Map(Foo -> a, Bar -> b, Baz -> c), Map(Foo -> d, Bar -> e, Baz -> f))
 ````
 
-#### Using loan pattern
-
-```scala
-scala> CSVReader.open("src/test/resources/simple.csv") { lines =>
-     |   lines.foreach(println)
-     | }
-List(a, b, c)
-List(d, e, f)
-```
-
 ### Writing example
 
 #### import
@@ -184,17 +174,6 @@ scala> writer.writeRow(List("4", "5", "6"))
 scala> writer.close()
 ```
 
-#### Using loan pattern
-
-```scala
-scala> CSVWriter.open("a.csv") { writer =>
-     |   writer.writeRow(List(1, 2, 3))
-     | }
-
-scala> io.Source.fromFile("a.csv").mkString
-res0: String =
-""1","2","3"
-```
 
 ## License
 [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
