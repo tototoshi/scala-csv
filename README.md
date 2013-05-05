@@ -16,7 +16,7 @@ libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "0.7.1"
 ### import
 
 ```scala
-scala> import com.github.tototoshi.csv.CSVReader
+scala> import com.github.tototoshi.csv._
 ```
 
 ### Reading example
@@ -126,13 +126,6 @@ res0: List[Map[String,String]] = List(Map(Foo -> a, Bar -> b, Baz -> c), Map(Foo
 
 ### Writing example
 
-#### import
-```scala
-scala> import com.github.tototoshi.csv.CSVWriter
-import com.github.tototoshi.csv.CSVWriter
-
-```
-
 #### Writing all lines with #writeAll
 
 ```scala
@@ -174,6 +167,28 @@ scala> writer.writeRow(List("4", "5", "6"))
 scala> writer.close()
 ```
 
+### Customizing the format
+
+```scala
+scala> :paste
+// Entering paste mode (ctrl-D to finish)
+
+implicit object MyFormat extends DefaultCSVFormat {
+  override val separator = '#'
+}
+val w = CSVWriter.open(new java.io.OutputStreamWriter(System.out))
+
+// Exiting paste mode, now interpreting.
+
+defined module MyFormat
+w: com.github.tototoshi.csv.CSVWriter = com.github.tototoshi.csv.CSVWriter@6cd66afa
+
+scala> w.writeRow(List(1, 2, 3))
+"1"#"2"#"3"
+```
+
+CSVReader/Writer#open takes CSVFormat implicitly.
+Define your own CSVFormat when you want to change the CSV's format.
 
 ## License
 [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
