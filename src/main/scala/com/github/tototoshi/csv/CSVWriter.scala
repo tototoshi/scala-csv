@@ -22,15 +22,6 @@ class CSVWriter (protected val writer: Writer)(implicit val format: CSVFormat) {
 
   val printWriter: PrintWriter = new PrintWriter(writer)
 
-  @deprecated("No longer supported","0.8.0")
-  def apply[A](f: CSVWriter => A): A = {
-    try {
-      f(this)
-    } finally {
-      this.close()
-    }
-  }
-
   def close(): Unit = printWriter.close()
 
   def flush(): Unit = printWriter.flush()
@@ -98,13 +89,6 @@ class CSVWriter (protected val writer: Writer)(implicit val format: CSVFormat) {
 }
 
 object CSVWriter {
-
-  @deprecated("Use #open instead", "0.5.0")
-  def apply(file: File, encoding: String = "UTF-8")(implicit format: CSVFormat): CSVWriter =
-    open(file, false, encoding)(defaultCSVFormat)
-
-  @deprecated("Use #open instead", "0.5.0")
-  def apply(writer: Writer): CSVWriter = open(writer)(defaultCSVFormat)
 
   def open(writer: Writer)(implicit format: CSVFormat): CSVWriter = {
     new CSVWriter(writer)(format)

@@ -14,16 +14,6 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
 
   describe("CSVReader") {
 
-    describe ("#apply") {
-      it ("should close csv reader") {
-        val reader = CSVReader.open("src/test/resources/simple.csv")
-        reader.apply { lines => () }
-        intercept[java.io.IOException] {
-          reader.readNext()
-        }
-      }
-    }
-
     it("should be constructed with java.io.File") {
       var res: List[String] = Nil
       using (CSVReader.open(new File("src/test/resources/simple.csv"))) { reader =>

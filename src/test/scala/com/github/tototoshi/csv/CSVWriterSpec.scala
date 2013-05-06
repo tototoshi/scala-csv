@@ -21,16 +21,6 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
 
   describe("CSVWriter") {
 
-    describe ("#apply") {
-      it ("should close csv writer") {
-        val writer = CSVWriter.open("test.csv")
-        writer(w => ())
-        intercept[java.io.IOException] {
-          writer.writeRow(List(1))
-        }
-      }
-    }
-
     describe ("#open") {
       it("should be constructed with java.io.File") {
         using (CSVWriter.open(new File("test.csv"))) { writer =>

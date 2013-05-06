@@ -28,15 +28,6 @@ class CSVReader protected (private val reader: Reader, separatorChar: Char = ','
 
   private var pagedReader: parser.Input = new PagedSeqReader(PagedSeq.fromReader(reader))
 
-  @deprecated("No longer supported", "0.8.0")
-  def apply[A](f: Iterator[Seq[String]] => A): A = {
-    try {
-      f(this.iterator)
-    } finally {
-      this.close()
-    }
-  }
-
   private def handleParseError[A, B]: PartialFunction[parser.ParseResult[A], B] = {
     case parser.Failure(msg, _) => throw new CSVParserException(msg)
     case parser.Error(msg, _) => throw new CSVParserException(msg)
@@ -108,12 +99,6 @@ class CSVReader protected (private val reader: Reader, separatorChar: Char = ','
 object CSVReader {
 
   val DEFAULT_ENCODING = "UTF-8"
-
-  @deprecated("Use #open instead", "0.5.0")
-  def apply(file: File, encoding: String = "UTF-8"): CSVReader = open(file, encoding)(defaultCSVFormat)
-
-  @deprecated("Use #open instead", "0.5.0")
-  def apply(reader: Reader): CSVReader = open(reader)(defaultCSVFormat)
 
   def open(reader: Reader)(implicit format: CSVFormat): CSVReader =
     new CSVReader(reader, format.delimiter, format.quoteChar)
