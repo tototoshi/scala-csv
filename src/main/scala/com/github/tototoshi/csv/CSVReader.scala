@@ -16,14 +16,11 @@
 
 package com.github.tototoshi.csv
 
-import au.com.bytecode.opencsv.{CSVReader => JCSVReader}
 import java.io._
-import scala.collection.JavaConversions._
 import java.util.NoSuchElementException
 import scala.util.parsing.input.PagedSeqReader
 import scala.collection.immutable.PagedSeq
 
-class CSVParserException(msg: String) extends Exception(msg)
 
 class CSVReader protected (private val reader: Reader, separatorChar: Char = ',', quoteChar: Char = '"') {
 
@@ -119,7 +116,7 @@ object CSVReader {
   def apply(reader: Reader): CSVReader = open(reader)(defaultCSVFormat)
 
   def open(reader: Reader)(implicit format: CSVFormat): CSVReader =
-    new CSVReader(reader, format.separator, format.quoteChar)
+    new CSVReader(reader, format.delimiter, format.quoteChar)
 
   def open(file: File)(implicit format: CSVFormat): CSVReader = {
     open(file, this.DEFAULT_ENCODING)(format)

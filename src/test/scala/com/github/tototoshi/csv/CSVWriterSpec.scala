@@ -76,8 +76,8 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
           writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
         }
 
-        val expected = """|"a","b","c"
-        |"d","e","f"
+        val expected = """|a,b,c
+        |d,e,f
         |""".stripMargin
 
         readFileAsString("test.csv") should be (expected)
@@ -100,11 +100,68 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
           writer.writeRow(List("d", "e", "f"))
         }
 
-        val expected = """|"a","b","c"
-        |"d","e","f"
-        |""".stripMargin
+        val expected = """|a,b,c
+                         |d,e,f
+                         |""".stripMargin
 
         readFileAsString("test.csv") should be (expected)
+      }
+      describe ("When a field contains quoteChar in it") {
+        it ("should escape the quoteChar") {
+          using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+            writer.writeRow(List("a", "b\"", "c"))
+            writer.writeRow(List("d", "e", "f"))
+          }
+
+          val expected = "a,\"b\"\"\",c\nd,e,f\n"
+
+          readFileAsString("test.csv") should be (expected)
+        }
+      }
+      describe ("When a field contains delimiter in it") {
+        it ("should escape the delimiter") {
+          using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+            writer.writeRow(List("a", "b,", "c"))
+            writer.writeRow(List("d", "e", "f"))
+          }
+
+          val expected = "a,\"b,\",c\nd,e,f\n"
+
+          readFileAsString("test.csv") should be (expected)
+        }
+      }
+      describe ("When quoting is set to QUOTE_ALL") {
+        it ("should quote all fields") {
+          implicit object quoteAllFormat extends DefaultCSVFormat {
+            override val quoting: Quoting = QUOTE_ALL
+          }
+
+          using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+            writer.writeRow(List("a", "b", "c"))
+            writer.writeRow(List("d", "e", "f"))
+          }
+
+          val expected = """|"a","b","c"
+                            |"d","e","f"
+                            |""".stripMargin
+
+          readFileAsString("test.csv") should be (expected)
+        }
+      }
+      describe ("When a field contains cr or lf in it") {
+        it ("should quoted the field") {
+          using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+            writer.writeRow(List("a", "b\n", "c"))
+            writer.writeRow(List("d", "e", "f"))
+          }
+
+          val expected = """|a,"b
+                            |",c
+                            |d,e,f
+                            |""".stripMargin
+
+          readFileAsString("test.csv") should be (expected)
+        }
       }
       describe ("When stream is already closed") {
         it ("throws an Exception") {
@@ -143,9 +200,9 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
           writer.writeRow(List("h", "i", "j"))
         }
 
-        val expected = """|"a","b","c"
-                          |"d","e","f"
-                          |"h","i","j"
+        val expected = """|a,b,c
+                          |d,e,f
+                          |h,i,j
                           |""".stripMargin
 
         readFileAsString("test.csv") should be (expected)
@@ -161,7 +218,7 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
           writer.writeRow(List("d", "e", "f"))
         }
 
-        val expected = """|"d","e","f"
+        val expected = """|d,e,f
                           |""".stripMargin
 
         readFileAsString("test.csv") should be (expected)
@@ -170,8 +227,8 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
           writer.writeRow(List("h", "i", "j"))
         }
 
-        val expected2 = """|"h","i","j"
-                          |""".stripMargin
+        val expected2 = """|h,i,j
+                           |""".stripMargin
 
         readFileAsString("test.csv") should be (expected2)
       }

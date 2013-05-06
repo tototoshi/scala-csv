@@ -16,11 +16,11 @@
 
 package com.github.tototoshi.csv
 
-import scala.collection.JavaConversions._
-import au.com.bytecode.opencsv.{ CSVWriter => JCSVWriter }
-import java.io.{ File, Writer, FileOutputStream, OutputStreamWriter }
+import java.io._
 
-class CSVWriter protected (protected val underlying: JCSVWriter) {
+class CSVWriter (protected val writer: Writer)(implicit val format: CSVFormat) {
+
+  val printWriter: PrintWriter = new PrintWriter(writer)
 
   @deprecated("No longer supported","0.8.0")
   def apply[A](f: CSVWriter => A): A = {
@@ -31,20 +31,67 @@ class CSVWriter protected (protected val underlying: JCSVWriter) {
     }
   }
 
-  def close(): Unit = underlying.close()
+  def close(): Unit = printWriter.close()
 
-  def flush(): Unit = underlying.flush()
+  def flush(): Unit = printWriter.flush()
+
+  private def writeNext(fields: Seq[Any]): Unit = {
+
+    def shouldQuote(field: String, quoting: Quoting): Boolean =
+      quoting match {
+        case QUOTE_ALL => true
+        case QUOTE_MINIMAL => {
+          List("\r", "\n", format.quoteChar.toString, format.delimiter.toString).exists(field.contains)
+        }
+        case QUOTE_NONE => false
+        case QUOTE_NONNUMERIC => {
+          if (field.forall(_.isDigit)) {
+            false
+          } else {
+            val firstCharIsDigit = field.headOption.map(_.isDigit).getOrElse(false)
+            if (firstCharIsDigit && (field.filterNot(_.isDigit) == ".")) {
+              true
+            } else {
+              true
+            }
+          }
+        }
+      }
+
+    def quote(field: String): String =
+      if (shouldQuote(field, format.quoting)) field.mkString(format.quoteChar.toString, "", format.quoteChar.toString)
+      else field
+
+    def repeatQuoteChar(field: String): String =
+      field.replace(format.quoteChar.toString, format.quoteChar.toString * 2)
+
+    def escapeDelimiterChar(field: String): String =
+      field.replace(format.delimiter.toString, format.escapeChar.toString + format.delimiter.toString)
+
+    def show(s: Any): String = s.toString
+
+    val renderField = {
+      val escape = format.quoting match {
+        case QUOTE_NONE => escapeDelimiterChar _
+        case _ => repeatQuoteChar _
+      }
+      quote _ compose escape compose show
+    }
+
+    printWriter.print(fields.map(renderField).mkString(format.delimiter.toString))
+    printWriter.print(format.lineTerminator)
+  }
 
   def writeAll(allLines: Seq[Seq[Any]]): Unit = {
-    underlying.writeAll(allLines.map(_.toArray.map(_.toString)))
-    if (underlying.checkError) {
+    allLines.foreach(line => writeNext(line))
+    if (printWriter.checkError) {
       throw new java.io.IOException("Failed to write")
     }
   }
 
   def writeRow(fields: Seq[Any]): Unit = {
-    underlying.writeNext(fields.map(_.toString).toArray)
-    if (underlying.checkError) {
+    writeNext(fields)
+    if (printWriter.checkError) {
       throw new java.io.IOException("Failed to write")
     }
   }
@@ -60,10 +107,8 @@ object CSVWriter {
   def apply(writer: Writer): CSVWriter = open(writer)(defaultCSVFormat)
 
   def open(writer: Writer)(implicit format: CSVFormat): CSVWriter = {
-    val jcsvWriter = new JCSVWriter(writer, format.separator, format.quoteChar, format.escapeChar, format.lineEnd)
-    new CSVWriter(jcsvWriter)
+    new CSVWriter(writer)(format)
   }
-
 
   def open(file: File)(implicit format: CSVFormat): CSVWriter = open(file, false, "UTF-8")(format)
 

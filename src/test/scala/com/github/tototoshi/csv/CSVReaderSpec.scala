@@ -48,7 +48,7 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       var res: List[String] = Nil
 
       implicit object format extends DefaultCSVFormat {
-        override val separator: Char = '#'
+        override val delimiter: Char = '#'
       }
 
       using (CSVReader.open("src/test/resources/hash-separated.csv")) { reader =>
@@ -62,7 +62,7 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
 
     it("should be consutrcted with separators and quotes") {
       implicit object format extends DefaultCSVFormat {
-        override val separator: Char = '#'
+        override val delimiter: Char = '#'
         override val quoteChar: Char = '$'
       }
 

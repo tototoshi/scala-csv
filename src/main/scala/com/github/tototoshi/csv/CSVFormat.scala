@@ -18,17 +18,14 @@ package com.github.tototoshi.csv
 
 trait CSVFormat {
 
-  val separator: Char
+  val delimiter: Char
 
   val quoteChar: Char
 
   val escapeChar: Char
 
-  val numberOfLinesToSkip: Int
+  val lineTerminator: String
 
-  val strictQuotes: Boolean
+  val quoting: Quoting
 
-  val ignoreLeadingWhiteSpace: Boolean
-
-  val lineEnd: String
 }

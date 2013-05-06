@@ -1,3 +1,18 @@
+/*
+* Copyright 2013 Toshiyuki Takahashi
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package com.github.tototoshi.csv
 
 import scala.util.parsing.combinator.{RegexParsers}
@@ -11,6 +26,9 @@ protected trait Between extends RegexParsers {
   def between[A](startAndEnd: String, p: Parser[A]): Parser[A] = between(startAndEnd, p, startAndEnd)
 
 }
+
+
+class CSVParserException(msg: String) extends Exception(msg)
 
 class CSVParser(val separatorChar: Char = ',',
                 val quoteChar: Char = '"')
@@ -36,7 +54,7 @@ class CSVParser(val separatorChar: Char = ',',
   def field = escaped | nonEscaped
 
   def escapedQuote = repN(2, quote) ^^ {
-    _ => ""
+    _ => quote
   }
 
   def escaped = between(quote, rep(textData | separator | crlf | escapedQuote)) ^^ {
@@ -47,7 +65,7 @@ class CSVParser(val separatorChar: Char = ',',
     _.mkString
   }
 
-  def crlf = cr | lf
+  def crlf =  cr + lf | cr | lf
 
   def textData = not(separator | quote | crlf) ~> """.""".r
 

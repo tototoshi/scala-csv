@@ -12,7 +12,6 @@ object ScalaCSVProject extends Build {
       crossScalaVersions := Seq("2.9.1", "2.9.2", "2.9.3", "2.10.0"),
       organization := "com.github.tototoshi",
       libraryDependencies ++= Seq(
-        "net.sf.opencsv" % "opencsv" % "2.3",
         "org.scalatest" %% "scalatest" % "1.9.1" % "test"
       ),
       scalacOptions ++= Seq("-deprecation"),

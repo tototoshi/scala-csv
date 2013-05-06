@@ -15,22 +15,31 @@
 */
 package com.github.tototoshi.csv
 
-import au.com.bytecode.opencsv.{ CSVParser, CSVReader => JCSVReader, CSVWriter => JCSVWriter }
-
 trait DefaultCSVFormat extends CSVFormat {
 
-  val separator: Char = CSVParser.DEFAULT_SEPARATOR
+  val delimiter: Char = ','
 
-  val quoteChar: Char = CSVParser.DEFAULT_QUOTE_CHARACTER
+  val quoteChar: Char = '"'
 
-  val escapeChar: Char = CSVParser.DEFAULT_ESCAPE_CHARACTER
+  val escapeChar: Char = '\\'
 
-  val numberOfLinesToSkip: Int = JCSVReader.DEFAULT_SKIP_LINES
+  val lineTerminator: String = "\r\n"
 
-  val strictQuotes: Boolean = CSVParser.DEFAULT_STRICT_QUOTES
-
-  val ignoreLeadingWhiteSpace: Boolean = CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE
-
-  val lineEnd: String = JCSVWriter.DEFAULT_LINE_END
+  val quoting: Quoting = QUOTE_MINIMAL
 
 }
+
+trait TSVFormat extends CSVFormat {
+
+  val delimiter: Char = '\t'
+
+  val quoteChar: Char = '"'
+
+  val escapeChar: Char = '\\'
+
+  val lineTerminator: String = "\r\n"
+
+  val quoting: Quoting = QUOTE_NONE
+
+}
+
