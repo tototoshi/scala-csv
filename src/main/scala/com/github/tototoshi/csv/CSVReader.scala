@@ -20,9 +20,16 @@ import au.com.bytecode.opencsv.{CSVReader => JCSVReader}
 import java.io._
 import scala.collection.JavaConversions._
 import java.util.NoSuchElementException
-import au.com.bytecode.opencsv
+import scala.util.parsing.input.PagedSeqReader
+import scala.collection.immutable.PagedSeq
 
-class CSVReader protected (private val underlying: JCSVReader) {
+class CSVParserException(msg: String) extends Exception(msg)
+
+class CSVReader protected (private val reader: Reader, separatorChar: Char = ',', quoteChar: Char = '"') {
+
+  private val parser = new CSVParser(separatorChar = separatorChar, quoteChar = quoteChar)
+
+  private var pagedReader: parser.Input = new PagedSeqReader(PagedSeq.fromReader(reader))
 
   @deprecated("No longer supported", "0.8.0")
   def apply[A](f: Iterator[Seq[String]] => A): A = {
@@ -33,7 +40,28 @@ class CSVReader protected (private val underlying: JCSVReader) {
     }
   }
 
-  def readNext(): Option[List[String]] = Option(underlying.readNext).map(_.toList)
+  private def handleParseError[A, B]: PartialFunction[parser.ParseResult[A], B] = {
+    case parser.Failure(msg, _) => throw new CSVParserException(msg)
+    case parser.Error(msg, _) => throw new CSVParserException(msg)
+  }
+
+  def readNext(): Option[List[String]] = {
+
+    def handleParseResult = handleParseSuccess.orElse(handleParseError[List[String], (List[String], parser.Input)])
+
+    def handleParseSuccess: PartialFunction[parser.ParseResult[List[String]], (List[String], parser.Input)] = {
+      case parser.Success(result, input) => (result, input)
+    }
+
+    if (pagedReader.atEnd) {
+      None
+    } else {
+      val parseResult = parser.parseLine(pagedReader)
+      val (result, input) = handleParseResult(parseResult)
+      pagedReader = input
+      Some(result)
+    }
+  }
 
   def foreach(f: Seq[String] => Unit): Unit = iterator.foreach(f)
 
@@ -64,8 +92,10 @@ class CSVReader protected (private val underlying: JCSVReader) {
   def toStream(): Stream[List[String]] =
     Stream.continually(readNext).takeWhile(_.isDefined).map(_.get)
 
-  def all(): List[List[String]] =
-    underlying.readAll().map(_.toList).toList
+  def all(): List[List[String]] = {
+    toStream().toList
+  }
+
 
   def allWithHeaders(): List[Map[String, String]] = {
     readNext() map { headers =>
@@ -74,7 +104,7 @@ class CSVReader protected (private val underlying: JCSVReader) {
     } getOrElse List()
   }
 
-  def close(): Unit = underlying.close()
+  def close(): Unit = reader.close()
 
 }
 
@@ -89,7 +119,7 @@ object CSVReader {
   def apply(reader: Reader): CSVReader = open(reader)(defaultCSVFormat)
 
   def open(reader: Reader)(implicit format: CSVFormat): CSVReader =
-    new CSVReader(new JCSVReader(reader, format.separator, format.quoteChar, format.numberOfLinesToSkip))
+    new CSVReader(reader, format.separator, format.quoteChar)
 
   def open(file: File)(implicit format: CSVFormat): CSVReader = {
     open(file, this.DEFAULT_ENCODING)(format)
