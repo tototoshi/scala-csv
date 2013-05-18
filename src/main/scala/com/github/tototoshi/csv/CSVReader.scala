@@ -109,8 +109,12 @@ object CSVReader {
 
   def open(file: File, encoding: String)(implicit format: CSVFormat): CSVReader = {
     val fin = new FileInputStream(file)
-    val reader = new InputStreamReader(fin, encoding)
-    open(reader)(format)
+    try {
+      val reader = new InputStreamReader(fin, encoding)
+      open(reader)(format)
+    } catch {
+      case e: UnsupportedEncodingException => fin.close(); throw e
+    }
   }
 
   def open(filename: String)(implicit format: CSVFormat) : CSVReader =

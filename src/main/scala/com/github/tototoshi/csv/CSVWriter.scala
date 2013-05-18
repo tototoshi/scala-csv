@@ -102,8 +102,12 @@ object CSVWriter {
 
   def open(file: File, append: Boolean, encoding: String)(implicit format: CSVFormat): CSVWriter = {
     val fos = new FileOutputStream(file, append)
-    val writer = new OutputStreamWriter(fos, encoding)
-    open(writer)(format)
+    try {
+      val writer = new OutputStreamWriter(fos, encoding)
+      open(writer)(format)
+    } catch {
+      case e: UnsupportedEncodingException => fos.close(); throw e
+    }
   }
 
   def open(file: String)(implicit format: CSVFormat): CSVWriter = open(file, false, "UTF-8")(format)
