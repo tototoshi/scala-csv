@@ -34,23 +34,7 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       res.mkString should be ("abcdef")
     }
 
-    it("should be constructed with separators") {
-      var res: List[String] = Nil
-
-      implicit object format extends DefaultCSVFormat {
-        override val delimiter: Char = '#'
-      }
-
-      using (CSVReader.open("src/test/resources/hash-separated.csv")) { reader =>
-        reader foreach { fields =>
-          res = res ++ fields
-        }
-      }
-
-      res.mkString should be ("abcdef")
-    }
-
-    it("should be consutrcted with separators and quotes") {
+    it("should be consutrcted with CSVFormat") {
       implicit object format extends DefaultCSVFormat {
         override val delimiter: Char = '#'
         override val quoteChar: Char = '$'
@@ -71,6 +55,29 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
         }
       }
       res.mkString should be ("abcdef")
+    }
+
+    it("read TSV from file") {
+      implicit val format = new TSVFormat {}
+
+      var res: List[Seq[String]] = Nil
+      using (CSVReader.open(new FileReader("src/test/resources/simple.tsv"))) { reader =>
+        reader.foreach { fields =>
+          res = res ::: fields :: Nil
+        }
+      }
+      res(0) should be (List("a", "b", "c"))
+      res(1) should be (List("d", "e", "f"))
+
+      var res2: List[Seq[String]] = Nil
+      using (CSVReader.open(new FileReader("src/test/resources/escape.tsv"))) { reader =>
+        reader.foreach { fields =>
+          res2 = res2 ::: fields :: Nil
+        }
+      }
+      res2(0) should be (List("a", "b\t", "c"))
+      res2(1) should be (List("d", "e", "f\ng"))
+      res2(2) should be (List("h", "i", "j"))
     }
 
     it("has #toStream") {

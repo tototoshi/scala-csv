@@ -22,9 +22,12 @@ import scala.util.parsing.input.PagedSeqReader
 import scala.collection.immutable.PagedSeq
 
 
-class CSVReader protected (private val reader: Reader, separatorChar: Char = ',', quoteChar: Char = '"') {
+class CSVReader protected (private val reader: Reader)(implicit format: CSVFormat) {
 
-  private val parser = new CSVParser(separatorChar = separatorChar, quoteChar = quoteChar)
+  val delimiter: Char = format.delimiter
+  val quoteChar: Char = format.quoteChar
+
+  private val parser = new CSVParser(format)
 
   private var pagedReader: parser.Input = new PagedSeqReader(PagedSeq.fromReader(reader))
 
@@ -101,7 +104,7 @@ object CSVReader {
   val DEFAULT_ENCODING = "UTF-8"
 
   def open(reader: Reader)(implicit format: CSVFormat): CSVReader =
-    new CSVReader(reader, format.delimiter, format.quoteChar)
+    new CSVReader(reader)(format)
 
   def open(file: File)(implicit format: CSVFormat): CSVReader = {
     open(file, this.DEFAULT_ENCODING)(format)

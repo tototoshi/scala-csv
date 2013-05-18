@@ -30,8 +30,7 @@ protected trait Between extends RegexParsers {
 
 class CSVParserException(msg: String) extends Exception(msg)
 
-class CSVParser(val separatorChar: Char = ',',
-                val quoteChar: Char = '"')
+class CSVParser(format: CSVFormat)
   extends RegexParsers
   with Between {
 
@@ -41,33 +40,44 @@ class CSVParser(val separatorChar: Char = ',',
 
   def lf = "\n"
 
-  def quote = quoteChar.toString
+  def escape = format.escapeChar.toString
 
-  def separator = separatorChar.toString
+  def quote = format.quoteChar.toString
 
-  def record = field ~ rep(separator ~> field) ^^ {
+  def delimiter = format.delimiter.toString
+
+  def record = field ~ rep(delimiter ~> field) ^^ {
     case head ~ tail => head :: tail
   }
 
-  def name = field
+  def field = format.quoting match {
+    case QUOTE_NONE => {
+      def textData = escape ~> (""".""".r | crlf) | not(delimiter) ~> """.""".r
 
-  def field = escaped | nonEscaped
+      rep(textData) ^^ {
+        _.mkString
+      }
+    }
+    case QUOTE_ALL | QUOTE_MINIMAL | QUOTE_NONNUMERIC => {
+      def textData = not(delimiter | quote | crlf) ~> """.""".r
 
-  def escapedQuote = repN(2, quote) ^^ {
-    _ => quote
+      def escapedQuote = repN(2, quote) ^^ {
+        _ => quote
+      }
+
+      def escaped = between(quote, rep(textData | delimiter | crlf | escapedQuote)) ^^ {
+        _.mkString
+      }
+
+      def nonEscaped = rep(textData) ^^ {
+        _.mkString
+      }
+
+      escaped | nonEscaped
+    }
   }
 
-  def escaped = between(quote, rep(textData | separator | crlf | escapedQuote)) ^^ {
-    _.mkString
-  }
-
-  def nonEscaped = rep(textData) ^^ {
-    _.mkString
-  }
-
-  def crlf =  cr + lf | cr | lf
-
-  def textData = not(separator | quote | crlf) ~> """.""".r
+  def crlf = cr + lf | cr | lf
 
   def parseLine(in: Input): ParseResult[List[String]] = parse(record <~ opt(crlf), in)
 

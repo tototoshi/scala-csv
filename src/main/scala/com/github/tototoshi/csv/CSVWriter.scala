@@ -20,7 +20,7 @@ import java.io._
 
 class CSVWriter (protected val writer: Writer)(implicit val format: CSVFormat) {
 
-  val printWriter: PrintWriter = new PrintWriter(writer)
+  private val printWriter: PrintWriter = new PrintWriter(writer)
 
   def close(): Unit = printWriter.close()
 
