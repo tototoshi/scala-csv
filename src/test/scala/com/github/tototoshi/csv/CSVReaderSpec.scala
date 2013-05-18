@@ -59,25 +59,27 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
 
     it("read TSV from file") {
       implicit val format = new TSVFormat {}
-
       var res: List[Seq[String]] = Nil
-      using (CSVReader.open(new FileReader("src/test/resources/simple.tsv"))) { reader =>
+      using (CSVReader.open(new FileReader("src/test/resources/simple.tsv"))(format)) { reader =>
         reader.foreach { fields =>
           res = res ::: fields :: Nil
         }
       }
       res(0) should be (List("a", "b", "c"))
       res(1) should be (List("d", "e", "f"))
+    }
 
-      var res2: List[Seq[String]] = Nil
-      using (CSVReader.open(new FileReader("src/test/resources/escape.tsv"))) { reader =>
+    it("read TSV with escaped values from file") {
+      implicit val format = new TSVFormat {}
+      var res: List[Seq[String]] = Nil
+      using (CSVReader.open(new FileReader("src/test/resources/escape.tsv"))(format)) { reader =>
         reader.foreach { fields =>
-          res2 = res2 ::: fields :: Nil
+          res = res ::: fields :: Nil
         }
       }
-      res2(0) should be (List("a", "b\t", "c"))
-      res2(1) should be (List("d", "e", "f\ng"))
-      res2(2) should be (List("h", "i", "j"))
+      res(0) should be (List("a", "b\t", "c"))
+      res(1) should be (List("d", "e", "f\ng"))
+      res(2) should be (List("h", "i", "j"))
     }
 
     it("has #toStream") {

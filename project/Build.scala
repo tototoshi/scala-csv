@@ -9,13 +9,22 @@ object ScalaCSVProject extends Build {
     settings = Defaults.defaultSettings ++ Seq (
       name := "scala-csv",
       version := "1.0.0-SNAPSHOT",
-      crossScalaVersions := Seq("2.9.1", "2.9.2", "2.9.3", "2.10.0"),
+      scalaVersion := "2.10.0",
+      crossScalaVersions := Seq("2.10.0", "2.9.1", "2.9.2", "2.9.3"),
       organization := "com.github.tototoshi",
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "1.9.1" % "test"
       ),
-      scalacOptions ++= Seq("-deprecation"),
-      initialCommands := "import com.github.tototoshi.csv._",
+      scalacOptions <<= scalaVersion.map { sv =>
+        if (sv.startsWith("2.10")) {
+          Seq(
+            "-deprecation",
+            "-language:_"
+          )
+        } else {
+          Seq("-deprecation")
+        }
+      },
       publishMavenStyle := true,
       publishTo <<= version { (v: String) =>
         val nexus = "https://oss.sonatype.org/"
