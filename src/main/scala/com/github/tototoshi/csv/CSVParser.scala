@@ -15,8 +15,7 @@
 */
 package com.github.tototoshi.csv
 
-import scala.util.parsing.combinator.{RegexParsers}
-import java.io.{Reader, InputStream}
+import scala.util.parsing.combinator.RegexParsers
 
 
 protected trait Between extends RegexParsers {

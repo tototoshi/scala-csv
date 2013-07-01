@@ -1,11 +1,10 @@
 package com.github.tototoshi.csv
 
-import java.io.FileWriter
+import java.io.{UnsupportedEncodingException, FileWriter, File}
 
 import org.scalatest.{ FunSpec, BeforeAndAfter }
 import org.scalatest.matchers._
 
-import java.io.File
 
 class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with Using {
 
@@ -55,6 +54,14 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
       it("should be constructed with file, append flag and encoding") {
         using (CSVWriter.open(new File("test.csv"), false, "utf-8")) { writer =>
           writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
+      }
+
+      it("should throws UnsupportedEncodingException when unsupprted encoding is specified") {
+        intercept[UnsupportedEncodingException] {
+          using (CSVWriter.open(new File("test.csv"), false, "unknown")) { writer =>
+            writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+          }
         }
       }
 
@@ -122,17 +129,53 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
       }
       describe ("When quoting is set to QUOTE_ALL") {
         it ("should quote all fields") {
-          implicit object quoteAllFormat extends DefaultCSVFormat {
+          object quoteAllFormat extends DefaultCSVFormat {
             override val quoting: Quoting = QUOTE_ALL
           }
 
-          using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+          using (CSVWriter.open(new FileWriter("test.csv"))(quoteAllFormat)) { writer =>
             writer.writeRow(List("a", "b", "c"))
             writer.writeRow(List("d", "e", "f"))
           }
 
           val expected = """|"a","b","c"
-                            |"d","e","f"
+                           |"d","e","f"
+                           |""".stripMargin
+
+          readFileAsString("test.csv") should be (expected)
+        }
+      }
+      describe ("When quoting is set to QUOTE_NONE") {
+        it ("should quote no field") {
+          object quoteNoneFormat extends DefaultCSVFormat {
+            override val quoting: Quoting = QUOTE_NONE
+          }
+
+          using (CSVWriter.open(new FileWriter("test.csv"))(quoteNoneFormat)) { writer =>
+            writer.writeRow(List("a", "b", "c"))
+            writer.writeRow(List("d", "e", "f"))
+          }
+
+          val expected = """|a,b,c
+                           |d,e,f
+                           |""".stripMargin
+
+          readFileAsString("test.csv") should be (expected)
+        }
+      }
+      describe ("When quoting is set to QUOTE_NONNUMERIC") {
+        it ("should quote only nonnumeric fields") {
+          object quoteNoneFormat extends DefaultCSVFormat {
+            override val quoting: Quoting = QUOTE_NONNUMERIC
+          }
+
+          using (CSVWriter.open(new FileWriter("test.csv"))(quoteNoneFormat)) { writer =>
+            writer.writeRow(List("a", "b", "1"))
+            writer.writeRow(List("2.0", "e", "f"))
+          }
+
+          val expected = """|"a","b",1
+                            |2.0,"e","f"
                             |""".stripMargin
 
           readFileAsString("test.csv") should be (expected)

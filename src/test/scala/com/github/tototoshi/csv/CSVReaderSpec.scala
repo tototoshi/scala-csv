@@ -1,10 +1,9 @@
 package com.github.tototoshi.csv
 
-import java.io.{ FileReader, File }
+import java.io.{UnsupportedEncodingException, FileReader, File}
 
 import org.scalatest.FunSpec
 import org.scalatest.matchers._
-import javax.swing.colorchooser.DefaultColorSelectionModel
 
 class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
 
@@ -45,9 +44,23 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
           map(0)("Foo ") should be ("a")
         }
       }
+
+      using (CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", "utf-8")) { reader =>
+        val map = reader.allWithHeaders()
+        map(0)("Foo ") should be ("a")
+      }
     }
 
-    it("read CSV from file") {
+    it("should throws UnsupportedEncodingException when unsupprted encoding is specified") {
+      intercept[UnsupportedEncodingException] {
+        using (CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", "unknown")) { reader =>
+          val map = reader.allWithHeaders()
+          map(0)("Foo ") should be ("a")
+        }
+      }
+    }
+
+    it("read simple CSV from file") {
       var res: List[String] = Nil
       using (CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
         reader foreach { fields =>
@@ -55,6 +68,16 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
         }
       }
       res.mkString should be ("abcdef")
+    }
+
+    it("read CSV file including escaped fields") {
+      var res: List[String] = Nil
+      using (CSVReader.open(new FileReader("src/test/resources/escape.csv"))) { reader =>
+        reader foreach { fields =>
+          res = res ++ fields
+        }
+      }
+      res.mkString should be ("""abcd"ef""")
     }
 
     it("read TSV from file") {
