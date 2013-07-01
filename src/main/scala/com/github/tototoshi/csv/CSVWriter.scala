@@ -41,7 +41,7 @@ class CSVWriter (protected val writer: Writer)(implicit val format: CSVFormat) {
           } else {
             val firstCharIsDigit = field.headOption.map(_.isDigit).getOrElse(false)
             if (firstCharIsDigit && (field.filterNot(_.isDigit) == ".")) {
-              true
+              false
             } else {
               true
             }
