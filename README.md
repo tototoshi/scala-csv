@@ -190,5 +190,14 @@ scala> w.writeRow(List(1, 2, 3))
 "1"#"2"#"3"
 ```
 
+## Dev
+
+```
+$ git clone https://github.com/tototoshi/scala-csv.git
+$ cd scala-csv
+$ ./sbt
+> test
+```
+
 ## License
 [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
