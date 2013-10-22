@@ -80,6 +80,17 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       res.mkString should be ("""abcd"ef""")
     }
 
+    it("should correctly parse fields with line breaks enclosed in double quotes") {
+      var res: List[Seq[String]] = Nil
+      using (CSVReader.open(new FileReader("src/test/resources/line-breaks.csv"))) { reader =>
+        reader foreach { fields =>
+          res = res :+ fields
+        }
+      }
+      res(0) should be (List("a", "b\nb", "c"))
+      res(1) should be (List("\nd", "e", "f"))
+    }
+
     it("read TSV from file") {
       implicit val format = new TSVFormat {}
       var res: List[Seq[String]] = Nil
@@ -212,4 +223,3 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
 
   }
 }
-
