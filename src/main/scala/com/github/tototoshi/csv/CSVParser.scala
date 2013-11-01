@@ -45,11 +45,20 @@ class CSVParser(format: CSVFormat)
 
   def delimiter = format.delimiter.toString
 
-  def record = field ~ rep(delimiter ~> field) ^^ {
+  def emptyLine: Parser[List[String]] = crlf ^^ { _ => Nil }
+
+  def nonEmptyLine = field ~ rep(delimiter ~> field) ^^ {
     case head ~ tail => head :: tail
   }
 
-  def field = format.quoting match {
+  def record: Parser[List[String]] = if (format.treatEmptyLineAsNil) {
+    emptyLine | nonEmptyLine
+  } else {
+    nonEmptyLine
+  }
+
+
+  def field: Parser[String] = format.quoting match {
     case QUOTE_NONE => {
       def textData = escape ~> (""".""".r | crlf) | not(delimiter) ~> """.""".r
 
@@ -76,7 +85,7 @@ class CSVParser(format: CSVFormat)
     }
   }
 
-  def crlf = cr + lf | cr | lf
+  def crlf: Parser[String] = cr + lf | cr | lf
 
   def parseLine(in: Input): ParseResult[List[String]] = parse(record <~ opt(crlf), in)
 

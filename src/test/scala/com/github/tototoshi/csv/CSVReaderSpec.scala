@@ -60,6 +60,21 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       }
     }
 
+    it("should be able to read an empty line") {
+      using (CSVReader.open("src/test/resources/has-empty-line.csv", "utf-8")) { reader =>
+        val lines = reader.all()
+        lines(1) should be(List(""))
+      }
+
+      val format = new DefaultCSVFormat {
+        override val treatEmptyLineAsNil = true
+      }
+      using (CSVReader.open("src/test/resources/has-empty-line.csv", "utf-8")(format)) { reader =>
+        val lines = reader.all()
+        lines(1) should be(Nil)
+      }
+    }
+
     it("read simple CSV from file") {
       var res: List[String] = Nil
       using (CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>

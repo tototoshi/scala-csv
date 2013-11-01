@@ -27,6 +27,8 @@ trait DefaultCSVFormat extends CSVFormat {
 
   val quoting: Quoting = QUOTE_MINIMAL
 
+  val treatEmptyLineAsNil: Boolean = false
+
 }
 
 trait TSVFormat extends CSVFormat {
@@ -40,6 +42,8 @@ trait TSVFormat extends CSVFormat {
   val lineTerminator: String = "\r\n"
 
   val quoting: Quoting = QUOTE_NONE
+
+  val treatEmptyLineAsNil: Boolean = false
 
 }
 

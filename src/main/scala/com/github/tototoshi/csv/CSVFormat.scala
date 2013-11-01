@@ -28,4 +28,6 @@ trait CSVFormat {
 
   val quoting: Quoting
 
+  val treatEmptyLineAsNil: Boolean
+
 }
