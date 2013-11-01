@@ -20,9 +20,9 @@ import scala.util.parsing.combinator.RegexParsers
 
 protected trait Between extends RegexParsers {
 
-  def between[A](start: String, p: Parser[A], end: String): Parser[A] = start ~> p <~ end
+  def between[A, B, C](start: Parser[A], p: Parser[B], end: Parser[C]): Parser[B] = start ~> p <~ end
 
-  def between[A](startAndEnd: String, p: Parser[A]): Parser[A] = between(startAndEnd, p, startAndEnd)
+  def between[A, B](startAndEnd: Parser[A], p: Parser[B]): Parser[B] = between(startAndEnd, p, startAndEnd)
 
 }
 
@@ -35,19 +35,23 @@ class CSVParser(format: CSVFormat)
 
   override def skipWhitespace = false
 
-  def cr = "\r"
+  def cr: Parser[String] = "\r"
 
-  def lf = "\n"
+  def lf: Parser[String] = "\n"
 
-  def escape = format.escapeChar.toString
+  def crlf: Parser[String] = "\r\n"
 
-  def quote = format.quoteChar.toString
+  def newLine: Parser[String] = crlf | cr | lf
 
-  def delimiter = format.delimiter.toString
+  def escape: Parser[String] = format.escapeChar.toString
 
-  def emptyLine: Parser[List[String]] = crlf ^^ { _ => Nil }
+  def quote: Parser[String] = format.quoteChar.toString
 
-  def nonEmptyLine = field ~ rep(delimiter ~> field) ^^ {
+  def delimiter: Parser[String] = format.delimiter.toString
+
+  def emptyLine: Parser[List[String]] = newLine ^^ { _ => Nil }
+
+  def nonEmptyLine: Parser[List[String]] = field ~ rep(delimiter ~> field) ^^ {
     case head ~ tail => head :: tail
   }
 
@@ -60,20 +64,18 @@ class CSVParser(format: CSVFormat)
 
   def field: Parser[String] = format.quoting match {
     case QUOTE_NONE => {
-      def textData = escape ~> (""".""".r | crlf) | not(delimiter) ~> """.""".r
+      def textData: Parser[String] = escape ~> (""".""".r | newLine) | not(delimiter) ~> """.""".r
 
-      rep(textData) ^^ {
-        _.mkString
-      }
+      rep(textData) ^^ { _.mkString }
     }
     case QUOTE_ALL | QUOTE_MINIMAL | QUOTE_NONNUMERIC => {
-      def textData = not(delimiter | quote | crlf) ~> """.""".r
+      def textData: Parser[String] = not(delimiter | quote | newLine) ~> """.""".r
 
-      def escapedQuote = repN(2, quote) ^^ {
-        _ => quote
+      def escapedQuote: Parser[String] = repN(2, quote) ^^ {
+        _ => format.quoteChar.toString
       }
 
-      def escaped = between(quote, rep(textData | delimiter | crlf | escapedQuote)) ^^ {
+      def escaped = between(quote, rep(textData | delimiter | newLine | escapedQuote)) ^^ {
         _.mkString
       }
 
@@ -85,8 +87,6 @@ class CSVParser(format: CSVFormat)
     }
   }
 
-  def crlf: Parser[String] = cr + lf | cr | lf
-
-  def parseLine(in: Input): ParseResult[List[String]] = parse(record <~ opt(crlf), in)
+  def parseLine(in: Input): ParseResult[List[String]] = parse(record <~ opt(newLine), in)
 
 }
