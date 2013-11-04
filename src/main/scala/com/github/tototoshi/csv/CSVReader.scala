@@ -95,6 +95,16 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
     } getOrElse List()
   }
 
+  def allHeaderValueMaps(): List[Map[String, List[String]]] = {
+    all() match {
+    case header :: values =>
+      header.zipWithIndex.map {
+        case (h, i) => Map(h -> values.map(_(i)))
+      }
+    case _ => List()
+    }
+  }
+
   def close(): Unit = reader.close()
 
 }
