@@ -25,6 +25,9 @@ object ScalaCSVProject extends Build {
           Seq("-deprecation")
         }
       },
+      initialCommands := """
+                           |import com.github.tototoshi.csv._
+                         """.stripMargin,
       publishMavenStyle := true,
       publishTo <<= version { (v: String) =>
         val nexus = "https://oss.sonatype.org/"
