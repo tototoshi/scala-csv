@@ -32,7 +32,7 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
   private var pagedReader: parser.Input = new PagedSeqReader(PagedSeq.fromReader(reader))
 
   private def handleParseError[A, B]: PartialFunction[parser.ParseResult[A], B] = {
-    case parser.Failure(msg, _) => throw new CSVParserException(msg)
+    case parser.Failure(msg, _) => throw new MalformedCSVException(msg)
     case parser.Error(msg, _) => throw new CSVParserException(msg)
   }
 

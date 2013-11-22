@@ -41,6 +41,8 @@ class CSVParser(format: CSVFormat)
 
   def crlf: Parser[String] = "\r\n"
 
+  def eof: Parser[String] = """\z""".r
+
   def newLine: Parser[String] = crlf | cr | lf
 
   def escape: Parser[String] = format.escapeChar.toString
@@ -49,11 +51,9 @@ class CSVParser(format: CSVFormat)
 
   def delimiter: Parser[String] = format.delimiter.toString
 
-  def emptyLine: Parser[List[String]] = newLine ^^ { _ => Nil }
+  def emptyLine: Parser[List[String]] = (newLine | eof) ^^ { _ => Nil }
 
-  def nonEmptyLine: Parser[List[String]] = field ~ rep(delimiter ~> field) ^^ {
-    case head ~ tail => head :: tail
-  }
+  def nonEmptyLine: Parser[List[String]] = rep1sep(field, delimiter) <~ (newLine | eof)
 
   def record: Parser[List[String]] = if (format.treatEmptyLineAsNil) {
     emptyLine | nonEmptyLine
@@ -69,6 +69,7 @@ class CSVParser(format: CSVFormat)
       rep(textData) ^^ { _.mkString }
     }
     case QUOTE_ALL | QUOTE_MINIMAL | QUOTE_NONNUMERIC => {
+
       def textData: Parser[String] = not(delimiter | quote | newLine) ~> """.""".r
 
       def escapedQuote: Parser[String] = repN(2, quote) ^^ {
@@ -87,6 +88,8 @@ class CSVParser(format: CSVFormat)
     }
   }
 
-  def parseLine(in: Input): ParseResult[List[String]] = parse(record <~ opt(newLine), in)
+  def parseLine(in: Input): ParseResult[List[String]] = {
+    parse(record, in)
+  }
 
 }

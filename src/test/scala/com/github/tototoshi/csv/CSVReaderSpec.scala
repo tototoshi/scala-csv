@@ -85,6 +85,14 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       res.mkString should be ("abcdef")
     }
 
+    it("should be throw exception against malformed input") {
+      intercept[MalformedCSVException] {
+        using (CSVReader.open(new FileReader("src/test/resources/malformed.csv"))) { reader =>
+          reader.all()
+        }
+      }
+    }
+
     it("read CSV file including escaped fields") {
       var res: List[String] = Nil
       using (CSVReader.open(new FileReader("src/test/resources/escape.csv"))) { reader =>
