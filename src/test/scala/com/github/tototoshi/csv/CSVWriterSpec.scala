@@ -79,6 +79,19 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
 
         readFileAsString("test.csv") should be (expected)
       }
+
+      it("writes null fields as empty strings") {
+        using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+          writer.writeAll(List(List("a", null, "c"), List("d", "e", null)))
+        }
+
+        val expected = """|a,,c
+        |d,e,
+        |""".stripMargin
+
+        readFileAsString("test.csv") should be (expected)
+      }
+
       describe ("When stream is already closed") {
         it ("throws an Exception") {
           val writer = CSVWriter.open("test.csv")
@@ -99,6 +112,18 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
 
         val expected = """|a,b,c
                          |d,e,f
+                         |""".stripMargin
+
+        readFileAsString("test.csv") should be (expected)
+      }
+      it("write single line with null fieldsto file") {
+        using (CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+          writer.writeRow(List("a", null, "c"))
+          writer.writeRow(List("d", "e", null))
+        }
+
+        val expected = """|a,,c
+                         |d,e,
                          |""".stripMargin
 
         readFileAsString("test.csv") should be (expected)
