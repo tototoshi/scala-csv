@@ -10,11 +10,18 @@ object ScalaCSVProject extends Build {
       name := "scala-csv",
       version := "1.0.0",
       scalaVersion := "2.10.3",
-      crossScalaVersions := Seq("2.10.3", "2.9.1", "2.9.2", "2.9.3"),
+      crossScalaVersions := Seq("2.11.0", "2.10.3", "2.9.1", "2.9.2", "2.9.3"),
       organization := "com.github.tototoshi",
-      libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+      libraryDependencies += (
+        if(scalaVersion.value.startsWith("2.1"))
+          "org.scalatest" %% "scalatest" % "2.1.3" % "test"
+        else
+          "org.scalatest" %% "scalatest" % "1.9.1" % "test"
       ),
+      libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
+        case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+          "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1"
+      }.toList,
       scalacOptions <<= scalaVersion.map { sv =>
         if (sv.startsWith("2.10")) {
           Seq(
