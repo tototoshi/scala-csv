@@ -1,6 +1,6 @@
 package com.github.tototoshi.csv
 
-import java.io.{UnsupportedEncodingException, FileReader, File}
+import java.io.{UnsupportedEncodingException, FileReader, File, StringReader}
 
 import org.scalatest.FunSpec
 import org.scalatest.matchers._
@@ -78,6 +78,17 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
     it("read simple CSV from file") {
       var res: List[String] = Nil
       using (CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
+        reader foreach { fields =>
+          res = res ++ fields
+        }
+      }
+      res.mkString should be ("abcdef")
+    }
+
+    it("read simple CSV string") {
+      val csvString = "a,b,c\nd,e,f\n"
+      var res: List[String] = Nil
+      using (CSVReader.open(new StringReader(csvString))) { reader =>
         reader foreach { fields =>
           res = res ++ fields
         }
