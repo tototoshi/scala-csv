@@ -3,7 +3,7 @@ package com.github.tototoshi.csv
 import java.io.{UnsupportedEncodingException, FileReader, File, StringReader}
 
 import org.scalatest.FunSpec
-import org.scalatest._
+import org.scalatest.matchers._
 
 class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
 
