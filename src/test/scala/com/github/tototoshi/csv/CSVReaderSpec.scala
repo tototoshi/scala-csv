@@ -254,6 +254,12 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
         }
       }
     }
-
+      describe("Get values for each column") {
+        it("returns a List of Map[String, List[String]]") {
+          using (CSVReader.open(new FileReader("src/test/resources/with-headers.csv"))) { reader =>
+            reader.allHeaderValueMaps should be (List(Map("Foo" -> List("a", "d")), Map("Bar" -> List("b", "e")), Map("Baz" -> List("c", "f"))))
+          }
+        }
+      }  
   }
 }
