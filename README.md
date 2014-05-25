@@ -175,7 +175,7 @@ scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
 implicit object MyFormat extends DefaultCSVFormat {
-  override val separator = '#'
+  override val delimiter = '#'
 }
 val w = CSVWriter.open(new java.io.OutputStreamWriter(System.out))
 
