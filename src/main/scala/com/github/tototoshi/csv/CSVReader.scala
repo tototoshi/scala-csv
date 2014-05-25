@@ -18,8 +18,7 @@ package com.github.tototoshi.csv
 
 import java.io._
 import java.util.NoSuchElementException
-import scala.util.parsing.input.PagedSeqReader
-import scala.collection.immutable.PagedSeq
+import scala.util.parsing.input.CharSequenceReader
 
 
 class CSVReader protected (private val reader: Reader)(implicit format: CSVFormat) {
@@ -29,29 +28,34 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
 
   private val parser = new CSVParser(format)
 
-  private var pagedReader: parser.Input = new PagedSeqReader(PagedSeq.fromReader(reader))
-
-  private def handleParseError[A, B]: PartialFunction[parser.ParseResult[A], B] = {
-    case parser.Failure(msg, _) => throw new MalformedCSVException(msg)
-    case parser.Error(msg, _) => throw new CSVParserException(msg)
-  }
+  private val lineReader = new LineReader(reader)
 
   def readNext(): Option[List[String]] = {
 
-    def handleParseResult = handleParseSuccess.orElse(handleParseError[List[String], (List[String], parser.Input)])
+    @scala.annotation.tailrec
+    def parseNext(lineReader: LineReader, leftOver: Option[String] = None, failureMsg: Option[String] = None): Option[List[String]] = {
 
-    def handleParseSuccess: PartialFunction[parser.ParseResult[List[String]], (List[String], parser.Input)] = {
-      case parser.Success(result, input) => (result, input)
+      var nextLine = lineReader.readLineWithTerminator()
+
+      if (nextLine == null) {
+        if (leftOver.isDefined) {
+          throw new MalformedCSVException(failureMsg.getOrElse(""))
+        } else {
+          None
+        }
+      } else {
+        val line = leftOver.getOrElse("") + nextLine
+        parser.parseLine(new CharSequenceReader(line, 0)) match {
+          case parser.Success(result, _) => Some(result)
+          case parser.Failure(msg, _) => {
+            parseNext(lineReader, Some(line), Some(msg))
+          }
+          case parser.Error(msg, _) => throw new CSVParserException(msg)
+        }
+      }
     }
 
-    if (pagedReader.atEnd) {
-      None
-    } else {
-      val parseResult = parser.parseLine(pagedReader)
-      val (result, input) = handleParseResult(parseResult)
-      pagedReader = input
-      Some(result)
-    }
+    parseNext(lineReader)
   }
 
   def foreach(f: Seq[String] => Unit): Unit = iterator.foreach(f)
@@ -95,7 +99,10 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
     } getOrElse List()
   }
 
-  def close(): Unit = reader.close()
+  def close(): Unit = {
+    lineReader.close()
+    reader.close()
+  }
 
 }
 

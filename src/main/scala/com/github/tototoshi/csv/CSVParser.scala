@@ -61,7 +61,6 @@ class CSVParser(format: CSVFormat)
     nonEmptyLine
   }
 
-
   def field: Parser[String] = format.quoting match {
     case QUOTE_NONE => {
       def textData: Parser[String] = escape ~> (""".""".r | newLine) | not(delimiter) ~> """.""".r
