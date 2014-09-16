@@ -21,7 +21,7 @@ import java.util.NoSuchElementException
 import scala.util.parsing.input.CharSequenceReader
 
 
-class CSVReader protected (private val reader: Reader)(implicit format: CSVFormat) {
+class CSVReader protected (private val reader: Reader)(implicit format: CSVFormat) extends Closeable {
 
   val delimiter: Char = format.delimiter
   val quoteChar: Char = format.quoteChar
