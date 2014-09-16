@@ -18,7 +18,7 @@ package com.github.tototoshi.csv
 
 import java.io._
 
-class CSVWriter (protected val writer: Writer)(implicit val format: CSVFormat) {
+class CSVWriter (protected val writer: Writer)(implicit val format: CSVFormat) extends Closeable with Flushable {
 
   private val printWriter: PrintWriter = new PrintWriter(writer)
 
