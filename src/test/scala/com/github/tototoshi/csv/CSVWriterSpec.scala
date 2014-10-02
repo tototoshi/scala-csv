@@ -1,6 +1,6 @@
 package com.github.tototoshi.csv
 
-import java.io.{UnsupportedEncodingException, FileWriter, File}
+import java.io.{FileOutputStream, UnsupportedEncodingException, FileWriter, File}
 
 import org.scalatest.{ FunSpec, BeforeAndAfter }
 import org.scalatest.matchers._
@@ -21,6 +21,19 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
   describe("CSVWriter") {
 
     describe ("#open") {
+
+      it("should be constructed with OutputStream") {
+        using (CSVWriter.open(new FileOutputStream("test.csv"))) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
+      }
+
+      it("should be constructed with OutputStream and encoding") {
+        using (CSVWriter.open(new FileOutputStream("test.csv"), "UTF-8")) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
+        }
+      }
+
       it("should be constructed with java.io.File") {
         using (CSVWriter.open(new File("test.csv"))) { writer =>
           writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
