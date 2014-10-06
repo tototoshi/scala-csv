@@ -35,15 +35,9 @@ class CSVParser(format: CSVFormat)
 
   override def skipWhitespace = false
 
-  def cr: Parser[String] = "\r"
-
-  def lf: Parser[String] = "\n"
-
-  def crlf: Parser[String] = "\r\n"
-
   def eof: Parser[String] = """\z""".r
 
-  def newLine: Parser[String] = crlf | cr | lf
+  def newLine: Parser[String] = """\r\n|[\n\r\u2028\u2029\u0085]""".r
 
   def escape: Parser[String] = format.escapeChar.toString
 
