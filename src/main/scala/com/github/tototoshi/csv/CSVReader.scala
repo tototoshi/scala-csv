@@ -19,7 +19,20 @@ package com.github.tototoshi.csv
 import java.io._
 import java.util.NoSuchElementException
 import scala.util.parsing.input.CharSequenceReader
+import scala.reflect.runtime.universe._
 
+trait Error
+case object EmptyFile extends Error
+case class Mismatch(found: String, expected: String)
+case class HeaderMismatch(headers: List[Mismatch]) extends Error {
+  override def toString() =
+    headers.map { case Mismatch(found, expected) =>
+      s"Found: $found but expected: $expected"
+    }.mkString("\n")
+}
+case class ValueParseError(value: String, type_ : Type) extends Error {
+  override def toString() = s"Was unable to convert String: $value into value of type: $type_"
+}
 
 class CSVReader protected (private val reader: Reader)(implicit format: CSVFormat) extends Closeable {
 
@@ -91,12 +104,64 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
     toStream().toList
   }
 
+  def allOf[T: TypeTag]: Either[Error, List[T]] = {
+    val almost = toStream().map(convertTo[T](_, typeOf[T])).toList
+    val r = almost.find(_.isLeft)
+    if (r.isEmpty) Right(almost.map(_.right.toOption).flatten)
+    else Left(r.get.left.get)
+  }
+
+  private def convertTo[T](list: List[String], t: Type): Either[Error, T] = {
+    val constructor = t.decl(termNames.CONSTRUCTOR).asMethod
+    val paramTypes = constructor.typeSignatureIn(t).paramLists.flatten.map(_.typeSignature)
+    require(paramTypes.forall { t =>
+      t <:< typeOf[AnyVal] || t <:< typeOf[String] && !(t =:= typeOf[Unit] || t =:= typeOf[Char])
+    })
+    val values = paramTypes.zip(list).map { case (t, unparsed) =>
+      import scala.util.Try
+      val input = unparsed.trim
+      def safeParse(conv: String => Any) = Try(conv(input))
+      if (t =:= typeOf[String]) input
+      else if (t =:= typeOf[Int]) safeParse(_.toInt).getOrElse(return Left(ValueParseError(input, t)))
+      else if (t =:= typeOf[Double]) safeParse(_.toDouble).getOrElse(return Left(ValueParseError(input, t)))
+      else if (t =:= typeOf[Float]) safeParse(_.toFloat).getOrElse(return Left(ValueParseError(input, t)))
+      else if (t =:= typeOf[Boolean]) safeParse(_.toBoolean).getOrElse(return Left(ValueParseError(input, t)))
+      else if (t =:= typeOf[Byte]) safeParse(_.toByte).getOrElse(return Left(ValueParseError(input, t)))
+      else if (t =:= typeOf[Long]) safeParse(_.toLong).getOrElse(return Left(ValueParseError(input, t)))
+      else {
+        assert(t =:= typeOf[Short]); safeParse(_.toShort).getOrElse(return Left(ValueParseError(input, t)))
+      }
+    }
+    val class_ = t.typeSymbol.asClass
+    val mirror = runtimeMirror(getClass().getClassLoader)
+    val classMirror = mirror.reflectClass(class_)
+    val constructorMirror = classMirror.reflectConstructor(constructor)
+    Right(constructorMirror.apply(values: _*).asInstanceOf[T])
+  }
 
   def allWithHeaders(): List[Map[String, String]] = {
     readNext() map { headers =>
       val lines = all()
       lines.map(l => headers.zip(l).toMap)
     } getOrElse List()
+  }
+
+  def allOfWithHeaders[T: TypeTag](validate: Boolean = true, caseSensitive: Boolean = false): Either[Error, List[T]] = {
+    val t = typeOf[T]
+    val headers = readNext()
+    if (validate) {
+      headers map { headers =>
+        val constructor = t.decl(termNames.CONSTRUCTOR).asMethod
+        val paramNames = constructor.paramLists.flatten.map(_.name.toString.trim)
+        val mismatchedHeaders = paramNames.zip(headers).filter { case (paramName, header) =>
+          if (caseSensitive) paramName != header
+          else paramName.toLowerCase != header.toLowerCase
+        }
+        if (mismatchedHeaders.isEmpty)  allOf[T]
+        else Left(HeaderMismatch(mismatchedHeaders.map{ case (paramName, header) => Mismatch(header, paramName)}))
+      } getOrElse Left(EmptyFile)
+    }
+    else if (headers.isEmpty) Left(EmptyFile) else allOf[T]
   }
 
   def close(): Unit = {

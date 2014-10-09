@@ -5,6 +5,9 @@ import java.io.{UnsupportedEncodingException, FileReader, File, StringReader}
 import org.scalatest.FunSpec
 import org.scalatest.matchers._
 
+case class Triple(foo: String, bar: String, baz: String)
+case class InvalidTriple(foo: String, b: String, baz: String)
+
 class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
 
   def fixture = new {
@@ -163,6 +166,37 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
     it("has #all") {
       using (CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
         reader.all should be (List(List("a", "b", "c"), List("d", "e", "f")))
+      }
+    }
+
+    describe("has #allOf") {
+      it("tuples") {
+        using(CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
+          reader.allOf[(String, String, String)] should be(Right(List(("a", "b", "c"), ("d", "e", "f"))))
+        }
+      }
+      it("various types") {
+        using(CSVReader.open(new FileReader("src/test/resources/various-types.csv"))) { reader =>
+          reader.allOf[(Int, Boolean, Float)] should be(Right(List((4, true, 5.5), (6, false, 6.5))))
+        }
+      }
+      it("case classes") {
+        using(CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
+          reader.allOf[Triple] should be(Right(List(Triple("a", "b", "c"), Triple("d", "e", "f"))))
+        }
+      }
+    }
+
+    describe("has #allOfWithHeaders") {
+      it("valid") {
+        using(CSVReader.open(new FileReader("src/test/resources/with-headers.csv"))) { reader =>
+          reader.allOfWithHeaders[Triple]() should be(Right(List(Triple("a", "b", "c"), Triple("d", "e", "f"))))
+        }
+      }
+      it("invalid") {
+        using(CSVReader.open(new FileReader("src/test/resources/with-headers.csv"))) { reader =>
+          reader.allOfWithHeaders[InvalidTriple]() should be(Left(HeaderMismatch(List(Mismatch("Bar", "b")))))
+        }
       }
     }
 
