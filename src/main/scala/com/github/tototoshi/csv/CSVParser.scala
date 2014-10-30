@@ -15,74 +15,92 @@
 */
 package com.github.tototoshi.csv
 
-import scala.util.parsing.combinator.RegexParsers
-
-
-protected trait Between extends RegexParsers {
-
-  def between[A, B, C](start: Parser[A], p: Parser[B], end: Parser[C]): Parser[B] = start ~> p <~ end
-
-  def between[A, B](startAndEnd: Parser[A], p: Parser[B]): Parser[B] = between(startAndEnd, p, startAndEnd)
-
-}
-
-
 class CSVParserException(msg: String) extends Exception(msg)
 
-class CSVParser(format: CSVFormat)
-  extends RegexParsers
-  with Between {
+class CSVParser(format: CSVFormat) {
 
-  override def skipWhitespace = false
+  private val startsWithNewLineRegexp = """^\r\n|[\n\r\u2028\u2029\u0085]""".r
 
-  def eof: Parser[String] = """\z""".r
+  private def startsWithNewLine(s: String): Boolean =
+    (s.size > 1 && s.charAt(0) == '\r' && s.charAt(1) == '\n') ||
+  (!s.isEmpty &&
+      (s.charAt(0) == '\n' ||
+        s.charAt(0) == '\r' ||
+        s.charAt(0) == '\u2028' ||
+        s.charAt(0) == '\u2029' ||
+        s.charAt(0) == '\u0085'))
 
-  def newLine: Parser[String] = """\r\n|[\n\r\u2028\u2029\u0085]""".r
-
-  def escape: Parser[String] = format.escapeChar.toString
-
-  def quote: Parser[String] = format.quoteChar.toString
-
-  def delimiter: Parser[String] = format.delimiter.toString
-
-  def emptyLine: Parser[List[String]] = (newLine | eof) ^^ { _ => Nil }
-
-  def nonEmptyLine: Parser[List[String]] = rep1sep(field, delimiter) <~ (newLine | eof)
-
-  def record: Parser[List[String]] = if (format.treatEmptyLineAsNil) {
-    emptyLine | nonEmptyLine
-  } else {
-    nonEmptyLine
-  }
-
-  def field: Parser[String] = format.quoting match {
-    case QUOTE_NONE => {
-      def textData: Parser[String] = escape ~> (""".""".r | newLine) | not(delimiter) ~> """.""".r
-
-      rep(textData) ^^ { _.mkString }
+  private def ltrimNewLine(s: String): String =
+    if (s.size > 1 && s.charAt(0) == '\r' && s.charAt(1) == '\n') {
+      s.substring(2)
+    } else if (!s.isEmpty &&
+      (s.charAt(0) == '\n' ||
+        s.charAt(0) == '\r' ||
+        s.charAt(0) == '\u2028' ||
+        s.charAt(0) == '\u2029' ||
+        s.charAt(0) == '\u0085')) {
+      s.substring(1)
+    } else {
+      s
     }
-    case QUOTE_ALL | QUOTE_MINIMAL | QUOTE_NONNUMERIC => {
 
-      def textData: Parser[String] = not(delimiter | quote | newLine) ~> """.""".r
+  private lazy val fieldRegexpForQuoted =
+    ("""(?m)^[""" + format.quoteChar + """](([^""" + format.quoteChar + """]|[""" + format.quoteChar + """][""" + format.quoteChar + """])*)[""" + format.quoteChar + """]""").r
 
-      def escapedQuote: Parser[String] = repN(2, quote) ^^ {
-        _ => format.quoteChar.toString
-      }
-
-      def escaped = between(quote, rep(textData | delimiter | newLine | escapedQuote)) ^^ {
-        _.mkString
-      }
-
-      def nonEscaped = rep(textData) ^^ {
-        _.mkString
-      }
-
-      escaped | nonEscaped
+  private lazy val fieldRegexpForNonQuoted =
+    if (format.escapeChar == '\\') {
+      ("""(?m)^(([^ """ + format.delimiter + """\n\r\u2028\u2029\u0085]|\\[""" + format.delimiter + """])*)""").r
+    } else {
+      ("""(?m)^(([^""" + format.delimiter + """\n\r\u2028\u2029\u0085]|[""" + format.escapeChar + """][""" + format.delimiter + """])*)""").r
     }
-  }
 
-  def parseLine(in: Input): ParseResult[List[String]] = {
-    parse(record, in)
+  def parseLine(input: String): Option[List[String]] = {
+    def getFieldRegexp(quoted: Boolean) =
+      if (quoted)
+        fieldRegexpForQuoted
+      else
+        fieldRegexpForNonQuoted
+
+    var buf: String = input
+    var fields: Vector[String] = Vector()
+
+    try {
+      while (!buf.isEmpty) {
+        val quoted = buf.charAt(0) == format.quoteChar
+        val fieldRegexp = getFieldRegexp(quoted)
+        val m = fieldRegexp.findFirstMatchIn(buf)
+        m match {
+          case Some(s) => {
+            val field =
+              if (quoted) {
+                s.group(1).replace("""""""", """"""")
+              } else {
+                s.group(1)
+              }
+            buf = buf.substring(field.size + (if (quoted) 2 /* remove quoteChar*/ else 0))
+            fields :+= field
+            if (buf.isEmpty) {
+              // do nothing
+            } else if (startsWithNewLine(buf)) {
+              buf = ltrimNewLine(buf)
+            } else {
+              // remove delimiter
+              buf = buf.substring(1)
+            }
+          }
+          case _ => throw new CSVParserException("Failed to parse: " + buf + "...")
+        }
+      }
+      if (fields.size == 1 && fields(0) == "") {
+        if (format.treatEmptyLineAsNil) Some(Nil)
+        else Some(List(""))
+      } else {
+        Some(fields.toList)
+      }
+    } catch {
+      case e: CSVParserException =>
+        None
+    }
   }
 
 }

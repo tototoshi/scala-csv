@@ -13,21 +13,18 @@ public class LineReader {
     }
 
     public String readLineWithTerminator() throws IOException {
-        int c = bufferedReader.read();
-
-        if (c == -1) {
-            return null;
-        }
-
+        int c = -1;
         StringBuilder sb = new StringBuilder();
-        sb.append((char) c);
-
-        while (true) {
+        do {
 
             c = bufferedReader.read();
 
             if (c == -1) {
-                break;
+                if (sb.length() == 0) {
+                    return null;
+                } else {
+                    break;
+                }
             }
 
             sb.append((char) c);
@@ -53,7 +50,7 @@ public class LineReader {
                 break;
             }
 
-        }
+        } while (true);
 
         return sb.toString();
     }

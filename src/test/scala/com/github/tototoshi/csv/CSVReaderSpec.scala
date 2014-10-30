@@ -33,19 +33,19 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       res.mkString should be ("abcdef")
     }
 
-    it("should be consutrcted with CSVFormat") {
+    it("should be constructed with CSVFormat") {
       implicit object format extends DefaultCSVFormat {
         override val delimiter: Char = '#'
         override val quoteChar: Char = '$'
       }
 
-      using (CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv")) { reader => {
+      using (CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv")(format)) { reader => {
           val map = reader.allWithHeaders()
           map(0)("Foo ") should be ("a")
         }
       }
 
-      using (CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", "utf-8")) { reader =>
+      using (CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", "utf-8")(format)) { reader =>
         val map = reader.allWithHeaders()
         map(0)("Foo ") should be ("a")
       }
