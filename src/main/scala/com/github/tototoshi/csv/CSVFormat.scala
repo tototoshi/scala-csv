@@ -15,7 +15,6 @@
 */
 package com.github.tototoshi.csv
 
-
 trait CSVFormat {
 
   val delimiter: Char

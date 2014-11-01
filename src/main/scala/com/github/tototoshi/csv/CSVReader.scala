@@ -20,7 +20,6 @@ import java.io._
 import java.util.NoSuchElementException
 import scala.util.parsing.input.CharSequenceReader
 
-
 class CSVReader protected (private val reader: Reader)(implicit format: CSVFormat) extends Closeable {
 
   val delimiter: Char = format.delimiter
@@ -65,7 +64,7 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
     def hasNext: Boolean = {
       _next match {
         case Some(row) => true
-        case None => { _next = readNext;  _next.isDefined }
+        case None => { _next = readNext; _next.isDefined }
       }
     }
 
@@ -88,7 +87,6 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
   def all(): List[List[String]] = {
     toStream().toList
   }
-
 
   def allWithHeaders(): List[Map[String, String]] = {
     readNext() map { headers =>
@@ -125,10 +123,10 @@ object CSVReader {
     }
   }
 
-  def open(filename: String)(implicit format: CSVFormat) : CSVReader =
+  def open(filename: String)(implicit format: CSVFormat): CSVReader =
     open(new File(filename), this.DEFAULT_ENCODING)(format)
 
-  def open(filename: String, encoding: String)(implicit format: CSVFormat) : CSVReader =
+  def open(filename: String, encoding: String)(implicit format: CSVFormat): CSVReader =
     open(new File(filename), encoding)(format)
 
 }

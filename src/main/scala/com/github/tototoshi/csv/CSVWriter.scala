@@ -18,7 +18,7 @@ package com.github.tototoshi.csv
 
 import java.io._
 
-class CSVWriter (protected val writer: Writer)(implicit val format: CSVFormat) extends Closeable with Flushable {
+class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) extends Closeable with Flushable {
 
   private val printWriter: PrintWriter = new PrintWriter(writer)
 
@@ -59,7 +59,7 @@ class CSVWriter (protected val writer: Writer)(implicit val format: CSVFormat) e
     def escapeDelimiterChar(field: String): String =
       field.replace(format.delimiter.toString, format.escapeChar.toString + format.delimiter.toString)
 
-      def show(s: Any): String = Option(s).getOrElse("").toString
+    def show(s: Any): String = Option(s).getOrElse("").toString
 
     val renderField = {
       val escape = format.quoting match {

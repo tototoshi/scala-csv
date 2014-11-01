@@ -1,5 +1,6 @@
 import sbt._
 import Keys._
+import com.typesafe.sbt.SbtScalariform.scalariformSettings
 
 object ScalaCSVProject extends Build {
 
@@ -45,7 +46,7 @@ object ScalaCSVProject extends Build {
       },
       publishArtifact in Test := false,
       pomExtra := _pomExtra
-    )
+    ) ++ scalariformSettings
   )
 
   val _pomExtra =
@@ -70,4 +71,3 @@ object ScalaCSVProject extends Build {
     </developers>
 
 }
-

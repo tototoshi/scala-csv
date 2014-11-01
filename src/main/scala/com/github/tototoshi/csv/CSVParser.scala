@@ -23,12 +23,12 @@ class CSVParser(format: CSVFormat) {
 
   private def startsWithNewLine(s: String): Boolean =
     (s.size > 1 && s.charAt(0) == '\r' && s.charAt(1) == '\n') ||
-  (!s.isEmpty &&
-      (s.charAt(0) == '\n' ||
-        s.charAt(0) == '\r' ||
-        s.charAt(0) == '\u2028' ||
-        s.charAt(0) == '\u2029' ||
-        s.charAt(0) == '\u0085'))
+      (!s.isEmpty &&
+        (s.charAt(0) == '\n' ||
+          s.charAt(0) == '\r' ||
+          s.charAt(0) == '\u2028' ||
+          s.charAt(0) == '\u2029' ||
+          s.charAt(0) == '\u0085'))
 
   private def ltrimNewLine(s: String): String =
     if (s.size > 1 && s.charAt(0) == '\r' && s.charAt(1) == '\n') {
