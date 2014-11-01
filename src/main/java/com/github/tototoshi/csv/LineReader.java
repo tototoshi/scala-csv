@@ -29,7 +29,10 @@ public class LineReader {
 
             sb.append((char) c);
 
-            if (c == '\n') {
+            if (c == '\n'
+                || c == '\u2028'
+                || c == '\u2029'
+                || c == '\u0085') {
                 break;
             }
 
