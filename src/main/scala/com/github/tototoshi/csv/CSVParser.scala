@@ -19,24 +19,17 @@ class CSVParserException(msg: String) extends Exception(msg)
 
 class CSVParser(format: CSVFormat) {
 
+  private def isNewLineChar(c: Char): Boolean =
+    c == '\n' || c == '\r' || c == '\u2028' || c == '\u2029' || c == '\u0085'
+
   private def startsWithNewLine(s: String): Boolean =
     (s.size > 1 && s.charAt(0) == '\r' && s.charAt(1) == '\n') ||
-      (!s.isEmpty &&
-        (s.charAt(0) == '\n' ||
-          s.charAt(0) == '\r' ||
-          s.charAt(0) == '\u2028' ||
-          s.charAt(0) == '\u2029' ||
-          s.charAt(0) == '\u0085'))
+      (!s.isEmpty && isNewLineChar(s.charAt(0)))
 
   private def ltrimNewLine(s: String): String =
     if (s.size > 1 && s.charAt(0) == '\r' && s.charAt(1) == '\n') {
       s.substring(2)
-    } else if (!s.isEmpty &&
-      (s.charAt(0) == '\n' ||
-        s.charAt(0) == '\r' ||
-        s.charAt(0) == '\u2028' ||
-        s.charAt(0) == '\u2029' ||
-        s.charAt(0) == '\u0085')) {
+    } else if (!s.isEmpty && isNewLineChar(s.charAt(0))) {
       s.substring(1)
     } else {
       s
