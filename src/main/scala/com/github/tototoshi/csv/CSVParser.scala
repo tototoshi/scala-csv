@@ -19,8 +19,6 @@ class CSVParserException(msg: String) extends Exception(msg)
 
 class CSVParser(format: CSVFormat) {
 
-  private val startsWithNewLineRegexp = """^\r\n|[\n\r\u2028\u2029\u0085]""".r
-
   private def startsWithNewLine(s: String): Boolean =
     (s.size > 1 && s.charAt(0) == '\r' && s.charAt(1) == '\n') ||
       (!s.isEmpty &&
