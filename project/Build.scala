@@ -13,11 +13,18 @@ object ScalaCSVProject extends Build {
       scalaVersion := "2.11.1",
       crossScalaVersions := Seq("2.11.1", "2.10.3", "2.9.1", "2.9.2", "2.9.3"),
       organization := "com.github.tototoshi",
-      libraryDependencies += (
-        if(scalaVersion.value.startsWith("2.1"))
-          "org.scalatest" %% "scalatest" % "2.1.3" % "test"
-        else
-          "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+      libraryDependencies ++= (
+        if(scalaVersion.value.startsWith("2.1")) {
+          Seq(
+            "org.scalatest" %% "scalatest" % "2.1.3" % "test",
+            "org.scalacheck" %% "scalacheck" % "1.11.4" % "test"
+          )
+        } else {
+          Seq(
+            "org.scalatest" %% "scalatest" % "1.9.1" % "test",
+            "org.scalacheck" %% "scalacheck" % "1.11.4" % "test"
+          )
+        }
       ),
       libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
         case Some((2, scalaMajor)) if scalaMajor >= 11 =>
