@@ -15,83 +15,254 @@
 */
 package com.github.tototoshi.csv
 
-class CSVParserException(msg: String) extends Exception(msg)
+object CSVParser {
+
+  abstract sealed trait State
+  case object Start extends State
+  case object Field extends State
+  case object Delimiter extends State
+  case object End extends State
+  case object QuoteStart extends State
+  case object QuoteEnd extends State
+  case object QuotedField extends State
+
+  /**
+   * {{{
+   * scala> com.github.tototoshi.csv.CSVParser.parse("a,b,c", '\\', ',', '"')
+   * res0: Option[List[String]] = Some(List(a, b, c))
+   *
+   * scala> com.github.tototoshi.csv.CSVParser.parse("\"a\",\"b\",\"c\"", '\\', ',', '"')
+   * res1: Option[List[String]] = Some(List(a, b, c))
+   * }}}
+   */
+  def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char): Option[List[String]] = {
+    var buf: String = input
+    var fields: Vector[String] = Vector()
+    var field = new StringBuilder
+    var state: State = Start
+    var pos = 0
+    val buflen = buf.size
+
+    while (state != End && pos < buflen) {
+      val c = buf.charAt(pos)
+      state match {
+        case Start => {
+          c match {
+            case `quoteChar` => {
+              state = QuoteStart
+              pos += 1
+            }
+            case `delimiter` => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = Delimiter
+              pos += 1
+            }
+            case '\n' | '\u2028' | '\u2029' | '\u0085' => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
+            case '\r' => {
+              if (pos + 1 < buflen && buf.charAt(1) == '\n') {
+                pos += 1
+              }
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
+            case x => {
+              field += x
+              state = Field
+              pos += 1
+            }
+          }
+        }
+        case Delimiter => {
+          c match {
+            case `quoteChar` => {
+              state = QuoteStart
+              pos += 1
+            }
+            case `delimiter` => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = Delimiter
+              pos += 1
+            }
+            case '\n' | '\u2028' | '\u2029' | '\u0085' => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
+            case '\r' => {
+              if (pos + 1 < buflen && buf.charAt(1) == '\n') {
+                pos += 1
+              }
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
+            case x => {
+              field += x
+              state = Field
+              pos += 1
+            }
+          }
+        }
+        case Field => {
+          c match {
+            case `escapeChar` => {
+              if (pos + 1 < buflen) {
+                if (buf.charAt(pos + 1) == escapeChar
+                  || buf.charAt(pos + 1) == delimiter) {
+                  field += buf.charAt(pos + 1)
+                  state = Field
+                  pos += 2
+                } else {
+                  throw new MalformedCSVException(buf)
+                }
+              } else {
+                state = QuoteEnd
+                pos += 1
+              }
+            }
+            case `delimiter` => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = Delimiter
+              pos += 1
+            }
+            case '\n' | '\u2028' | '\u2029' | '\u0085' => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
+            case '\r' => {
+              if (pos + 1 < buflen && buf.charAt(1) == '\n') {
+                pos += 1
+              }
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
+            case x => {
+              field += x
+              state = Field
+              pos += 1
+            }
+          }
+        }
+        case QuoteStart => {
+          c match {
+            case `quoteChar` => {
+              if (pos + 1 < buflen && buf.charAt(pos + 1) == quoteChar) {
+                field += quoteChar
+                state = QuotedField
+                pos += 2
+              } else {
+                fields :+= field.toString
+                field = new StringBuilder
+                state = QuoteEnd
+                pos += 1
+              }
+            }
+            case x => {
+              field += x
+              state = QuotedField
+              pos += 1
+            }
+          }
+        }
+        case QuoteEnd => {
+          c match {
+            case `delimiter` => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = Delimiter
+              pos += 1
+            }
+            case '\n' | '\u2028' | '\u2029' | '\u0085' => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
+            case '\r' => {
+              if (pos + 1 < buflen && buf.charAt(1) == '\n') {
+                pos += 1
+              }
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
+            case _ => {
+              throw new MalformedCSVException(buf)
+            }
+          }
+        }
+        case QuotedField => {
+          c match {
+            case `quoteChar` => {
+              if (pos + 1 < buflen && buf.charAt(pos + 1) == quoteChar) {
+                field += quoteChar
+                state = QuotedField
+                pos += 2
+              } else {
+                state = QuoteEnd
+                pos += 1
+              }
+            }
+            case x => {
+              field += x
+              state = QuotedField
+              pos += 1
+            }
+          }
+        }
+        case End => {
+          sys.error("unexpected error")
+        }
+      }
+    }
+    state match {
+      case Delimiter => {
+        fields :+= ""
+        Some(fields.toList)
+      }
+      case QuotedField => {
+        None
+      }
+      case _ => {
+        if (!field.isEmpty) {
+          // When no crlf at end of file
+          state match {
+            case Field | QuoteEnd => {
+              fields :+= field.toString
+            }
+            case _ => {
+            }
+          }
+        }
+        Some(fields.toList)
+      }
+    }
+  }
+}
 
 class CSVParser(format: CSVFormat) {
 
-  private def isNewLineChar(c: Char): Boolean =
-    c == '\n' || c == '\r' || c == '\u2028' || c == '\u2029' || c == '\u0085'
-
-  private def startsWithNewLine(s: String): Boolean =
-    (s.size > 1 && s.charAt(0) == '\r' && s.charAt(1) == '\n') ||
-      (!s.isEmpty && isNewLineChar(s.charAt(0)))
-
-  private def ltrimNewLine(s: String): String =
-    if (s.size > 1 && s.charAt(0) == '\r' && s.charAt(1) == '\n') {
-      s.substring(2)
-    } else if (!s.isEmpty && isNewLineChar(s.charAt(0))) {
-      s.substring(1)
-    } else {
-      s
-    }
-
-  private lazy val fieldRegexpForQuoted =
-    ("""(?m)^[""" + format.quoteChar + """](([^""" + format.quoteChar + """]|[""" + format.quoteChar + """][""" + format.quoteChar + """])*)[""" + format.quoteChar + """]""").r
-
-  private lazy val fieldRegexpForNonQuoted =
-    if (format.escapeChar == '\\') {
-      ("""(?m)^(([^ """ + format.delimiter + """\n\r\u2028\u2029\u0085]|\\[""" + format.delimiter + """])*)""").r
-    } else {
-      ("""(?m)^(([^""" + format.delimiter + """\n\r\u2028\u2029\u0085]|[""" + format.escapeChar + """][""" + format.delimiter + """])*)""").r
-    }
-
   def parseLine(input: String): Option[List[String]] = {
-    def getFieldRegexp(quoted: Boolean) =
-      if (quoted)
-        fieldRegexpForQuoted
-      else
-        fieldRegexpForNonQuoted
-
-    var buf: String = input
-    var fields: Vector[String] = Vector()
-
-    try {
-      while (!buf.isEmpty) {
-        val quoted = buf.charAt(0) == format.quoteChar
-        val fieldRegexp = getFieldRegexp(quoted)
-        val m = fieldRegexp.findFirstMatchIn(buf)
-        m match {
-          case Some(s) => {
-            val field =
-              if (quoted) {
-                s.group(1).replace("""""""", """"""")
-              } else {
-                s.group(1)
-              }
-            buf = buf.substring(field.size + (if (quoted) 2 /* remove quoteChar*/ else 0))
-            fields :+= field
-            if (buf.isEmpty) {
-              // do nothing
-            } else if (startsWithNewLine(buf)) {
-              buf = ltrimNewLine(buf)
-            } else {
-              // remove delimiter
-              buf = buf.substring(1)
-            }
-          }
-          case _ => throw new CSVParserException("Failed to parse: " + buf + "...")
-        }
-      }
-      if (fields.size == 1 && fields(0) == "") {
-        if (format.treatEmptyLineAsNil) Some(Nil)
-        else Some(List(""))
-      } else {
-        Some(fields.toList)
-      }
-    } catch {
-      case e: CSVParserException =>
-        None
-    }
+    val parsedResult = CSVParser.parse(input, format.escapeChar, format.delimiter, format.quoteChar)
+    if (parsedResult == Some(List("")) && format.treatEmptyLineAsNil) Some(Nil)
+    else parsedResult
   }
 
 }
