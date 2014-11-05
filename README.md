@@ -3,18 +3,9 @@
 [![Build Status](https://travis-ci.org/tototoshi/scala-csv.png)](https://travis-ci.org/tototoshi/scala-csv)
 
 ## build.sbt
-If you use Scala 2.9.1, 2.9.2, 2.9.3 or 2.10.x, 2.11.x you can get scala-csv with the following line in your build.sbt.
 
 ```scala
-libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.0.0"
-```
-
-or snapshot version
-
-```scala
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.1.0-SNAPSHOT"
+libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.1.0"
 ```
 
 ## Example
