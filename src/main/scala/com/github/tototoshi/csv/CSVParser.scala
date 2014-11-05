@@ -36,15 +36,15 @@ object CSVParser {
    * }}}
    */
   def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char): Option[List[String]] = {
-    var buf: String = input
+    var buf: Array[Char] = input.toCharArray
     var fields: Vector[String] = Vector()
     var field = new StringBuilder
     var state: State = Start
     var pos = 0
-    val buflen = buf.size
+    val buflen = buf.length
 
     while (state != End && pos < buflen) {
-      val c = buf.charAt(pos)
+      val c = buf(pos)
       state match {
         case Start => {
           c match {
@@ -65,7 +65,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf.charAt(1) == '\n') {
+              if (pos + 1 < buflen && buf(1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -99,7 +99,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf.charAt(1) == '\n') {
+              if (pos + 1 < buflen && buf(1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -118,13 +118,13 @@ object CSVParser {
           c match {
             case `escapeChar` => {
               if (pos + 1 < buflen) {
-                if (buf.charAt(pos + 1) == escapeChar
-                  || buf.charAt(pos + 1) == delimiter) {
-                  field += buf.charAt(pos + 1)
+                if (buf(pos + 1) == escapeChar
+                  || buf(pos + 1) == delimiter) {
+                  field += buf(pos + 1)
                   state = Field
                   pos += 2
                 } else {
-                  throw new MalformedCSVException(buf)
+                  throw new MalformedCSVException(buf.mkString)
                 }
               } else {
                 state = QuoteEnd
@@ -144,7 +144,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf.charAt(1) == '\n') {
+              if (pos + 1 < buflen && buf(1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -162,7 +162,7 @@ object CSVParser {
         case QuoteStart => {
           c match {
             case `quoteChar` => {
-              if (pos + 1 < buflen && buf.charAt(pos + 1) == quoteChar) {
+              if (pos + 1 < buflen && buf(pos + 1) == quoteChar) {
                 field += quoteChar
                 state = QuotedField
                 pos += 2
@@ -195,7 +195,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf.charAt(1) == '\n') {
+              if (pos + 1 < buflen && buf(1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -204,14 +204,14 @@ object CSVParser {
               pos += 1
             }
             case _ => {
-              throw new MalformedCSVException(buf)
+              throw new MalformedCSVException(buf.mkString)
             }
           }
         }
         case QuotedField => {
           c match {
             case `quoteChar` => {
-              if (pos + 1 < buflen && buf.charAt(pos + 1) == quoteChar) {
+              if (pos + 1 < buflen && buf(pos + 1) == quoteChar) {
                 field += quoteChar
                 state = QuotedField
                 pos += 2
