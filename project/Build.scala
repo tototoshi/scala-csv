@@ -25,6 +25,10 @@ object ScalaCSVProject extends Build {
         "-deprecation",
         "-language:_"
       ),
+      scalacOptions ++= {
+        if(scalaVersion.value.startsWith("2.11")) Seq("-Ywarn-unused")
+        else Nil
+      },
       initialCommands := """
                            |import com.github.tototoshi.csv._
                          """.stripMargin,
