@@ -11,16 +11,12 @@ object ScalaCSVProject extends Build {
       name := "scala-csv",
       version := "1.1.0",
       scalaVersion := "2.11.4",
-      crossScalaVersions := Seq("2.11.4", "2.10.3"),
+      crossScalaVersions := Seq("2.11.4", "2.10.4"),
       organization := "com.github.tototoshi",
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "2.1.3" % "test",
         "org.scalacheck" %% "scalacheck" % "1.11.4" % "test"
       ),
-      libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
-        case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-          "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1"
-      }.toList,
       scalacOptions ++= Seq(
         "-deprecation",
         "-language:_"
