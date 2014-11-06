@@ -18,7 +18,6 @@ package com.github.tototoshi.csv
 
 import java.io._
 import java.util.NoSuchElementException
-import scala.util.parsing.input.CharSequenceReader
 
 class CSVReader protected (private val reader: Reader)(implicit format: CSVFormat) extends Closeable {
 
