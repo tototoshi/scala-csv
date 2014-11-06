@@ -33,7 +33,7 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
     @scala.annotation.tailrec
     def parseNext(lineReader: LineReader, leftOver: Option[String] = None): Option[List[String]] = {
 
-      var nextLine = lineReader.readLineWithTerminator()
+      val nextLine = lineReader.readLineWithTerminator()
       if (nextLine == null) {
         if (leftOver.isDefined) {
           throw new MalformedCSVException("Malformed Input!: " + leftOver)

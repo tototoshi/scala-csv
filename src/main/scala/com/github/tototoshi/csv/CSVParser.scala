@@ -36,7 +36,7 @@ object CSVParser {
    * }}}
    */
   def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char): Option[List[String]] = {
-    var buf: Array[Char] = input.toCharArray
+    val buf: Array[Char] = input.toCharArray
     var fields: Vector[String] = Vector()
     var field = new StringBuilder
     var state: State = Start
