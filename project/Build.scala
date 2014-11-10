@@ -25,6 +25,7 @@ object ScalaCSVProject extends Build {
         if(scalaVersion.value.startsWith("2.11")) Seq("-Ywarn-unused")
         else Nil
       },
+      javacOptions in compile ++= Seq("-target", "6", "-source", "6", "-Xlint"),
       initialCommands := """
                            |import com.github.tototoshi.csv._
                          """.stripMargin,
