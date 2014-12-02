@@ -105,6 +105,16 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       }
     }
 
+    it("read simple CSV file with empty quoted fields") {
+      var res: List[String] = Nil
+      using(CSVReader.open("src/test/resources/issue30.csv")) { reader =>
+        reader foreach { fields =>
+          res = res ++ fields
+        }
+      }
+      res.mkString(",") should be("h1,h2,h3,a1,,a3,b1,b2,b3")
+    }
+
     it("should be throw exception against malformed input") {
       intercept[MalformedCSVException] {
         using(CSVReader.open(new FileReader("src/test/resources/malformed.csv"))) { reader =>

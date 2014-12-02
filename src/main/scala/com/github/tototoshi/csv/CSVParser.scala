@@ -167,8 +167,6 @@ object CSVParser {
                 state = QuotedField
                 pos += 2
               } else {
-                fields :+= field.toString
-                field = new StringBuilder
                 state = QuoteEnd
                 pos += 1
               }
