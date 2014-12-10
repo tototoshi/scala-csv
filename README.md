@@ -11,7 +11,6 @@ libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.1.2"
 or snapshot version.
 
 ```scala
-// build.sbt
 resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
