@@ -88,10 +88,16 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
   }
 
   def allWithHeaders(): List[Map[String, String]] = {
-    readNext() map { headers =>
+    allWithOrderedHeaders._2
+  }
+
+  def allWithOrderedHeaders(): (List[String], List[Map[String, String]]) = {
+    val headers = readNext()
+    val data = headers.map(headers => {
       val lines = all()
       lines.map(l => headers.zip(l).toMap)
-    } getOrElse List()
+    })
+    (headers.getOrElse(Nil), data.getOrElse(Nil))
   }
 
   def close(): Unit = {

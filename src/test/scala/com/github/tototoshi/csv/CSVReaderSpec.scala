@@ -274,5 +274,30 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       }
     }
 
+    describe("#allOrderedHeaders") {
+      describe("When the file is empty") {
+        it("returns an empty list") {
+          using(CSVReader.open(new FileReader("src/test/resources/empty.csv"))) { reader =>
+            reader.allWithOrderedHeaders() should be((Nil, Nil))
+          }
+        }
+      }
+      describe("When the file has only header line") {
+        it("returns only header names") {
+          using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
+            reader.allWithOrderedHeaders should be((List("foo", "bar"), Nil))
+          }
+        }
+      }
+      describe("When the file has many headers and many lines") {
+        it("returns header names in order and data") {
+          using(CSVReader.open(new FileReader("src/test/resources/with-headers.csv"))) { reader =>
+            val result = reader.allWithOrderedHeaders()
+            result._1 should be(List("Foo", "Bar", "Baz"))
+            result._2 should be(List(Map("Foo" -> "a", "Bar" -> "b", "Baz" -> "c"), Map("Foo" -> "d", "Bar" -> "e", "Baz" -> "f")))
+          }
+        }
+      }
+    }
   }
 }
