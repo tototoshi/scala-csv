@@ -15,16 +15,18 @@
 */
 package com.github.tototoshi.csv
 
+import scala.annotation.switch
+
 object CSVParser {
 
-  abstract sealed trait State
-  case object Start extends State
-  case object Field extends State
-  case object Delimiter extends State
-  case object End extends State
-  case object QuoteStart extends State
-  case object QuoteEnd extends State
-  case object QuotedField extends State
+  private type State = Int
+  private final val Start = 0
+  private final val Field = 1
+  private final val Delimiter = 2
+  private final val End = 3
+  private final val QuoteStart = 4
+  private final val QuoteEnd = 5
+  private final val QuotedField = 6
 
   /**
    * {{{
@@ -45,7 +47,7 @@ object CSVParser {
 
     while (state != End && pos < buflen) {
       val c = buf(pos)
-      state match {
+      (state: @switch) match {
         case Start => {
           c match {
             case `quoteChar` => {
@@ -244,7 +246,7 @@ object CSVParser {
         }
       }
     }
-    state match {
+    (state: @switch) match {
       case Delimiter => {
         fields :+= ""
         Some(fields.toList)
