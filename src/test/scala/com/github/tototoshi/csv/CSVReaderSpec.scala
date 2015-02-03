@@ -250,6 +250,33 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
         }
       }
     }
+
+    describe("#iteratorWitHeaders") {
+      describe("When the file is empty") {
+        it("returns an empty list") {
+          using(CSVReader.open(new FileReader("src/test/resources/empty.csv"))) { reader =>
+            reader.iteratorWitHeaders should be('empty)
+          }
+        }
+      }
+      describe("When the file has only one line") {
+        it("returns an empty list") {
+          using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
+            reader.iteratorWitHeaders should be('empty)
+          }
+        }
+      }
+      describe("When the file has many lines") {
+        it("returns a List of Map[String, String]") {
+          using(CSVReader.open(new FileReader("src/test/resources/with-headers.csv"))) { reader =>
+            val iterator = reader.iteratorWitHeaders
+            iterator.next() should be(Map("Foo" -> "a", "Bar" -> "b", "Baz" -> "c"))
+            iterator.next() should be(Map("Foo" -> "d", "Bar" -> "e", "Baz" -> "f"))
+          }
+        }
+      }
+    }
+
     describe("#allHeaders") {
       describe("When the file is empty") {
         it("returns an empty list") {
