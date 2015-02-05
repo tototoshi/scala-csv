@@ -80,7 +80,7 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
 
   }
 
-  def iteratorWitHeaders: Iterator[Map[String, String]] = {
+  def iteratorWithHeaders: Iterator[Map[String, String]] = {
     val headers = readNext()
     headers.map(headers => {
       iterator.map(line => headers.zip(line).toMap)
