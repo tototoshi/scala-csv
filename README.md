@@ -5,16 +5,10 @@
 ## build.sbt
 
 ```scala
-libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.1.2"
-```
-
-or snapshot version.
-
-```scala
 resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.2.0-SNAPSHOT"
+libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.2.0"
 ```
 
 ## Example
