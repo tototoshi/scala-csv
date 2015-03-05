@@ -10,8 +10,8 @@ object ScalaCSVProject extends Build {
     settings = Defaults.defaultSettings ++ Seq (
       name := "scala-csv",
       version := "1.2.0",
-      scalaVersion := "2.11.4",
-      crossScalaVersions := Seq("2.11.4", "2.10.4"),
+      scalaVersion := "2.11.6",
+      crossScalaVersions := Seq("2.11.6", "2.10.4"),
       organization := "com.github.tototoshi",
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "2.1.3" % "test",
