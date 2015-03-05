@@ -5,9 +5,6 @@
 ## build.sbt
 
 ```scala
-resolvers +=
-  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
 libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.2.1"
 ```
 
