@@ -105,6 +105,17 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
       }
     }
 
+    it("issue #32") {
+      var res: List[String] = Nil
+      using(CSVReader.open("src/test/resources/issue32.csv")(new DefaultCSVFormat {
+        override val escapeChar: Char = '\\'
+      })) { reader =>
+        reader foreach { fields =>
+          res = res ++ fields
+        }
+      }
+    }
+
     it("should read csv file whose escape char is backslash") {
       var res: List[String] = Nil
       implicit val format = new DefaultCSVFormat {
