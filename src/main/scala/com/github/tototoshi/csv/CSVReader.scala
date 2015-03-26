@@ -21,9 +21,6 @@ import java.util.NoSuchElementException
 
 class CSVReader protected (private val reader: Reader)(implicit format: CSVFormat) extends Closeable {
 
-  val delimiter: Char = format.delimiter
-  val quoteChar: Char = format.quoteChar
-
   private val parser = new CSVParser(format)
 
   private val lineReader = new LineReader(reader)
