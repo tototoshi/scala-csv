@@ -14,7 +14,7 @@ object ScalaCSVProject extends Build {
       crossScalaVersions := Seq("2.11.6", "2.10.4"),
       organization := "com.github.tototoshi",
       libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "2.1.3" % "test",
+        "org.scalatest" %% "scalatest" % "2.2.4" % "test",
         "org.scalacheck" %% "scalacheck" % "1.11.4" % "test"
       ),
       scalacOptions ++= Seq(
