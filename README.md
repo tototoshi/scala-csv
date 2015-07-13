@@ -187,7 +187,7 @@ scala> w.writeRow(List(1, 2, 3))
 "1"#"2"#"3"
 ```
 ### Changing the encoding
-By default the UTF-8 is set. To change it, for example, to ISO-8859-1 you can set it CSVReader:
+By default the UTF-8 is set. To change it, for example, to ISO-8859-1 you can set it in the CSVReader:
 ```scala
 scala> val reader = CSVReader.open(filepath, "ISO-8859-1")
 reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@6bcb69ba
