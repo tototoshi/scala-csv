@@ -186,6 +186,12 @@ w: com.github.tototoshi.csv.CSVWriter = com.github.tototoshi.csv.CSVWriter@6cd66
 scala> w.writeRow(List(1, 2, 3))
 "1"#"2"#"3"
 ```
+### Changing the encoding
+By default the UTF-8 is set. To change it, for example, to ISO-8859-1 you can set it CSVReader:
+```scala
+scala> val reader = CSVReader.open(filepath, "ISO-8859-1")
+reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@6bcb69ba
+```
 
 ## Dev
 
