@@ -88,6 +88,16 @@ object CSVParser {
               state = QuoteStart
               pos += 1
             }
+            case `escapeChar` => {
+              if (pos + 1 < buflen
+                && (buf(pos + 1) == escapeChar || buf(pos + 1) == delimiter)) {
+                field += buf(pos + 1)
+                state = Field
+                pos += 2
+              } else {
+                throw new MalformedCSVException(buf.mkString)
+              }
+            }
             case `delimiter` => {
               fields :+= field.toString
               field = new StringBuilder
