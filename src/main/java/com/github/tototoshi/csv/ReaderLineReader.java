@@ -4,11 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
-public class FileLineReader implements LineReader {
+public class ReaderLineReader implements LineReader {
 
     private BufferedReader bufferedReader;
 
-    public FileLineReader(Reader reader) {
+    public ReaderLineReader(Reader reader) {
         this.bufferedReader = new BufferedReader(reader);
     }
 

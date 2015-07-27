@@ -117,7 +117,7 @@ object CSVReader {
 
   def open(source: Source)(implicit format: CSVFormat): CSVReader = new CSVReader(new SourceLineReader(source))(format)
 
-  def open(reader: Reader)(implicit format: CSVFormat): CSVReader = new CSVReader(new FileLineReader(reader))(format)
+  def open(reader: Reader)(implicit format: CSVFormat): CSVReader = new CSVReader(new ReaderLineReader(reader))(format)
 
   def open(file: File)(implicit format: CSVFormat): CSVReader = {
     open(file, this.DEFAULT_ENCODING)(format)
