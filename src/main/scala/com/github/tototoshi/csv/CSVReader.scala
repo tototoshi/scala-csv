@@ -84,7 +84,7 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
     }).getOrElse(Iterator())
   }
 
-  def toStreamWithHeaders: Stream[Map[String,String]] = iteratorWithHeaders.toStream
+  def toStreamWithHeaders: Stream[Map[String, String]] = iteratorWithHeaders.toStream
 
   def toStream: Stream[List[String]] =
     Stream.continually(readNext()).takeWhile(_.isDefined).map(_.get)
@@ -115,9 +115,9 @@ object CSVReader {
 
   val DEFAULT_ENCODING = "UTF-8"
 
-  def open(source: Source)(implicit format: CSVFormat): CSVReader = new CSVReader(new SourceLineReader(source))
+  def open(source: Source)(implicit format: CSVFormat): CSVReader = new CSVReader(new SourceLineReader(source))(format)
 
-  def open(reader: Reader)(implicit format: CSVFormat): CSVReader = new CSVReader(new FileLineReader(reader))
+  def open(reader: Reader)(implicit format: CSVFormat): CSVReader = new CSVReader(new FileLineReader(reader))(format)
 
   def open(file: File)(implicit format: CSVFormat): CSVReader = {
     open(file, this.DEFAULT_ENCODING)(format)
@@ -126,7 +126,7 @@ object CSVReader {
   def open(file: File, encoding: String)(implicit format: CSVFormat): CSVReader = {
     val fin = new FileInputStream(file)
     try {
-      open(Source.fromInputStream(fin,encoding))
+      open(Source.fromInputStream(fin, encoding))
     } catch {
       case e: UnsupportedEncodingException => fin.close(); throw e
     }
