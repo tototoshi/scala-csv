@@ -19,11 +19,11 @@ package com.github.tototoshi.csv
 import java.io._
 import java.util.NoSuchElementException
 
-class CSVReader protected (private val reader: Reader)(implicit format: CSVFormat) extends Closeable {
+import scala.io.Source
+
+class CSVReader protected (private val lineReader: LineReader)(implicit format: CSVFormat) extends Closeable {
 
   private val parser = new CSVParser(format)
-
-  private val lineReader = new LineReader(reader)
 
   def readNext(): Option[List[String]] = {
 
@@ -60,7 +60,7 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
     def hasNext: Boolean = {
       _next match {
         case Some(row) => true
-        case None => { _next = readNext; _next.isDefined }
+        case None => _next = readNext(); _next.isDefined
       }
     }
 
@@ -71,7 +71,7 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
           _next = None
           _row
         }
-        case None => readNext.getOrElse(throw new NoSuchElementException("next on empty iterator"))
+        case None => readNext().getOrElse(throw new NoSuchElementException("next on empty iterator"))
       }
     }
 
@@ -84,15 +84,17 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
     }).getOrElse(Iterator())
   }
 
-  def toStream(): Stream[List[String]] =
-    Stream.continually(readNext).takeWhile(_.isDefined).map(_.get)
+  def toStreamWithHeaders: Stream[Map[String,String]] = iteratorWithHeaders.toStream
+
+  def toStream: Stream[List[String]] =
+    Stream.continually(readNext()).takeWhile(_.isDefined).map(_.get)
 
   def all(): List[List[String]] = {
-    toStream().toList
+    toStream.toList
   }
 
   def allWithHeaders(): List[Map[String, String]] = {
-    allWithOrderedHeaders._2
+    allWithOrderedHeaders()._2
   }
 
   def allWithOrderedHeaders(): (List[String], List[Map[String, String]]) = {
@@ -106,17 +108,16 @@ class CSVReader protected (private val reader: Reader)(implicit format: CSVForma
 
   def close(): Unit = {
     lineReader.close()
-    reader.close()
   }
-
 }
 
 object CSVReader {
 
   val DEFAULT_ENCODING = "UTF-8"
 
-  def open(reader: Reader)(implicit format: CSVFormat): CSVReader =
-    new CSVReader(reader)(format)
+  def open(source: Source)(implicit format: CSVFormat): CSVReader = new CSVReader(new SourceLineReader(source))
+
+  def open(reader: Reader)(implicit format: CSVFormat): CSVReader = new CSVReader(new FileLineReader(reader))
 
   def open(file: File)(implicit format: CSVFormat): CSVReader = {
     open(file, this.DEFAULT_ENCODING)(format)
@@ -125,8 +126,7 @@ object CSVReader {
   def open(file: File, encoding: String)(implicit format: CSVFormat): CSVReader = {
     val fin = new FileInputStream(file)
     try {
-      val reader = new InputStreamReader(fin, encoding)
-      open(reader)(format)
+      open(Source.fromInputStream(fin,encoding))
     } catch {
       case e: UnsupportedEncodingException => fin.close(); throw e
     }
