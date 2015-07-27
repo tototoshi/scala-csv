@@ -6,24 +6,24 @@ import java.io.IOException;
 
 public class SourceLineReader implements LineReader {
 
-    private Source reader;
+    private Source source;
 
-    public SourceLineReader(Source reader) {
-        this.reader = reader;
+    public SourceLineReader(Source source) {
+        this.source = source;
     }
 
     @Override
     public String readLineWithTerminator() throws IOException {
         StringBuilder sb = new StringBuilder();
         while(true) {
-            if (!reader.hasNext()) {
+            if (!source.hasNext()) {
                 if (sb.length() == 0) {
                     return null;
                 } else {
                     break;
                 }
             }
-            int c = reader.next();
+            int c = source.next();
 
             sb.append((char) c);
 
@@ -35,10 +35,10 @@ public class SourceLineReader implements LineReader {
             }
 
             if (c == '\r') {
-                if (!reader.hasNext()) {
+                if (!source.hasNext()) {
                     break;
                 }
-                c = reader.next();
+                c = source.next();
                 sb.append(c);
                 if (c == '\n') {
                     break;
@@ -50,6 +50,6 @@ public class SourceLineReader implements LineReader {
 
     @Override
     public void close() throws IOException {
-        reader.close();
+        source.close();
     }
 }

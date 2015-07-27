@@ -7,8 +7,10 @@ import java.io.Reader;
 public class ReaderLineReader implements LineReader {
 
     private BufferedReader bufferedReader;
+    private Reader baseReader;
 
     public ReaderLineReader(Reader reader) {
+        this.baseReader = reader;
         this.bufferedReader = new BufferedReader(reader);
     }
 
@@ -59,5 +61,6 @@ public class ReaderLineReader implements LineReader {
 
     public void close() throws IOException {
         bufferedReader.close();
+        baseReader.close();
     }
 }
