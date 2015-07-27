@@ -94,7 +94,7 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
   }
 
   def allWithHeaders(): List[Map[String, String]] = {
-    allWithOrderedHeaders()._2
+    allWithOrderedHeaders._2
   }
 
   def allWithOrderedHeaders(): (List[String], List[Map[String, String]]) = {
@@ -126,7 +126,7 @@ object CSVReader {
   def open(file: File, encoding: String)(implicit format: CSVFormat): CSVReader = {
     val fin = new FileInputStream(file)
     try {
-      open(Source.fromInputStream(fin, encoding))
+      open(new InputStreamReader(fin, encoding))(format)
     } catch {
       case e: UnsupportedEncodingException => fin.close(); throw e
     }
