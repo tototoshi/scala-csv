@@ -8,6 +8,14 @@
 libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.2.2"
 ```
 
+or snapshot version
+
+```scala
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.0-SNAPSHOT"
+```
+
 ## Example
 
 ### import
