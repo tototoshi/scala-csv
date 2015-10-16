@@ -79,7 +79,7 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
     }
 
     describe("#writeAll") {
-      it("write all lines to file") {
+      it("write all lines to file using default separator") {
         using(CSVWriter.open(new FileWriter("test.csv"))) { writer =>
           writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
         }
@@ -87,6 +87,18 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
         val expected = """|a,b,c
         |d,e,f
         |""".stripMargin
+
+        readFileAsString("test.csv") should be(expected)
+      }
+
+      it("write all lines to file using provided separator") {
+        using(CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+          writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")), "@")
+        }
+
+        val expected = """|a@b@c
+                         |d@e@f
+                         |""".stripMargin
 
         readFileAsString("test.csv") should be(expected)
       }
@@ -115,7 +127,7 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
     }
 
     describe("#writeNext") {
-      it("write single line to file") {
+      it("write single line to file using default separator") {
         using(CSVWriter.open(new FileWriter("test.csv"))) { writer =>
           writer.writeRow(List("a", "b", "c"))
           writer.writeRow(List("d", "e", "f"))
@@ -127,6 +139,20 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
 
         readFileAsString("test.csv") should be(expected)
       }
+
+      it("write single line to file using provided separator") {
+        using(CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+          writer.writeRow(List("a", "b", "c"), "@")
+          writer.writeRow(List("d", "e", "f"), "@")
+        }
+
+        val expected = """|a@b@c
+                         |d@e@f
+                         |""".stripMargin
+
+        readFileAsString("test.csv") should be(expected)
+      }
+
       it("write single line with null fieldsto file") {
         using(CSVWriter.open(new FileWriter("test.csv"))) { writer =>
           writer.writeRow(List("a", null, "c"))

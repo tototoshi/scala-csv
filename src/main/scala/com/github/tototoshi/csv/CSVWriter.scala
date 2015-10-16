@@ -26,13 +26,13 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
 
   def flush(): Unit = printWriter.flush()
 
-  private def writeNext(fields: Seq[Any]): Unit = {
+  private def writeNext(fields: Seq[Any], separator: String): Unit = {
 
     def shouldQuote(field: String, quoting: Quoting): Boolean =
       quoting match {
         case QUOTE_ALL => true
         case QUOTE_MINIMAL => {
-          List("\r", "\n", format.quoteChar.toString, format.delimiter.toString).exists(field.contains)
+          List("\r", "\n", format.quoteChar.toString, separator).exists(field.contains)
         }
         case QUOTE_NONE => false
         case QUOTE_NONNUMERIC => {
@@ -69,19 +69,19 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
       quote _ compose escape compose show
     }
 
-    printWriter.print(fields.map(renderField).mkString(format.delimiter.toString))
+    printWriter.print(fields.map(renderField).mkString(separator))
     printWriter.print(format.lineTerminator)
   }
 
-  def writeAll(allLines: Seq[Seq[Any]]): Unit = {
-    allLines.foreach(line => writeNext(line))
+  def writeAll(allLines: Seq[Seq[Any]], separator: String = format.delimiter.toString): Unit = {
+    allLines.foreach(line => writeNext(line, separator))
     if (printWriter.checkError) {
       throw new java.io.IOException("Failed to write")
     }
   }
 
-  def writeRow(fields: Seq[Any]): Unit = {
-    writeNext(fields)
+  def writeRow(fields: Seq[Any], separator: String = format.delimiter.toString): Unit = {
+    writeNext(fields, separator)
     if (printWriter.checkError) {
       throw new java.io.IOException("Failed to write")
     }
