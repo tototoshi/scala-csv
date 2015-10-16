@@ -1,6 +1,7 @@
 # scala-csv
 
 [![Build Status](https://travis-ci.org/tototoshi/scala-csv.png)](https://travis-ci.org/tototoshi/scala-csv)
+[![Codacy Badge](https://api.codacy.com/project/badge/c543938794304275ac4792e1561bcebc)](https://www.codacy.com/app/pedrorijo91/scala-csv)
 
 ## build.sbt
 
