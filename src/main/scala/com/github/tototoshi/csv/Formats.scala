@@ -23,7 +23,7 @@ trait DefaultCSVFormat extends CSVFormat {
 
   val escapeChar: Char = '"'
 
-  val lineTerminator: String = "\r\n"
+  val lineTerminator: String = System.lineSeparator
 
   val quoting: Quoting = QUOTE_MINIMAL
 
@@ -39,7 +39,7 @@ trait TSVFormat extends CSVFormat {
 
   val escapeChar: Char = '\\'
 
-  val lineTerminator: String = "\r\n"
+  val lineTerminator: String = System.lineSeparator
 
   val quoting: Quoting = QUOTE_NONE
 
