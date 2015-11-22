@@ -236,13 +236,14 @@ object CSVParser {
           c match {
             case `escapeChar` if escapeChar != quoteChar => {
               if (pos + 1 < buflen) {
-                if (buf(pos + 1) == escapeChar
-                  || buf(pos + 1) == quoteChar) {
+                if (buf(pos + 1) == quoteChar) {
                   field += buf(pos + 1)
                   state = QuotedField
                   pos += 2
                 } else {
-                  throw new MalformedCSVException(buf.mkString)
+                  field += c
+                  state = QuotedField
+                  pos += 1
                 }
               } else {
                 throw new MalformedCSVException(buf.mkString)
