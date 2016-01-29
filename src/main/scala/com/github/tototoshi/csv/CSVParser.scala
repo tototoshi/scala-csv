@@ -35,9 +35,6 @@ object CSVParser {
    *
    * scala> com.github.tototoshi.csv.CSVParser.parse("\"a\",\"b\",\"c\"", '\\', ',', '"')
    * res1: Option[List[String]] = Some(List(a, b, c))
-   *
-   * scala> com.github.tototoshi.csv.CSVParser.parse("a,b,c,\"\"", '\\', ',', '"')
-   * res2: Option[List[String]] = Some(List(a, b, c, ))
    * }}}
    */
   def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char): Option[List[String]] = {
