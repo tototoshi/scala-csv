@@ -126,7 +126,7 @@ class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
           res = res ++ fields
         }
       }
-      res should be(List("field1", "field2", "field3 says, \"escaped with backslash\""))
+      res should be(List("field1", "field2", "field3 says, \"escaped with backslash\"", "\\field4", "\\field5"))
     }
 
     it("read simple CSV file with empty quoted fields") {

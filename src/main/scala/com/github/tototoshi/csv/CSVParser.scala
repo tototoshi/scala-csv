@@ -89,8 +89,7 @@ object CSVParser {
               pos += 1
             }
             case `escapeChar` => {
-              if (pos + 1 < buflen
-                && (buf(pos + 1) == escapeChar || buf(pos + 1) == delimiter)) {
+              if (pos + 1 < buflen) {
                 field += buf(pos + 1)
                 state = Field
                 pos += 2
@@ -130,14 +129,9 @@ object CSVParser {
           c match {
             case `escapeChar` => {
               if (pos + 1 < buflen) {
-                if (buf(pos + 1) == escapeChar
-                  || buf(pos + 1) == delimiter) {
-                  field += buf(pos + 1)
-                  state = Field
-                  pos += 2
-                } else {
-                  throw new MalformedCSVException(buf.mkString)
-                }
+                field += buf(pos + 1)
+                state = Field
+                pos += 2
               } else {
                 state = QuoteEnd
                 pos += 1
@@ -175,14 +169,9 @@ object CSVParser {
           c match {
             case `escapeChar` if escapeChar != quoteChar => {
               if (pos + 1 < buflen) {
-                if (buf(pos + 1) == escapeChar
-                  || buf(pos + 1) == quoteChar) {
-                  field += buf(pos + 1)
-                  state = QuotedField
-                  pos += 2
-                } else {
-                  throw new MalformedCSVException(buf.mkString)
-                }
+                field += buf(pos + 1)
+                state = QuotedField
+                pos += 2
               } else {
                 throw new MalformedCSVException(buf.mkString)
               }
@@ -236,14 +225,9 @@ object CSVParser {
           c match {
             case `escapeChar` if escapeChar != quoteChar => {
               if (pos + 1 < buflen) {
-                if (buf(pos + 1) == escapeChar
-                  || buf(pos + 1) == quoteChar) {
-                  field += buf(pos + 1)
-                  state = QuotedField
-                  pos += 2
-                } else {
-                  throw new MalformedCSVException(buf.mkString)
-                }
+                field += buf(pos + 1)
+                state = QuotedField
+                pos += 2
               } else {
                 throw new MalformedCSVException(buf.mkString)
               }
