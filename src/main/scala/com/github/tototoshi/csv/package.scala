@@ -18,6 +18,6 @@ package com.github.tototoshi
 
 package object csv {
 
-  implicit val defaultCSVFormat = new DefaultCSVFormat {}
+  implicit val defaultCSVFormat: CSVFormat = new DefaultCSVFormat {}
 
 }
