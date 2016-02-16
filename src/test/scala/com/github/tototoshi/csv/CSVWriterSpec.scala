@@ -3,6 +3,7 @@ package com.github.tototoshi.csv
 import java.io.{ FileOutputStream, UnsupportedEncodingException, FileWriter, File }
 
 import org.scalatest._
+import implicits._
 
 class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with Using {
 
