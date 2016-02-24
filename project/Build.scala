@@ -1,13 +1,12 @@
 import sbt._
 import Keys._
-import com.typesafe.sbt.SbtScalariform.scalariformSettings
 
 object ScalaCSVProject extends Build {
 
   lazy val root = Project (
     id = "scala-csv",
     base = file ("."),
-    settings = Defaults.defaultSettings ++ Seq (
+    settings = Seq (
       name := "scala-csv",
       version := "1.3.0",
       scalaVersion := "2.11.6",
@@ -39,7 +38,7 @@ object ScalaCSVProject extends Build {
       },
       publishArtifact in Test := false,
       pomExtra := _pomExtra
-    ) ++ scalariformSettings
+    )
   )
 
   val _pomExtra =
