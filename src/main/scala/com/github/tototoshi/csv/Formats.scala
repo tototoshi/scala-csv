@@ -29,6 +29,8 @@ trait DefaultCSVFormat extends CSVFormat {
 
   val treatEmptyLineAsNil: Boolean = false
 
+  val lastLineWithLineTerminator: Boolean = true
+
 }
 
 trait TSVFormat extends CSVFormat {
@@ -44,6 +46,8 @@ trait TSVFormat extends CSVFormat {
   val quoting: Quoting = QUOTE_NONE
 
   val treatEmptyLineAsNil: Boolean = false
+
+  val lastLineWithLineTerminator: Boolean = true
 
 }
 
