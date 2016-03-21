@@ -1,14 +1,14 @@
 package com.github.tototoshi.csv
 
-import java.io.{ FileOutputStream, UnsupportedEncodingException, FileWriter, File }
+import java.io.{ File, FileOutputStream, FileWriter, UnsupportedEncodingException }
 
 import org.scalatest._
 
 class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with Using {
 
-  def readFileAsString(file: String) = {
+  def readFileAsString(file: String, endTerminator: String = "\n") = {
     using(io.Source.fromFile(file)) { src =>
-      src.getLines.mkString("", "\n", "\n")
+      src.getLines.mkString(start = "", sep = "\n", end = endTerminator)
     }
   }
 
@@ -17,7 +17,6 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
   }
 
   describe("CSVWriter") {
-
     describe("#open") {
 
       it("should be constructed with OutputStream") {
@@ -303,5 +302,24 @@ class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with
       }
     }
 
+    describe("When lastLineWithLineTerminator is set to false") {
+      it("last line has not line terminator") {
+
+        case class CsvFormatter(override val lastLineWithLineTerminator: Boolean = false) extends DefaultCSVFormat
+        val csvWriter = CSVWriter.open(new File("test.csv"))(CsvFormatter())
+
+        using(csvWriter) { writer =>
+          writer.writeAll(List(
+            List("a", "b", "c"),
+            List("d", "e", "f")
+          ))
+        }
+
+        val expected = """|a,b,c
+                          |d,e,f""".stripMargin
+
+        readFileAsString("test.csv", endTerminator = "") should be(expected)
+      }
+    }
   }
 }

@@ -26,7 +26,7 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
 
   def flush(): Unit = printWriter.flush()
 
-  private def writeNext(fields: Seq[Any]): Unit = {
+  private def writeNext(fields: Seq[Any], writeLineTerminator: Boolean = true): Unit = {
 
     def shouldQuote(field: String, quoting: Quoting): Boolean =
       quoting match {
@@ -70,11 +70,17 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
     }
 
     printWriter.print(fields.map(renderField).mkString(format.delimiter.toString))
-    printWriter.print(format.lineTerminator)
+    if (writeLineTerminator) printWriter.print(format.lineTerminator)
   }
 
   def writeAll(allLines: Seq[Seq[Any]]): Unit = {
-    allLines.foreach(line => writeNext(line))
+    allLines match {
+      case line :: Nil => writeNext(line, writeLineTerminator = format.lastLineWithLineTerminator)
+      case line :: tail =>
+        writeNext(line, writeLineTerminator = true)
+        writeAll(tail)
+    }
+
     if (printWriter.checkError) {
       throw new java.io.IOException("Failed to write")
     }
