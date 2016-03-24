@@ -74,11 +74,12 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
   }
 
   def writeAll(allLines: Seq[Seq[Any]]): Unit = {
-    allLines match {
-      case line :: Nil => writeNext(line, writeLineTerminator = format.lastLineWithLineTerminator)
-      case line :: tail =>
+    val totalLines = allLines.size - 1
+    for ((line, lineNumber) <- allLines.zipWithIndex) {
+      if (lineNumber < totalLines)
         writeNext(line, writeLineTerminator = true)
-        writeAll(tail)
+      else
+        writeNext(line, writeLineTerminator = format.lastLineWithLineTerminator)
     }
 
     if (printWriter.checkError) {
