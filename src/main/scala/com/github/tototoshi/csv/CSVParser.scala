@@ -45,6 +45,10 @@ object CSVParser {
     var pos = 0
     val buflen = buf.length
 
+    if (buf.length > 0 && buf(0) == '\uFEFF') {
+      pos += 1
+    }
+
     while (state != End && pos < buflen) {
       val c = buf(pos)
       (state: @switch) match {
