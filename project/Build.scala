@@ -14,7 +14,8 @@ object ScalaCSVProject extends Build {
       organization := "com.github.tototoshi",
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "2.2.4" % "test",
-        "org.scalacheck" %% "scalacheck" % "1.11.4" % "test"
+        "org.scalacheck" %% "scalacheck" % "1.11.4" % "test",
+        "com.storm-enroute" %% "scalameter" % "0.7"
       ),
       scalacOptions ++= Seq(
         "-deprecation",
@@ -24,6 +25,11 @@ object ScalaCSVProject extends Build {
         if(scalaVersion.value.startsWith("2.11")) Seq("-Ywarn-unused")
         else Nil
       },
+      testFrameworks += new TestFramework(
+        "org.scalameter.ScalaMeterFramework"
+      ),
+      parallelExecution in Test := false,
+      logBuffered := false,
       javacOptions in compile ++= Seq("-target", "6", "-source", "6", "-Xlint"),
       initialCommands := """
                            |import com.github.tototoshi.csv._
