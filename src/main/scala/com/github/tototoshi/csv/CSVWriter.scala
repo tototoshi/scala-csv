@@ -17,7 +17,7 @@
 package com.github.tototoshi.csv
 
 import java.io._
-import java.util.regex.{Matcher, Pattern}
+import java.util.regex.{ Matcher, Pattern }
 
 class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) extends Closeable with Flushable {
 
@@ -79,7 +79,7 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
       if (shouldQuote(field, format.quoting)) {
         printWriter.print(format.quoteChar)
         var i = 0
-        while ( i < field.length ) {
+        while (i < field.length) {
           val char = field(i)
           if (char == format.quoteChar || (format.quoting == QUOTE_NONE && char == format.delimiter)) {
             printWriter.print(format.quoteChar)
@@ -88,8 +88,7 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
           i += 1
         }
         printWriter.print(format.quoteChar)
-      }
-      else {
+      } else {
         printWriter.print(field)
       }
 
