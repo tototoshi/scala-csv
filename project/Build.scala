@@ -15,7 +15,7 @@ object ScalaCSVProject extends Build {
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "2.2.4" % "test",
         "org.scalacheck" %% "scalacheck" % "1.11.4" % "test",
-        "com.storm-enroute" %% "scalameter" % "0.7"
+        "com.storm-enroute" %% "scalameter" % "0.7" % "test"
       ),
       scalacOptions ++= Seq(
         "-deprecation",
