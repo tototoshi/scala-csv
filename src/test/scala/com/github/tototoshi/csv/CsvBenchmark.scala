@@ -11,8 +11,8 @@ object CsvBenchmark extends Bench.LocalTime {
   private[this] val quotings = {
     val quotings = Seq(QUOTE_ALL, QUOTE_MINIMAL, QUOTE_NONE, QUOTE_NONNUMERIC)
 
-    implicit val pickler = new Pickler[Product with Serializable with Quoting] {
-      override def pickle(x: Product with Serializable with Quoting): Array[Byte] = {
+    implicit val pickler = new Pickler[Quoting] {
+      override def pickle(x: Quoting): Array[Byte] = {
         x match {
           case QUOTE_ALL => Array[Byte](0)
           case QUOTE_MINIMAL => Array[Byte](1)
@@ -21,7 +21,7 @@ object CsvBenchmark extends Bench.LocalTime {
         }
       }
 
-      override def unpickle(a: Array[Byte], from: Int): (Product with Serializable with Quoting, Int) = {
+      override def unpickle(a: Array[Byte], from: Int): (Quoting, Int) = {
         val quoting = a(0) match {
           case 0 => QUOTE_ALL
           case 1 => QUOTE_MINIMAL
