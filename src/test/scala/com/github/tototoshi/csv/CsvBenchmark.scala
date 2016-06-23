@@ -3,7 +3,6 @@ package com.github.tototoshi.csv
 import org.scalameter.api._
 import org.scalameter.picklers.Pickler
 
-
 object CsvBenchmark extends Bench.LocalTime {
 
   val row = Seq("a", "1", "\"hey\"", "world")

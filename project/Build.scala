@@ -11,6 +11,12 @@ object ScalaCSVProject extends Build {
       version := "1.3.2",
       scalaVersion := "2.11.8",
       crossScalaVersions := Seq("2.11.8", "2.10.6"),
+      TaskKey[Unit]("checkScalariform") := {
+        val diff = "git diff".!!
+        if(diff.nonEmpty){
+          sys.error("Working directory is dirty!\n" + diff)
+        }
+      },
       organization := "com.github.tototoshi",
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "2.2.4" % "test",
