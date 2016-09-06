@@ -8,3 +8,7 @@ jdk:
 script:
   - sbt ++${TRAVIS_SCALA_VERSION} test:compile checkScalariform
   - sbt ++${TRAVIS_SCALA_VERSION} test
+matrix:
+  include:
+  - scala: 2.12.0-M5
+    jdk: oraclejdk8
