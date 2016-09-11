@@ -4,7 +4,7 @@ import java.io.{ FileOutputStream, UnsupportedEncodingException, FileWriter, Fil
 
 import org.scalatest._
 
-class CSVWriterSpec extends FunSpec with ShouldMatchers with BeforeAndAfter with Using {
+class CSVWriterSpec extends FunSpec with Matchers with BeforeAndAfter with Using {
 
   def readFileAsString(file: String) = {
     using(io.Source.fromFile(file)) { src =>

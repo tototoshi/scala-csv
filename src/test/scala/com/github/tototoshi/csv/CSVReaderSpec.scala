@@ -4,7 +4,7 @@ import java.io.{ UnsupportedEncodingException, FileReader, File, StringReader }
 
 import org.scalatest._
 
-class CSVReaderSpec extends FunSpec with ShouldMatchers with Using {
+class CSVReaderSpec extends FunSpec with Matchers with Using {
 
   def fixture = new {
 

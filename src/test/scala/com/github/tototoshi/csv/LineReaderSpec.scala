@@ -6,7 +6,7 @@ import org.scalatest._
 
 import scala.io.Source
 
-class LineReaderSpec extends FunSpec with ShouldMatchers with Using {
+class LineReaderSpec extends FunSpec with Matchers with Using {
 
   describe("ReaderLineReader") {
 
