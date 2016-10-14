@@ -10,7 +10,7 @@ object ScalaCSVProject extends Build {
       name := "scala-csv",
       version := "1.3.3",
       scalaVersion := "2.11.8",
-      crossScalaVersions := Seq("2.11.8", "2.10.6", "2.12.0-M5"),
+      crossScalaVersions := Seq("2.11.8", "2.10.6", "2.12.0-RC1"),
       TaskKey[Unit]("checkScalariform") := {
         val diff = "git diff".!!
         if(diff.nonEmpty){
