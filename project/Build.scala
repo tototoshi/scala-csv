@@ -10,7 +10,7 @@ object ScalaCSVProject extends Build {
       name := "scala-csv",
       version := "1.3.3",
       scalaVersion := "2.11.8",
-      crossScalaVersions := Seq("2.11.8", "2.10.6", "2.12.0-RC1"),
+      crossScalaVersions := Seq("2.11.8", "2.10.6", "2.12.0"),
       TaskKey[Unit]("checkScalariform") := {
         val diff = "git diff".!!
         if(diff.nonEmpty){
@@ -20,7 +20,7 @@ object ScalaCSVProject extends Build {
       organization := "com.github.tototoshi",
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "3.0.0" % "test",
-        "org.scalacheck" %% "scalacheck" % "1.13.2" % "test"
+        "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
       ),
       libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
         case Some((2, v)) if v <= 11 =>
