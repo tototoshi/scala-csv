@@ -8,7 +8,7 @@ object ScalaCSVProject extends Build {
     base = file ("."),
     settings = Seq (
       name := "scala-csv",
-      version := "1.3.3",
+      version := "1.3.4",
       scalaVersion := "2.11.8",
       crossScalaVersions := Seq("2.11.8", "2.10.6", "2.12.0"),
       TaskKey[Unit]("checkScalariform") := {
