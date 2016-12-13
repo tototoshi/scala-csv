@@ -283,14 +283,11 @@ object CSVParser {
         None
       }
       case _ => {
-        if (!field.isEmpty) {
-          // When no crlf at end of file
-          state match {
-            case Field | QuoteEnd => {
-              fields :+= field.toString
-            }
-            case _ => {
-            }
+        state match {
+          case Field | QuoteEnd => {
+            fields :+= field.toString
+          }
+          case _ => {
           }
         }
         Some(fields.toList)
