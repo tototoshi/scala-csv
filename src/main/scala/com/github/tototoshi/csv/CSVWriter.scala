@@ -17,7 +17,6 @@
 package com.github.tototoshi.csv
 
 import java.io._
-import java.util.regex.{ Matcher, Pattern }
 
 class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) extends Closeable with Flushable {
 
