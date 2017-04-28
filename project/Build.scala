@@ -8,9 +8,9 @@ object ScalaCSVProject extends Build {
     base = file ("."),
     settings = Seq (
       name := "scala-csv",
-      version := "1.3.4",
-      scalaVersion := "2.11.8",
-      crossScalaVersions := Seq("2.11.8", "2.10.6", "2.12.0"),
+      version := "1.3.5-SNAPSHOT",
+      scalaVersion := "2.11.11",
+      crossScalaVersions := Seq("2.11.11", "2.10.6", "2.12.2"),
       TaskKey[Unit]("checkScalariform") := {
         val diff = "git diff".!!
         if(diff.nonEmpty){
@@ -19,12 +19,12 @@ object ScalaCSVProject extends Build {
       },
       organization := "com.github.tototoshi",
       libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "3.0.0" % "test",
-        "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
+        "org.scalatest" %% "scalatest" % "3.0.3" % "test",
+        "org.scalacheck" %% "scalacheck" % "1.13.5" % "test"
       ),
       libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
-        case Some((2, v)) if v <= 11 =>
-          Seq("com.storm-enroute" %% "scalameter" % "0.7" % "test")
+        case Some((2, v)) if v <= 12 =>
+          Seq("com.storm-enroute" %% "scalameter" % "0.8.2" % "test")
       }.toList.flatten,
       scalacOptions ++= Seq(
         "-deprecation",
@@ -36,10 +36,11 @@ object ScalaCSVProject extends Build {
       (sources in Test) := {
         val s = (sources in Test).value
         val exclude = Set("CsvBenchmark.scala")
-        if(scalaVersion.value.startsWith("2.12")) {
-          s.filterNot(f => exclude(f.getName))
-        } else {
-          s
+        CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((2, v)) if v <= 12 =>
+            s
+          case _ =>
+            s.filterNot(f => exclude(f.getName))
         }
       },
       testFrameworks += new TestFramework(
