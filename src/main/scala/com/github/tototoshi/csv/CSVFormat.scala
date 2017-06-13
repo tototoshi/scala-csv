@@ -15,7 +15,7 @@
 */
 package com.github.tototoshi.csv
 
-trait CSVFormat {
+trait CSVFormat extends Serializable {
 
   val delimiter: Char
 
