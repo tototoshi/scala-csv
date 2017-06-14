@@ -54,7 +54,14 @@ object ScalaCSVProject extends Build {
           case Some((2, v)) if v <= 11 =>
             Seq("-target", "6", "-source", "6")
           case _ =>
-            Seq("-target", "8")
+            try {
+              scala.util.Properties.isJavaAtLeast("1.8")
+              Seq("-target", "8")
+            } catch {
+              case _: NumberFormatException =>
+                // if Java9
+                Nil
+            }
         }
       },
       initialCommands := """
