@@ -1,8 +1,8 @@
 package com.github.tototoshi.csv
 
 import java.io.{ UnsupportedEncodingException, FileReader, File, StringReader }
-
 import org.scalatest._
+import java.nio.charset.{ StandardCharsets, Charset }
 
 class CSVReaderSpec extends FunSpec with Matchers with Using {
 
@@ -45,23 +45,14 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
         }
       }
 
-      using(CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", "utf-8")(format)) { reader =>
+      using(CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", StandardCharsets.UTF_8)(format)) { reader =>
         val map = reader.allWithHeaders()
         map(0)("Foo ") should be("a")
       }
     }
 
-    it("should throws UnsupportedEncodingException when unsupprted encoding is specified") {
-      intercept[UnsupportedEncodingException] {
-        using(CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", "unknown")) { reader =>
-          val map = reader.allWithHeaders()
-          map(0)("Foo ") should be("a")
-        }
-      }
-    }
-
     it("should be able to read an empty line") {
-      using(CSVReader.open("src/test/resources/has-empty-line.csv", "utf-8")) { reader =>
+      using(CSVReader.open("src/test/resources/has-empty-line.csv", StandardCharsets.UTF_8)) { reader =>
         val lines = reader.all()
         lines(1) should be(List(""))
       }
@@ -69,7 +60,7 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       val format = new DefaultCSVFormat {
         override val treatEmptyLineAsNil = true
       }
-      using(CSVReader.open("src/test/resources/has-empty-line.csv", "utf-8")(format)) { reader =>
+      using(CSVReader.open("src/test/resources/has-empty-line.csv", StandardCharsets.UTF_8)(format)) { reader =>
         val lines = reader.all()
         lines(1) should be(Nil)
       }

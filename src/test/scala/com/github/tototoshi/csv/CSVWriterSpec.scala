@@ -1,8 +1,8 @@
 package com.github.tototoshi.csv
 
-import java.io.{ FileOutputStream, UnsupportedEncodingException, FileWriter, File }
-
+import java.io.{ FileOutputStream, FileWriter, File }
 import org.scalatest._
+import java.nio.charset.{ StandardCharsets, Charset }
 
 class CSVWriterSpec extends FunSpec with Matchers with BeforeAndAfter with Using {
 
@@ -27,7 +27,7 @@ class CSVWriterSpec extends FunSpec with Matchers with BeforeAndAfter with Using
       }
 
       it("should be constructed with OutputStream and encoding") {
-        using(CSVWriter.open(new FileOutputStream("test.csv"), "UTF-8")) { writer =>
+        using(CSVWriter.open(new FileOutputStream("test.csv"), StandardCharsets.UTF_8)) { writer =>
           writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
         }
       }
@@ -45,34 +45,26 @@ class CSVWriterSpec extends FunSpec with Matchers with BeforeAndAfter with Using
       }
 
       it("should be constructed with filename string and encoding") {
-        using(CSVWriter.open("test.csv", "utf-8")) { writer =>
+        using(CSVWriter.open("test.csv", StandardCharsets.UTF_8)) { writer =>
           writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
         }
       }
 
       it("should be constructed with filename string, append flag and encoding") {
-        using(CSVWriter.open("test.csv", false, "utf-8")) { writer =>
+        using(CSVWriter.open("test.csv", false, StandardCharsets.UTF_8)) { writer =>
           writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
         }
       }
 
       it("should be constructed with file and encoding") {
-        using(CSVWriter.open(new File("test.csv"), "utf-8")) { writer =>
+        using(CSVWriter.open(new File("test.csv"), StandardCharsets.UTF_8)) { writer =>
           writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
         }
       }
 
       it("should be constructed with file, append flag and encoding") {
-        using(CSVWriter.open(new File("test.csv"), false, "utf-8")) { writer =>
+        using(CSVWriter.open(new File("test.csv"), false, StandardCharsets.UTF_8)) { writer =>
           writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
-        }
-      }
-
-      it("should throws UnsupportedEncodingException when unsupprted encoding is specified") {
-        intercept[UnsupportedEncodingException] {
-          using(CSVWriter.open(new File("test.csv"), false, "unknown")) { writer =>
-            writer.writeAll(List(List("a", "b", "c"), List("d", "e", "f")))
-          }
         }
       }
 
