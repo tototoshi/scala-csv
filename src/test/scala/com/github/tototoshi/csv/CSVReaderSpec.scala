@@ -51,6 +51,15 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       }
     }
 
+    it("should throws UnsupportedEncodingException when unsupprted encoding is specified") {
+      intercept[UnsupportedEncodingException] {
+        using(CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", "unknown")) { reader =>
+          val map = reader.allWithHeaders()
+          map(0)("Foo ") should be("a")
+        }
+      }
+    }
+
     it("should be able to read an empty line") {
       using(CSVReader.open("src/test/resources/has-empty-line.csv", StandardCharsets.UTF_8)) { reader =>
         val lines = reader.all()
