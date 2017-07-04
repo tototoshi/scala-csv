@@ -120,6 +120,8 @@ object CSVWriter {
 
   def open(file: File)(implicit format: CSVFormat): CSVWriter = open(file, false, StandardCharsets.UTF_8)(format)
 
+  def open(file: File, encoding: String)(implicit format: CSVFormat): CSVWriter = open(file, false, Charset.forName(encoding))(format)
+
   def open(file: File, encoding: Charset)(implicit format: CSVFormat): CSVWriter = open(file, false, encoding)(format)
 
   def open(file: File, append: Boolean)(implicit format: CSVFormat): CSVWriter = open(file, append, StandardCharsets.UTF_8)(format)
