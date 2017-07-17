@@ -27,6 +27,7 @@ object CSVParser {
   private final val QuoteStart = 4
   private final val QuoteEnd = 5
   private final val QuotedField = 6
+  private final val SurroundingSpace = 7
 
   /**
    * {{{
@@ -37,7 +38,7 @@ object CSVParser {
    * res1: Option[List[String]] = Some(List(a, b, c))
    * }}}
    */
-  def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char): Option[List[String]] = {
+  def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char, ignoreSurroundingSpace: Boolean): Option[List[String]] = {
     val buf: Array[Char] = input.toCharArray
     var fields: Vector[String] = Vector()
     var field = new StringBuilder
@@ -123,6 +124,54 @@ object CSVParser {
               state = End
               pos += 1
             }
+            case '\u0020' if ignoreSurroundingSpace => {
+              state = SurroundingSpace
+              pos += 1
+            }
+            case x => {
+              field += x
+              state = Field
+              pos += 1
+            }
+          }
+        }
+        case SurroundingSpace => {
+          c match {
+            case `quoteChar` => {
+              state = QuoteStart
+              pos += 1
+            }
+            case `escapeChar` => {
+              if (pos + 1 < buflen
+                && (buf(pos + 1) == escapeChar || buf(pos + 1) == delimiter)) {
+                field += buf(pos + 1)
+                state = Field
+                pos += 2
+              } else {
+                throw new MalformedCSVException(buf.mkString)
+              }
+            }
+            case `delimiter` => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = Delimiter
+              pos += 1
+            }
+            case '\n' | '\u2028' | '\u2029' | '\u0085' => {
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
+            case '\r' => {
+              if (pos + 1 < buflen && buf(1) == '\n') {
+                pos += 1
+              }
+              fields :+= field.toString
+              field = new StringBuilder
+              state = End
+              pos += 1
+            }
             case x => {
               field += x
               state = Field
@@ -166,6 +215,10 @@ object CSVParser {
               fields :+= field.toString
               field = new StringBuilder
               state = End
+              pos += 1
+            }
+            case '\u0020' if ignoreSurroundingSpace && pos + 1 < buflen && buf(pos + 1) == delimiter => {
+              state = SurroundingSpace
               pos += 1
             }
             case x => {
@@ -229,6 +282,10 @@ object CSVParser {
               fields :+= field.toString
               field = new StringBuilder
               state = End
+              pos += 1
+            }
+            case '\u0020' if ignoreSurroundingSpace && pos + 1 < buflen && buf(pos + 1) == delimiter => {
+              state = SurroundingSpace
               pos += 1
             }
             case _ => {
@@ -302,7 +359,7 @@ object CSVParser {
 class CSVParser(format: CSVFormat) {
 
   def parseLine(input: String): Option[List[String]] = {
-    val parsedResult = CSVParser.parse(input, format.escapeChar, format.delimiter, format.quoteChar)
+    val parsedResult = CSVParser.parse(input, format.escapeChar, format.delimiter, format.quoteChar, format.ignoreSurroundingSpaces)
     if (parsedResult == Some(List("")) && format.treatEmptyLineAsNil) Some(Nil)
     else parsedResult
   }

@@ -29,4 +29,6 @@ trait CSVFormat {
 
   val treatEmptyLineAsNil: Boolean
 
+  val ignoreSurroundingSpaces: Boolean
+
 }
