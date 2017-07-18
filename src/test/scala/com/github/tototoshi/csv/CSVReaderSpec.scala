@@ -190,6 +190,21 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       res(1) should be(List("d", "e", "f"))
     }
 
+    it("should read a file has surrounding space with CSVFormat ignore surrounding spaces") {
+      implicit object format extends DefaultCSVFormat {
+        override val ignoreSurroundingSpaces: Boolean = true
+      }
+      var res: List[Seq[String]] = Nil
+      using(CSVReader.open(new FileReader("src/test/resources/has-surrounding-space.csv"))(format)) { reader =>
+        reader.foreach { fields =>
+          res = res ::: fields :: Nil
+        }
+      }
+      res(0) should be(List("aa", "bb,cc", "dd"))
+      res(1) should be(List("aa", "bb,cc", "dd"))
+      res(2) should be(List("aa", "bb , cc", "dd"))
+    }
+
     it("has #toStream") {
       using(CSVReader.open(new File("src/test/resources/simple.csv"))) { reader =>
         val stream = reader.toStream
