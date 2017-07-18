@@ -20,10 +20,6 @@ matrix:
     sudo: required
     scala: 2.12.2
     jdk: oraclejdk9
-    addons:
-      apt:
-        packages:
-        - oracle-java9-installer
     before_install:
     - cd ~
     - JDK9_URL=`curl http://jdk.java.net/9/ | grep "lin64JDK" | grep "tar.gz\"" | sed -e "s/\"/ /g" | awk '{print $5}'`
