@@ -15,6 +15,11 @@
 */
 package com.github.tototoshi.csv
 
+import scala.annotation.implicitNotFound
+
+@implicitNotFound(
+  "Cannot find implicit instance of com.github.tototoshi.csv.CSVFormat. Create your own, or import com.github.tototoshi.csv.implicits._"
+)
 trait CSVFormat {
 
   val delimiter: Char

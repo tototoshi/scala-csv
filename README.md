@@ -14,6 +14,7 @@ libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.4"
 
 ```scala
 scala> import com.github.tototoshi.csv._
+scala> import implicits._ // for a default CSVFormat instance
 ```
 
 ### Reading example
