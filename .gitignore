@@ -1,5 +1,32 @@
+#Folders
 target/
-.ensime*
-publish.sbt
-.idea
+bin/
+build/
+
+
+# Worksheets (Eclipse or IntelliJ)
+*.sc
+
+# Eclipse
+.cache
+.classpath
+.project
+.scala_dependencies
+.settings
+.target/
+.worksheet/
+
+# IntelliJ
+.idea/
 .idea_modules
+
+# ENSIME
+.ensime*
+.ensime_lucene/
+
+
+# Specific Files
+publish.sbt
+
+
+
