@@ -60,18 +60,49 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       }
     }
 
-    it("should be able to read an empty line") {
-      using(CSVReader.open("src/test/resources/has-empty-line.csv", "utf-8")) { reader =>
-        val lines = reader.all()
-        lines(1) should be(List(""))
+    describe("#emptyLines") {
+      it("should be able to read an empty line") {
+        using(CSVReader.open("src/test/resources/has-empty-line.csv", "utf-8")) { reader =>
+          val lines = reader.all()
+          lines(1) should be(List(""))
+        }
       }
 
-      val format = new DefaultCSVFormat {
-        override val treatEmptyLineAsNil = true
+      it("should treat empty line as Nil") {
+        val format = new DefaultCSVFormat {
+          override val treatEmptyLineAsNil = true
+        }
+        using(CSVReader.open("src/test/resources/has-empty-line.csv", "utf-8")(format)) { reader =>
+          val lines = reader.all()
+          lines(1) should be(Nil)
+        }
       }
-      using(CSVReader.open("src/test/resources/has-empty-line.csv", "utf-8")(format)) { reader =>
-        val lines = reader.all()
-        lines(1) should be(Nil)
+
+      it("should be able to read empty field with line feed") {
+        val csvString = "\"\"\r\n"
+        var res: List[String] = Nil
+        using(CSVReader.open(new StringReader(csvString))) { reader =>
+          val lines = reader.all()
+          lines(0) should be(List(""))
+        }
+      }
+
+      it("should be able to read empty field without line feed") {
+        val csvString = "\"\""
+        var res: List[String] = Nil
+        using(CSVReader.open(new StringReader(csvString))) { reader =>
+          val lines = reader.all()
+          lines(0) should be(List(""))
+        }
+      }
+
+      it("should be able to read empty last field without line feed") {
+        val csvString = "a,b,c,\"\",d,\"\""
+        var res: List[String] = Nil
+        using(CSVReader.open(new StringReader(csvString))) { reader =>
+          val lines = reader.all()
+          lines(0) should be(List("a", "b", "c", "", "d", ""))
+        }
       }
     }
 
@@ -89,6 +120,16 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       val csvString = "a,b,c\nd,e,f\n"
       var res: List[String] = Nil
       using(CSVReader.open(new StringReader(csvString))) { reader =>
+        reader foreach { fields =>
+          res = res ++ fields
+        }
+      }
+      res.mkString should be("abcdef")
+    }
+
+    it("read simple CSV from file with CRLF") {
+      var res: List[String] = Nil
+      using(CSVReader.open(new FileReader("src/test/resources/simple-crlf.csv"))) { reader =>
         reader foreach { fields =>
           res = res ++ fields
         }

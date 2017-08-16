@@ -71,7 +71,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf(1) == '\n') {
+              if (pos + 1 < buflen && buf(pos + 1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -115,7 +115,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf(1) == '\n') {
+              if (pos + 1 < buflen && buf(pos + 1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -160,7 +160,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf(1) == '\n') {
+              if (pos + 1 < buflen && buf(pos + 1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -223,7 +223,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf(1) == '\n') {
+              if (pos + 1 < buflen && buf(pos + 1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -283,14 +283,11 @@ object CSVParser {
         None
       }
       case _ => {
-        if (!field.isEmpty) {
-          // When no crlf at end of file
-          state match {
-            case Field | QuoteEnd => {
-              fields :+= field.toString
-            }
-            case _ => {
-            }
+        state match {
+          case Field | QuoteEnd => {
+            fields :+= field.toString
+          }
+          case _ => {
           }
         }
         Some(fields.toList)
