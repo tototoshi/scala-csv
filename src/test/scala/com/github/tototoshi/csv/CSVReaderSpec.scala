@@ -75,6 +75,13 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       }
     }
 
+    it("should be able to read empty fields") {
+      using(CSVReader.open("src/test/resources/has-empty-fields-and-no-eol.csv", "utf-8")) { reader =>
+        val lines = reader.all()
+        lines(0) should be(List("a", "", "b", "", "c", ""))
+      }
+    }
+
     it("read simple CSV from file") {
       var res: List[String] = Nil
       using(CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
