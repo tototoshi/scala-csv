@@ -299,7 +299,7 @@ object CSVParser {
   }
 }
 
-class CSVParser(format: CSVFormat) {
+class CSVParser(format: CSVFormat) extends Serializable {
 
   def parseLine(input: String): Option[List[String]] = {
     val parsedResult = CSVParser.parse(input, format.escapeChar, format.delimiter, format.quoteChar)
