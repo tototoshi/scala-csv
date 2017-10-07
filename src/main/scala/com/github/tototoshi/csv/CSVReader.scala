@@ -25,10 +25,10 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
 
   private val parser = new CSVParser(format)
 
-  def readNext(): Option[List[String]] = {
+  def readNext(): Option[Seq[String]] = {
 
     @scala.annotation.tailrec
-    def parseNext(lineReader: LineReader, leftOver: Option[String] = None): Option[List[String]] = {
+    def parseNext(lineReader: LineReader, leftOver: Option[String] = None): Option[Seq[String]] = {
 
       val nextLine = lineReader.readLineWithTerminator()
       if (nextLine == null) {
@@ -86,18 +86,18 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
 
   def toStreamWithHeaders: Stream[Map[String, String]] = iteratorWithHeaders.toStream
 
-  def toStream: Stream[List[String]] =
+  def toStream: Stream[Seq[String]] =
     Stream.continually(readNext()).takeWhile(_.isDefined).map(_.get)
 
-  def all(): List[List[String]] = {
+  def all(): Seq[Seq[String]] = {
     toStream.toList
   }
 
-  def allWithHeaders(): List[Map[String, String]] = {
+  def allWithHeaders(): Seq[Map[String, String]] = {
     allWithOrderedHeaders._2
   }
 
-  def allWithOrderedHeaders(): (List[String], List[Map[String, String]]) = {
+  def allWithOrderedHeaders(): (Seq[String], Seq[Map[String, String]]) = {
     val headers = readNext()
     val data = headers.map(headers => {
       val lines = all()
