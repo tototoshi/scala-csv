@@ -24,6 +24,7 @@ import scala.io.Source
 class CSVReader protected (private val lineReader: LineReader)(implicit format: CSVFormat) extends Closeable {
 
   private val parser = new CSVParser(format)
+  private var maybeNextIterator: Option[Iterator[Seq[String]]] = None
 
   def readNext(): Option[List[String]] = {
 
@@ -53,7 +54,13 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
 
   def foreach(f: Seq[String] => Unit): Unit = iterator.foreach(f)
 
-  def iterator: Iterator[Seq[String]] = new Iterator[Seq[String]] {
+  def iterator: Iterator[Seq[String]] = {
+    val duplicates = maybeNextIterator.getOrElse(_iterator).duplicate
+    maybeNextIterator = Some(duplicates._2)
+    duplicates._1
+  }
+
+  private def _iterator: Iterator[Seq[String]] = new Iterator[Seq[String]] {
 
     private var _next: Option[Seq[String]] = None
 
