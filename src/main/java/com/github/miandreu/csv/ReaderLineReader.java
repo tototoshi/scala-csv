@@ -3,9 +3,9 @@ package com.github.tototoshi.csv;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-
+import org.apache.commons.logging.Log;
 public class ReaderLineReader implements LineReader {
-
+    private static final Log LOG = LogFactory.getLog(Reduce.class);
     private BufferedReader bufferedReader;
     private Reader baseReader;
 
