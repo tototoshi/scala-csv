@@ -1,8 +1,9 @@
 language: scala
 sudo: false
 scala:
-  - "2.11.11"
-  - "2.10.6"
+  - "2.12.4"
+  - "2.11.12"
+  - "2.10.7"
 jdk:
   - oraclejdk7
   - oraclejdk8
@@ -11,9 +12,9 @@ script:
   - sbt ++${TRAVIS_SCALA_VERSION} test
 matrix:
   include:
-  - scala: 2.12.2
+  - scala: 2.12.4
     jdk: oraclejdk8
   - scala: 2.13.0-M1
     jdk: oraclejdk8
-  - scala: 2.12.2
+  - scala: 2.12.4
     jdk: oraclejdk9
