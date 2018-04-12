@@ -16,7 +16,7 @@ TaskKey[Unit]("checkScalariform") := {
 organization := "com.github.tototoshi"
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.0.3" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.5-M1" % "test",
   "org.scalacheck" %% "scalacheck" % "1.13.5" % "test"
 )
 
