@@ -10,6 +10,16 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
 
   }
 
+  private def read(fileName: String)(implicit format: CSVFormat): List[String] = {
+    var res: List[String] = Nil
+    using(CSVReader.open(fileName)(format)) { reader =>
+      reader foreach { fields =>
+        res = res ++ fields
+      }
+    }
+    res
+  }
+
   describe("CSVReader") {
 
     it("should be constructed with java.io.File") {
@@ -23,13 +33,7 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
     }
 
     it("should be constructed with filename") {
-      var res: List[String] = Nil
-      using(CSVReader.open("src/test/resources/simple.csv")) { reader =>
-        reader foreach { fields =>
-          res = res ++ fields
-        }
-      }
-      res.mkString should be("abcdef")
+      read("src/test/resources/simple.csv").mkString should be("abcdef")
     }
 
     it("should be constructed with CSVFormat") {
@@ -83,13 +87,7 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
     }
 
     it("read simple CSV from file") {
-      var res: List[String] = Nil
-      using(CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
-        reader foreach { fields =>
-          res = res ++ fields
-        }
-      }
-      res.mkString should be("abcdef")
+      read("src/test/resources/simple.csv").mkString should be("abcdef")
     }
 
     it("read simple CSV string") {
@@ -104,56 +102,35 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
     }
 
     it("issue #22") {
-      var res: List[String] = Nil
-      using(CSVReader.open("src/test/resources/issue22.csv")) { reader =>
-        reader foreach { fields =>
-          res = res ++ fields
-        }
-      }
+      read("src/test/resources/issue22.csv")
     }
 
     it("issue #32") {
-      var res: List[String] = Nil
-      using(CSVReader.open("src/test/resources/issue32.csv")(new DefaultCSVFormat {
+      read("src/test/resources/issue32.csv")(new DefaultCSVFormat {
         override val escapeChar: Char = '\\'
-      })) { reader =>
-        reader foreach { fields =>
-          res = res ++ fields
-        }
-      }
+      })
     }
 
     it("should read csv file whose escape char is backslash") {
-      var res: List[String] = Nil
       implicit val format = new DefaultCSVFormat {
         override val escapeChar: Char = '\\'
       }
-      using(CSVReader.open("src/test/resources/backslash-escape.csv")(format)) { reader =>
-        reader foreach { fields =>
-          res = res ++ fields
-        }
-      }
+      val res: List[String] = read("src/test/resources/backslash-escape.csv")(format)
       res should be(List("field1", "field2", "field3 says, \"escaped with backslash\""))
     }
 
     it("read simple CSV file with empty quoted fields") {
-      var res: List[String] = Nil
-      using(CSVReader.open("src/test/resources/issue30.csv")) { reader =>
-        reader foreach { fields =>
-          res = res ++ fields
-        }
-      }
-      res.mkString(",") should be("h1,h2,h3,a1,,a3,b1,b2,b3")
+      read("src/test/resources/issue30.csv").mkString(",") should be("h1,h2,h3,a1,,a3,b1,b2,b3")
     }
 
     it("should read a file starting with BOM") {
-      var res: List[String] = Nil
-      using(CSVReader.open("src/test/resources/bom.csv")) { reader =>
-        reader foreach { fields =>
-          res = res ++ fields
-        }
-      }
-      res should be(List("a", "b", "c"))
+      read("src/test/resources/bom.csv") should be(List("a", "b", "c"))
+    }
+
+    it("should trim unquoted fields when wanted") {
+      read("src/test/resources/trim-unquoted.csv")(new DefaultCSVFormat {
+        override val trimUnquoted: Boolean = true
+      }) should be(List("a", "b", "c", "a", " b", "c "))
     }
 
     it("should be throw exception against malformed input") {

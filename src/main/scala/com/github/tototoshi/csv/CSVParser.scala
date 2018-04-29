@@ -37,7 +37,7 @@ object CSVParser {
    * res1: Option[List[String]] = Some(List(a, b, c))
    * }}}
    */
-  def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char): Option[List[String]] = {
+  def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char, trimUnquoted: Boolean = false): Option[List[String]] = {
     val buf: Array[Char] = input.toCharArray
     var fields: Vector[String] = Vector()
     var field = new StringBuilder
@@ -148,13 +148,13 @@ object CSVParser {
               }
             }
             case `delimiter` => {
-              fields :+= field.toString
+              fields :+= (if (trimUnquoted) field.toString().trim else field.toString())
               field = new StringBuilder
               state = Delimiter
               pos += 1
             }
             case '\n' | '\u2028' | '\u2029' | '\u0085' => {
-              fields :+= field.toString
+              fields :+= (if (trimUnquoted) field.toString().trim else field.toString())
               field = new StringBuilder
               state = End
               pos += 1
@@ -163,7 +163,7 @@ object CSVParser {
               if (pos + 1 < buflen && buf(1) == '\n') {
                 pos += 1
               }
-              fields :+= field.toString
+              fields :+= (if (trimUnquoted) field.toString().trim else field.toString())
               field = new StringBuilder
               state = End
               pos += 1
@@ -300,7 +300,7 @@ object CSVParser {
 class CSVParser(format: CSVFormat) extends Serializable {
 
   def parseLine(input: String): Option[List[String]] = {
-    val parsedResult = CSVParser.parse(input, format.escapeChar, format.delimiter, format.quoteChar)
+    val parsedResult = CSVParser.parse(input, format.escapeChar, format.delimiter, format.quoteChar, format.trimUnquoted)
     if (parsedResult == Some(List("")) && format.treatEmptyLineAsNil) Some(Nil)
     else parsedResult
   }
