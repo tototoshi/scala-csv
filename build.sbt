@@ -104,3 +104,11 @@ pomExtra := <url>http://github.com/tototoshi/scala-csv</url>
     <url>http://tototoshi.github.com</url>
   </developer>
 </developers>
+
+
+unmanagedSourceDirectories in Compile += ((scalaVersion.value, sourceDirectory.value) match {
+  case (v, dir) if v startsWith "2.10" => dir / "main" / "scala-2.12"
+  case (v, dir) if v startsWith "2.11" => dir / "main" / "scala-2.12"
+  case (v, dir) if v startsWith "2.12" => dir / "main" / "scala-2.12"
+  case (v, dir) if v startsWith "2.13" => dir / "main" / "scala-2.13"
+})
