@@ -16,12 +16,9 @@
 
 package com.github.tototoshi.csv
 
-import java.io._
-import java.util.NoSuchElementException
-
 import scala.io.Source
 
-class CSVReader protected (private val lineReader: LineReader)(implicit format: CSVFormat) extends Closeable {
+class CSVRead(private val lineReader: LineReader)(implicit format: CSVFormat) {
 
   private val parser = new CSVParser(format)
 
@@ -111,31 +108,3 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
   }
 }
 
-object CSVReader {
-
-  val DEFAULT_ENCODING = "UTF-8"
-
-  def open(source: Source)(implicit format: CSVFormat): CSVReader = new CSVReader(new SourceLineReader(source))(format)
-
-  def open(reader: Reader)(implicit format: CSVFormat): CSVReader = new CSVReader(new ReaderLineReader(reader))(format)
-
-  def open(file: File)(implicit format: CSVFormat): CSVReader = {
-    open(file, this.DEFAULT_ENCODING)(format)
-  }
-
-  def open(file: File, encoding: String)(implicit format: CSVFormat): CSVReader = {
-    val fin = new FileInputStream(file)
-    try {
-      open(new InputStreamReader(fin, encoding))(format)
-    } catch {
-      case e: UnsupportedEncodingException => fin.close(); throw e
-    }
-  }
-
-  def open(filename: String)(implicit format: CSVFormat): CSVReader =
-    open(new File(filename), this.DEFAULT_ENCODING)(format)
-
-  def open(filename: String, encoding: String)(implicit format: CSVFormat): CSVReader =
-    open(new File(filename), encoding)(format)
-
-}

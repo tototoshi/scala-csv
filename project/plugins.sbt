@@ -1,3 +1,5 @@
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.25")
+
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
 
 addSbtPlugin("com.github.tkawachi" % "sbt-doctest" % "0.3.2")
