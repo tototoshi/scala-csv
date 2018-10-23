@@ -4,7 +4,7 @@ import sbt.Keys.publishMavenStyle
 val Name = "scala-csv"
 val Organization = "com.github.tototoshi"
 val Version = "1.3.6-SNAPSHOT-scalajs"
-val ScalaVersion = "2.11.12"
+val ScalaVersion = "2.12.6"
 val CrossScalaVersion = Seq("2.12.6", "2.11.12", "2.10.7", "2.13.0-M4")
 
 
