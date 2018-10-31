@@ -16,16 +16,9 @@
 
 package com.github.tototoshi.csv
 
-import java.io._
+class CSVWrite(protected val printWriter: PrintWriter)(implicit val format: CSVFormat) {
 
-class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) extends Closeable with Flushable {
-
-  private[this] val printWriter: PrintWriter = new PrintWriter(writer)
   private[this] val quoteMinimalSpecs = Array('\r', '\n', format.quoteChar, format.delimiter)
-
-  def close(): Unit = printWriter.close()
-
-  def flush(): Unit = printWriter.flush()
 
   def writeAll(allLines: Seq[Seq[Any]]): Unit = {
     allLines.foreach(line => writeNext(line))
@@ -112,43 +105,5 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
     if (printWriter.checkError) {
       throw new java.io.IOException("Failed to write")
     }
-  }
-}
-
-object CSVWriter {
-
-  def open(file: File)(implicit format: CSVFormat): CSVWriter = open(file, false, "UTF-8")(format)
-
-  def open(file: File, encoding: String)(implicit format: CSVFormat): CSVWriter = open(file, false, encoding)(format)
-
-  def open(file: File, append: Boolean)(implicit format: CSVFormat): CSVWriter = open(file, append, "UTF-8")(format)
-
-  def open(fos: OutputStream)(implicit format: CSVFormat): CSVWriter = open(fos, "UTF-8")(format)
-
-  def open(file: String)(implicit format: CSVFormat): CSVWriter = open(file, false, "UTF-8")(format)
-
-  def open(file: String, encoding: String)(implicit format: CSVFormat): CSVWriter = open(file, false, encoding)(format)
-
-  def open(file: String, append: Boolean)(implicit format: CSVFormat): CSVWriter = open(file, append, "UTF-8")(format)
-
-  def open(file: String, append: Boolean, encoding: String)(implicit format: CSVFormat): CSVWriter =
-    open(new File(file), append, encoding)(format)
-
-  def open(file: File, append: Boolean, encoding: String)(implicit format: CSVFormat): CSVWriter = {
-    val fos = new FileOutputStream(file, append)
-    open(fos, encoding)(format)
-  }
-
-  def open(fos: OutputStream, encoding: String)(implicit format: CSVFormat): CSVWriter = {
-    try {
-      val writer = new OutputStreamWriter(fos, encoding)
-      open(writer)(format)
-    } catch {
-      case e: UnsupportedEncodingException => fos.close(); throw e
-    }
-  }
-
-  def open(writer: Writer)(implicit format: CSVFormat): CSVWriter = {
-    new CSVWriter(writer)(format)
   }
 }
