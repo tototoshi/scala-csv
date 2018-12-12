@@ -4,7 +4,7 @@ version := "1.3.6-SNAPSHOT"
 
 scalaVersion := "2.11.12"
 
-crossScalaVersions := Seq("2.12.6", "2.11.12", "2.10.7", "2.13.0-M4")
+crossScalaVersions := Seq("2.12.6", "2.11.12", "2.10.7", "2.13.0-M5")
 
 TaskKey[Unit]("checkScalariform") := {
   val diff = "git diff".!!
@@ -16,8 +16,8 @@ TaskKey[Unit]("checkScalariform") := {
 organization := "com.github.tototoshi"
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.0.6-SNAP1" % "test",
-  "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.6-SNAP4" % Test,
+  "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
 )
 
 libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
