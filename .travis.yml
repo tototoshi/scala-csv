@@ -4,7 +4,6 @@ scala:
   - "2.11.12"
   - "2.10.7"
 jdk:
-  - openjdk7
   - oraclejdk8
 script:
   - sbt ++${TRAVIS_SCALA_VERSION} test:compile checkScalariform
