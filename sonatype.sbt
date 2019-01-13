@@ -1,3 +1,3 @@
-import SonatypeKeys._
+import xerial.sbt.Sonatype._
 
 sonatypeSettings
