@@ -15,4 +15,4 @@ matrix:
   - scala: 2.13.0-M5
     jdk: oraclejdk8
   - scala: 2.12.8
-    jdk: oraclejdk9
+    jdk: openjdk11
