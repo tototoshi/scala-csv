@@ -6,7 +6,7 @@ version := "1.3.6-SNAPSHOT"
 
 scalaVersion := "2.11.12"
 
-crossScalaVersions := Seq("2.12.8", "2.11.12", "2.10.7", "2.13.0-RC1")
+crossScalaVersions := Seq("2.12.8", "2.11.12", "2.10.7", "2.13.0-RC2")
 
 TaskKey[Unit]("checkScalariform") := {
   val diff = "git diff".!!
@@ -18,7 +18,7 @@ TaskKey[Unit]("checkScalariform") := {
 organization := "com.github.tototoshi"
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.0.8-RC2" % Test,
+  "org.scalatest" %% "scalatest" % "3.1.0-SNAP11" % Test,
   "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
 )
 
