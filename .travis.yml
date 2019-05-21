@@ -4,15 +4,15 @@ scala:
   - "2.11.12"
   - "2.10.7"
 jdk:
-  - oraclejdk8
+  - openjdk8
 script:
   - sbt ++${TRAVIS_SCALA_VERSION} test:compile checkScalariform
   - sbt ++${TRAVIS_SCALA_VERSION} test
 matrix:
   include:
   - scala: 2.12.8
-    jdk: oraclejdk8
+    jdk: openjdk8
   - scala: 2.13.0-RC2
-    jdk: oraclejdk8
+    jdk: openjdk8
   - scala: 2.12.8
     jdk: openjdk11
