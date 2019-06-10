@@ -18,19 +18,10 @@ TaskKey[Unit]("checkScalariform") := {
 organization := "com.github.tototoshi"
 
 libraryDependencies ++= {
-  // TODO
-  // https://github.com/rickynils/scalacheck/issues/480
-  // https://github.com/scalatest/scalatest/issues/1601
-  if (scalaBinaryVersion.value == "2.13")
-    Seq(
-      "org.scalatest" % "scalatest_2.13.0-RC3" % "3.1.0-SNAP12" % Test,
-      "org.scalacheck" % "scalacheck_2.13.0-RC3" % "1.14.0" % Test
-    )
-  else
-    Seq(
-      "org.scalatest" %% "scalatest" % "3.1.0-SNAP12" % Test,
-      "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
-    )
+  Seq(
+    "org.scalatest" %% "scalatest" % "3.1.0-SNAP13" % Test,
+    "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
+  )
 }
 
 libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
