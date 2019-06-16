@@ -62,7 +62,7 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
 
   private def _iterator: Iterator[Seq[String]] = new Iterator[Seq[String]] {
 
-    private var _next: Option[Seq[String]] = None
+    private[this] var _next: Option[Seq[String]] = None
 
     def hasNext: Boolean = {
       _next match {

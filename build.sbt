@@ -1,10 +1,12 @@
+import scala.sys.process._
+
 name := "scala-csv"
 
-version := "1.3.6-SNAPSHOT"
+version := "1.3.6"
 
-scalaVersion := "2.11.11"
+scalaVersion := "2.11.12"
 
-crossScalaVersions := Seq("2.11.11", "2.10.6", "2.12.2")
+crossScalaVersions := Seq("2.12.8", "2.11.12", "2.10.7", "2.13.0")
 
 TaskKey[Unit]("checkScalariform") := {
   val diff = "git diff".!!
@@ -15,10 +17,12 @@ TaskKey[Unit]("checkScalariform") := {
 
 organization := "com.github.tototoshi"
 
-libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.0.3" % "test",
-  "org.scalacheck" %% "scalacheck" % "1.13.5" % "test"
-)
+libraryDependencies ++= {
+  Seq(
+    "org.scalatest" %% "scalatest" % "3.1.0-SNAP13" % Test,
+    "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
+  )
+}
 
 libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
   case Some((2, v)) if v <= 12 =>

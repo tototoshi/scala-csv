@@ -1,19 +1,18 @@
 language: scala
 sudo: false
 scala:
-  - "2.11.11"
-  - "2.10.6"
+  - "2.11.12"
+  - "2.10.7"
 jdk:
-  - oraclejdk7
-  - oraclejdk8
+  - openjdk8
 script:
   - sbt ++${TRAVIS_SCALA_VERSION} test:compile checkScalariform
   - sbt ++${TRAVIS_SCALA_VERSION} test
 matrix:
   include:
-  - scala: 2.12.2
-    jdk: oraclejdk8
-  - scala: 2.13.0-M1
-    jdk: oraclejdk8
-  - scala: 2.12.2
-    jdk: oraclejdk9
+  - scala: 2.12.8
+    jdk: openjdk8
+  - scala: 2.13.0
+    jdk: openjdk8
+  - scala: 2.12.8
+    jdk: openjdk11

@@ -225,7 +225,7 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
           it.hasNext should be(true)
           it.hasNext should be(true)
           it.hasNext should be(true)
-          it.foreach(x => ()) // cosume
+          it.foreach(x => ()) // consume
           it.hasNext should be(false)
         }
       }
