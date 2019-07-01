@@ -1,4 +1,4 @@
-addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.2")
+addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
 
 addSbtPlugin("com.github.tkawachi" % "sbt-doctest" % "0.9.5")
 
