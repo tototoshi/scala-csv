@@ -2,7 +2,7 @@ import scala.sys.process._
 
 name := "scala-csv"
 
-version := "1.3.6"
+version := "1.3.6-RC1"
 
 scalaVersion := "2.12.8"
 
