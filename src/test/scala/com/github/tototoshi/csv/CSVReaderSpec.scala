@@ -284,14 +284,14 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       describe("When the file is empty") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/empty.csv"))) { reader =>
-            reader.iteratorWithHeaders should be('empty)
+            reader.iteratorWithHeaders should be(Symbol("empty"))
           }
         }
       }
       describe("When the file has only one line") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
-            reader.iteratorWithHeaders should be('empty)
+            reader.iteratorWithHeaders should be(Symbol("empty"))
           }
         }
       }
@@ -310,14 +310,14 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       describe("When the file is empty") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/empty.csv"))) { reader =>
-            reader.allWithHeaders should be('empty)
+            reader.allWithHeaders should be(Symbol("empty"))
           }
         }
       }
       describe("When the file has only one line") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
-            reader.allWithHeaders should be('empty)
+            reader.allWithHeaders should be(Symbol("empty"))
           }
         }
       }
