@@ -3,10 +3,11 @@ package com.github.tototoshi.csv
 import java.io.FileReader
 
 import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
 
 import scala.io.Source
 
-class LineReaderSpec extends FunSpec with Matchers with Using {
+class LineReaderSpec extends AnyFunSpec with Matchers with Using {
 
   describe("ReaderLineReader") {
 

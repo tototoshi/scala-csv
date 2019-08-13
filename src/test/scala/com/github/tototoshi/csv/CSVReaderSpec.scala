@@ -3,8 +3,9 @@ package com.github.tototoshi.csv
 import java.io.{ UnsupportedEncodingException, FileReader, File, StringReader }
 
 import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
 
-class CSVReaderSpec extends FunSpec with Matchers with Using {
+class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
 
   def fixture = new {
 

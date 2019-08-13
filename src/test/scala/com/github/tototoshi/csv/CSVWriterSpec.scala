@@ -3,8 +3,9 @@ package com.github.tototoshi.csv
 import java.io.{ FileOutputStream, UnsupportedEncodingException, FileWriter, File }
 
 import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
 
-class CSVWriterSpec extends FunSpec with Matchers with BeforeAndAfter with Using {
+class CSVWriterSpec extends AnyFunSpec with Matchers with BeforeAndAfter with Using {
 
   def readFileAsString(file: String) = {
     using(io.Source.fromFile(file)) { src =>
