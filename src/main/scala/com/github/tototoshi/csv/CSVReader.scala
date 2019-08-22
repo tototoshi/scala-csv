@@ -74,7 +74,6 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
         case None => readNext().getOrElse(throw new NoSuchElementException("next on empty iterator"))
       }
     }
-
   }
 
   def iteratorWithHeaders: Iterator[Map[String, String]] = {

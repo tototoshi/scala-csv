@@ -39,8 +39,8 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
         override val quoteChar: Char = '$'
       }
 
-      using(CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv")(format)) { reader =>
-        {
+      using(CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv")(format)) {
+        reader => {
           val map = reader.allWithHeaders()
           map(0)("Foo ") should be("a")
         }
@@ -351,6 +351,25 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
             val result = reader.allWithOrderedHeaders()
             result._1 should be(List("Foo", "Bar", "Baz"))
             result._2 should be(List(Map("Foo" -> "a", "Bar" -> "b", "Baz" -> "c"), Map("Foo" -> "d", "Bar" -> "e", "Baz" -> "f")))
+          }
+        }
+      }
+
+      describe("when the file has tabs and new lines") {
+        it("should be throw exception against malformed input") {
+          object format extends DefaultCSVFormat {
+            override val delimiter: Char = '\t'
+            override val quoteChar: Char = '"'
+            override val escapeChar: Char = '\\'
+            override val lineTerminator: String = "\n"
+            override val quoting: Quoting = QUOTE_ALL
+            override val treatEmptyLineAsNil: Boolean = false
+          }
+          using(CSVReader.open(new FileReader("src/test/resources/tabs-LF-inside-quotes.csv"))(format)) { reader =>
+            val res = reader.all()
+
+            res(0) should be(List("a", "a a", "a\ta a\\b\nb"))
+            res(1) should be(List("a", "b", "c"))
           }
         }
       }
