@@ -24,10 +24,24 @@ libraryDependencies ++= {
   )
 }
 
-libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
-  case Some((2, v)) if v <= 12 =>
-    Seq("com.storm-enroute" %% "scalameter" % "0.8.2" % "test")
-}.toList.flatten
+val enableScalameter = settingKey[Boolean]("")
+
+enableScalameter := {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, v)) =>
+      11 <= v && v <= 13
+    case _ =>
+      false
+  }
+}
+
+libraryDependencies ++= {
+  if (enableScalameter.value) {
+    Seq("com.storm-enroute" %% "scalameter" % "0.19" % "test")
+  } else {
+    Nil
+  }
+}
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -41,11 +55,10 @@ scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersi
 (sources in Test) := {
   val s = (sources in Test).value
   val exclude = Set("CsvBenchmark.scala")
-  CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, v)) if v <= 12 =>
-      s
-    case _ =>
-      s.filterNot(f => exclude(f.getName))
+  if (enableScalameter.value) {
+    s
+  } else {
+    s.filterNot(f => exclude(f.getName))
   }
 }
 
