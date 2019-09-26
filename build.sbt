@@ -1,5 +1,7 @@
 import scala.sys.process._
 
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
 name := "scala-csv"
 
 version := "1.3.6"
