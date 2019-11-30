@@ -4,6 +4,7 @@ import java.io.{ UnsupportedEncodingException, FileReader, File, StringReader }
 
 import org.scalatest._
 import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
 class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
 

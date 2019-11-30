@@ -4,6 +4,7 @@ import java.io.{ FileOutputStream, UnsupportedEncodingException, FileWriter, Fil
 
 import org.scalatest._
 import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
 class CSVWriterSpec extends AnyFunSpec with Matchers with BeforeAndAfter with Using {
 

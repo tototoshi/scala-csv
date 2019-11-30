@@ -6,6 +6,7 @@ import org.scalatest._
 import org.scalatest.funspec.AnyFunSpec
 
 import scala.io.Source
+import org.scalatest.matchers.should.Matchers
 
 class LineReaderSpec extends AnyFunSpec with Matchers with Using {
 
