@@ -246,7 +246,10 @@ object CSVParser {
                   state = QuotedField
                   pos += 2
                 } else {
-                  throw new MalformedCSVException(buf.mkString)
+                  field += buf(pos)
+                  field += buf(pos + 1)
+                  state = QuotedField
+                  pos += 2
                 }
               } else {
                 throw new MalformedCSVException(buf.mkString)
