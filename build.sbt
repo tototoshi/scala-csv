@@ -5,7 +5,7 @@ val Name = "scala-csv"
 val Organization = "com.github.tototoshi"
 val Version = "1.3.6-SNAPSHOT-scalajs"
 val ScalaVersion = "2.12.6"
-val CrossScalaVersion = Seq("2.12.6", "2.11.12", "2.10.7", "2.13.0-M4")
+val CrossScalaVersion = Seq("2.12.6", "2.11.12", "2.10.7", "2.13.1")
 
 
 lazy val shared = project.in(file("shared")).settings(
@@ -59,14 +59,9 @@ lazy val jvm = project.in(file("jvm")) settings(
   initialCommands := """
                        |import com.github.tototoshi.csv._
                      """.stripMargin,
+  githubOwner := "waveinch",
+  githubRepository := "scala-csv",
   publishMavenStyle := true,
-  publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (version.value.trim.endsWith("SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-  },
   publishArtifact in Test := false,
   pomExtra := <url>http://github.com/tototoshi/scala-csv</url>
     <licenses>
@@ -98,18 +93,4 @@ lazy val jvm = project.in(file("jvm")) settings(
     }
   }
 ) dependsOn (shared)
-
-
-TaskKey[Unit]("checkScalariform") := {
-  val diff = "git diff".!!
-  if(diff.nonEmpty){
-    sys.error("Working directory is dirty!\n" + diff)
-  }
-}
-
-
-
-
-
-
 

@@ -1,0 +1,17 @@
+on:
+  push:
+    branches:
+      - master
+name: Build and Release apk and ipa
+jobs:
+  package:
+    name: Build iOS
+    runs-on: ubuntu-latest
+    steps:
+      - name: SBT action package
+        id: sbt
+        uses: lokkju/github-action-sbt@master
+        with:
+          commands: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
