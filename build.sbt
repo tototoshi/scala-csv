@@ -21,7 +21,7 @@ organization := "com.github.tototoshi"
 
 libraryDependencies ++= {
   Seq(
-    "org.scalatest" %% "scalatest" % "3.1.2" % Test,
+    "org.scalatest" %% "scalatest" % "3.2.0" % Test,
     "org.scalacheck" %% "scalacheck" % "1.14.3" % Test
   )
 }
