@@ -15,7 +15,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
   describe("CSVReader") {
 
     it("should be constructed with java.io.File") {
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       using(CSVReader.open(new File("src/test/resources/simple.csv"))) { reader =>
         reader foreach { fields =>
           res = res ++ fields
@@ -25,7 +25,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("should be constructed with filename") {
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       using(CSVReader.open("src/test/resources/simple.csv")) { reader =>
         reader foreach { fields =>
           res = res ++ fields
@@ -85,7 +85,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("read simple CSV from file") {
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       using(CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
         reader foreach { fields =>
           res = res ++ fields
@@ -96,7 +96,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
 
     it("read simple CSV string") {
       val csvString = "a,b,c\nd,e,f\n"
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       using(CSVReader.open(new StringReader(csvString))) { reader =>
         reader foreach { fields =>
           res = res ++ fields
@@ -106,7 +106,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("issue #22") {
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       using(CSVReader.open("src/test/resources/issue22.csv")) { reader =>
         reader foreach { fields =>
           res = res ++ fields
@@ -115,7 +115,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("issue #32") {
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       using(CSVReader.open("src/test/resources/issue32.csv")(new DefaultCSVFormat {
         override val escapeChar: Char = '\\'
       })) { reader =>
@@ -126,7 +126,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("should read csv file whose escape char is backslash") {
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       implicit val format = new DefaultCSVFormat {
         override val escapeChar: Char = '\\'
       }
@@ -152,7 +152,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("read simple CSV file with empty quoted fields") {
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       using(CSVReader.open("src/test/resources/issue30.csv")) { reader =>
         reader foreach { fields =>
           res = res ++ fields
@@ -162,7 +162,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("should read a file starting with BOM") {
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       using(CSVReader.open("src/test/resources/bom.csv")) { reader =>
         reader foreach { fields =>
           res = res ++ fields
@@ -180,7 +180,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("read CSV file including escaped fields") {
-      var res: List[String] = Nil
+      var res: Seq[String] = Nil
       using(CSVReader.open(new FileReader("src/test/resources/escape.csv"))) { reader =>
         reader foreach { fields =>
           res = res ++ fields
@@ -190,7 +190,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("should correctly parse fields with line breaks enclosed in double quotes") {
-      var res: List[Seq[String]] = Nil
+      var res: Seq[Seq[String]] = Nil
       using(CSVReader.open(new FileReader("src/test/resources/line-breaks.csv"))) { reader =>
         reader foreach { fields =>
           res = res :+ fields
@@ -202,10 +202,10 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
 
     it("read TSV from file") {
       implicit val format = new TSVFormat {}
-      var res: List[Seq[String]] = Nil
+      var res: Seq[Seq[String]] = Nil
       using(CSVReader.open(new FileReader("src/test/resources/simple.tsv"))(format)) { reader =>
         reader.foreach { fields =>
-          res = res ::: fields :: Nil
+          res = res :+ fields
         }
       }
       res(0) should be(List("a", "b", "c"))

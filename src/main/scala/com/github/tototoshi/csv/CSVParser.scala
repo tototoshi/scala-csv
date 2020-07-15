@@ -31,13 +31,13 @@ object CSVParser {
   /**
    * {{{
    * scala> com.github.tototoshi.csv.CSVParser.parse("a,b,c", '\\', ',', '"')
-   * res0: Option[List[String]] = Some(List(a, b, c))
+   * res0: Option[Seq[String]] = Some(List(a, b, c))
    *
    * scala> com.github.tototoshi.csv.CSVParser.parse("\"a\",\"b\",\"c\"", '\\', ',', '"')
-   * res1: Option[List[String]] = Some(List(a, b, c))
+   * res1: Option[Seq[String]] = Some(List(a, b, c))
    * }}}
    */
-  def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char): Option[List[String]] = {
+  def parse(input: String, escapeChar: Char, delimiter: Char, quoteChar: Char): Option[Seq[String]] = {
     val buf: Array[Char] = input.toCharArray
     var fields: Vector[String] = Vector()
     var field = new StringBuilder
@@ -302,7 +302,7 @@ object CSVParser {
 
 class CSVParser(format: CSVFormat) extends Serializable {
 
-  def parseLine(input: String): Option[List[String]] = {
+  def parseLine(input: String): Option[Seq[String]] = {
     val parsedResult = CSVParser.parse(input, format.escapeChar, format.delimiter, format.quoteChar)
     if (parsedResult == Some(List("")) && format.treatEmptyLineAsNil) Some(Nil)
     else parsedResult
