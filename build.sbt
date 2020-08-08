@@ -47,7 +47,8 @@ libraryDependencies ++= {
 
 scalacOptions ++= Seq(
   "-deprecation",
-  "-language:_"
+  "-feature",
+  "-language:implicitConversions"
 )
 
 scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
