@@ -1,6 +1,6 @@
 # scala-csv
 
-[![Build Status](https://travis-ci.org/tototoshi/scala-csv.png)](https://travis-ci.org/tototoshi/scala-csv)
+[![Build Status](https://travis-ci.org/tototoshi/scala-csv.svg)](https://travis-ci.org/tototoshi/scala-csv)
 
 ## build.sbt
 
