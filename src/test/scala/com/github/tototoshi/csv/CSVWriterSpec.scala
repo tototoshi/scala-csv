@@ -10,7 +10,7 @@ class CSVWriterSpec extends AnyFunSpec with Matchers with BeforeAndAfter with Us
 
   def readFileAsString(file: String) = {
     using(io.Source.fromFile(file)) { src =>
-      src.getLines.mkString("", "\n", "\n")
+      src.getLines().mkString("", "\n", "\n")
     }
   }
 
