@@ -251,7 +251,7 @@ class CSVWriterSpec extends AnyFunSpec with Matchers with BeforeAndAfter with Us
           writer.writeRow(List("a", "b", "c"))
           writer.flush()
           val content = using(CSVReader.open("test.csv")) { reader =>
-            reader.all
+            reader.all()
           }
           content should be(List(List("a", "b", "c")))
         }

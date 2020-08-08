@@ -94,7 +94,7 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
   }
 
   def allWithHeaders(): List[Map[String, String]] = {
-    allWithOrderedHeaders._2
+    allWithOrderedHeaders()._2
   }
 
   def allWithOrderedHeaders(): (List[String], List[Map[String, String]]) = {

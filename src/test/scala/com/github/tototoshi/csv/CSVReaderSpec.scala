@@ -222,13 +222,13 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     it("has #readNext") {
       using(CSVReader.open(new File("src/test/resources/simple.csv"))) { reader =>
         reader.readNext()
-        reader.readNext.get.mkString should be("def")
+        reader.readNext().get.mkString should be("def")
       }
     }
 
     it("has #all") {
       using(CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
-        reader.all should be(List(List("a", "b", "c"), List("d", "e", "f")))
+        reader.all() should be(List(List("a", "b", "c"), List("d", "e", "f")))
       }
     }
 
@@ -249,17 +249,17 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
         it("should return the next line") {
           using(CSVReader.open("src/test/resources/simple.csv")) { reader =>
             val it = reader.iterator
-            it.next should be(List("a", "b", "c"))
-            it.next should be(List("d", "e", "f"))
+            it.next() should be(List("a", "b", "c"))
+            it.next() should be(List("d", "e", "f"))
           }
         }
         it("should throw NoSuchElementException") {
           using(CSVReader.open("src/test/resources/simple.csv")) { reader =>
             val it = reader.iterator
-            it.next
-            it.next
+            it.next()
+            it.next()
             intercept[java.util.NoSuchElementException] {
-              it.next
+              it.next()
             }
           }
         }
@@ -324,21 +324,21 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       describe("When the file is empty") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/empty.csv"))) { reader =>
-            reader.allWithHeaders should be(Symbol("empty"))
+            reader.allWithHeaders() should be(Symbol("empty"))
           }
         }
       }
       describe("When the file has only one line") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
-            reader.allWithHeaders should be(Symbol("empty"))
+            reader.allWithHeaders() should be(Symbol("empty"))
           }
         }
       }
       describe("When the file has many lines") {
         it("returns a List of Map[String, String]") {
           using(CSVReader.open(new FileReader("src/test/resources/with-headers.csv"))) { reader =>
-            reader.allWithHeaders should be(List(Map("Foo" -> "a", "Bar" -> "b", "Baz" -> "c"), Map("Foo" -> "d", "Bar" -> "e", "Baz" -> "f")))
+            reader.allWithHeaders() should be(List(Map("Foo" -> "a", "Bar" -> "b", "Baz" -> "c"), Map("Foo" -> "d", "Bar" -> "e", "Baz" -> "f")))
           }
         }
       }
@@ -355,7 +355,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       describe("When the file has only header line") {
         it("returns only header names") {
           using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
-            reader.allWithOrderedHeaders should be((List("foo", "bar"), Nil))
+            reader.allWithOrderedHeaders() should be((List("foo", "bar"), Nil))
           }
         }
       }
