@@ -4,9 +4,9 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 name := "scala-csv"
 
-version := "1.3.6"
+version := "1.3.6-SNAPSHOT"
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.8"
 
 crossScalaVersions := Seq("2.12.12", "2.11.12", "2.10.7", "2.13.3")
 
