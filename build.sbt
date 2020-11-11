@@ -19,13 +19,9 @@ TaskKey[Unit]("checkScalariform") := {
 
 organization := "com.github.tototoshi"
 
-def scalatestVersion = "3.2.3"
-
-doctestScalaTestVersion := Some(scalatestVersion)
-
 libraryDependencies ++= {
   Seq(
-    "org.scalatest" %% "scalatest" % scalatestVersion % Test,
+    "org.scalatest" %% "scalatest" % "3.2.3" % Test,
     ("org.scalacheck" %% "scalacheck" % "1.14.3" % Test).withDottyCompat(scalaVersion.value)
   )
 }
