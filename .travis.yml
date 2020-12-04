@@ -15,7 +15,6 @@ matrix:
   - scala: 2.12.12
     jdk: openjdk11
   - scala: 3
-    name: dotty
     jdk: openjdk8
     script:
-    - sbt "++ 3.0.0-M1!" test
+    - sbt "++ 3.0.0-M2!" test
