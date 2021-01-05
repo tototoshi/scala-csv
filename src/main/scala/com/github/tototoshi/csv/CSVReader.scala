@@ -21,7 +21,7 @@ import java.util.NoSuchElementException
 
 import scala.io.Source
 
-class CSVReader protected (private val lineReader: LineReader)(implicit format: CSVFormat) extends Closeable {
+class CSVReader protected (private val lineReader: LineReader)(implicit format: CSVFormat) extends Closeable with CSVReaderCompat {
 
   private[this] val parser = new CSVParser(format)
 
