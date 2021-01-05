@@ -124,3 +124,13 @@ pomExtra := <url>http://github.com/tototoshi/scala-csv</url>
     <url>http://tototoshi.github.com</url>
   </developer>
 </developers>
+
+Compile / unmanagedSourceDirectories += {
+  val dir = CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, v)) if v <= 12 =>
+      "scala-2.13-"
+    case _ =>
+      "scala-2.13+"
+  }
+  baseDirectory.value / "src" / "main" / dir
+}
