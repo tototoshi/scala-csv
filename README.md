@@ -196,7 +196,7 @@ reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@
 ```
 $ git clone https://github.com/tototoshi/scala-csv.git
 $ cd scala-csv
-$ ./sbt
+$ sbt
 > test
 ```
 
