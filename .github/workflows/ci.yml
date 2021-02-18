@@ -23,15 +23,4 @@ jobs:
       with:
         java-version: "adopt@1.${{ matrix.java }}"
     - uses: coursier/cache-action@v5
-    - run: |
-        case ${{ matrix.scala }} in
-          2)
-            sbt -v "+ test:compile" checkScalariform "+ test"
-            ;;
-          3)
-            sbt -v "++ 3.0.0-RC1!" test
-            ;;
-          *)
-            echo "unknown scala version"
-            exit 1
-        esac
+    - run: sbt -v "+ test:compile" checkScalariform "+ test"
