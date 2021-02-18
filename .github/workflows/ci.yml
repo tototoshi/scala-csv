@@ -29,7 +29,7 @@ jobs:
             sbt -v "+ test:compile" checkScalariform "+ test"
             ;;
           3)
-            sbt -v "++ 3.0.0-M3!" test
+            sbt -v "++ 3.0.0-RC1!" test
             ;;
           *)
             echo "unknown scala version"
