@@ -12,11 +12,7 @@ jobs:
       matrix:
         include:
           - java: 8
-            scala: 2
-          - java: 8
-            scala: 3
           - java: 11
-            scala: 2
     steps:
     - uses: actions/checkout@v2.3.4
     - uses: olafurpg/setup-scala@v10
