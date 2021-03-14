@@ -19,4 +19,4 @@ jobs:
       with:
         java-version: "adopt@1.${{ matrix.java }}"
     - uses: coursier/cache-action@v5
-    - run: sbt -v "+ test:compile" checkScalariform "+ test"
+    - run: sbt -v "+ Test/compile" checkScalariform "+ test"
