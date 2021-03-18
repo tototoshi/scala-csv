@@ -47,3 +47,20 @@ trait TSVFormat extends CSVFormat {
 
 }
 
+trait PSVFormat extends CSVFormat {
+
+  val delimiter: Char = '|'
+
+  val quoteChar: Char = '"'
+
+  val escapeChar: Char = '\\'
+
+  val lineTerminator: String = "\r\n"
+
+  val quoting: Quoting = QUOTE_NONE
+
+  val treatEmptyLineAsNil: Boolean = false
+
+}
+
+
