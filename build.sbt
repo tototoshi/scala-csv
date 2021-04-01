@@ -8,7 +8,7 @@ version := "1.3.8-SNAPSHOT"
 
 scalaVersion := "2.13.5"
 
-crossScalaVersions := Seq("2.12.13", "2.11.12", "2.10.7", "2.13.5", "3.0.0-RC1")
+crossScalaVersions := Seq("2.12.13", "2.11.12", "2.10.7", "2.13.5", "3.0.0-RC2")
 
 TaskKey[Unit]("checkScalariform") := {
   val diff = "git diff".!!
@@ -21,7 +21,7 @@ organization := "com.github.tototoshi"
 
 libraryDependencies ++= {
   Seq(
-    "org.scalatest" %% "scalatest" % "3.2.6" % Test,
+    "org.scalatest" %% "scalatest" % "3.2.7" % Test,
     ("org.scalacheck" %% "scalacheck" % "1.14.3" % Test).withDottyCompat(scalaVersion.value)
   )
 }
