@@ -55,8 +55,8 @@ scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersi
   case Some((2, v)) if v >= 11 => Seq("-Ywarn-unused")
 }.toList.flatten
 
-(sources in Test) := {
-  val s = (sources in Test).value
+Test / sources := {
+  val s = (Test / sources).value
   val exclude = Set("CsvBenchmark.scala")
   if (enableScalameter.value) {
     s
@@ -69,13 +69,13 @@ testFrameworks += new TestFramework(
   "org.scalameter.ScalaMeterFramework"
 )
 
-parallelExecution in Test := false
+Test / parallelExecution := false
 
 logBuffered := false
 
-javacOptions in compile += "-Xlint"
+compile / javacOptions += "-Xlint"
 
-javacOptions in compile ++= {
+compile / javacOptions ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, v)) if v <= 11 =>
       Seq("-target", "6", "-source", "6")
@@ -103,7 +103,7 @@ publishTo := {
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
-publishArtifact in Test := false
+Test / publishArtifact := false
 
 pomExtra := <url>http://github.com/tototoshi/scala-csv</url>
 <licenses>
