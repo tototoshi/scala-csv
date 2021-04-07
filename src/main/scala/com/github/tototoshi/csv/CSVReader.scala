@@ -59,7 +59,7 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
 
     def hasNext: Boolean = {
       _next match {
-        case Some(row) => true
+        case Some(_) => true
         case None => _next = readNext(); _next.isDefined
       }
     }
