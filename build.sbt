@@ -6,7 +6,7 @@ name := "scala-csv"
 
 version := "1.3.8"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.6"
 
 crossScalaVersions := Seq("2.12.13", "2.11.12", "2.10.7", "2.13.6", "3.0.0")
 
