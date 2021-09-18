@@ -21,7 +21,7 @@ organization := "com.github.tototoshi"
 
 libraryDependencies ++= {
   Seq(
-    "org.scalatest" %% "scalatest" % "3.2.9" % Test,
+    "org.scalatest" %% "scalatest" % "3.2.10" % Test,
     if (scalaVersion.value.startsWith("2.")) "org.scalacheck" %% "scalacheck" % "1.14.3" % Test
     else "org.scalacheck" %% "scalacheck" % "1.15.4" % Test
   )
