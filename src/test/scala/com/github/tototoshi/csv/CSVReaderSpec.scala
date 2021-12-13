@@ -138,16 +138,17 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
     }
 
     it("should read csv file whose escape char is in the content without escaping a char") {
-      var res: List[String] = Nil
+      var res: List[Seq[String]] = Nil
       implicit val format = new DefaultCSVFormat {
         override val escapeChar: Char = '\\'
       }
-      using(CSVReader.open("src/test/resources/backslash-content.csv")(format)) { reader =>
-        reader foreach { fields =>
-          res = res ++ fields
+      using(CSVReader.open(new FileReader("src/test/resources/backslash-content.csv"))(format)) { reader =>
+        reader.foreach { fields =>
+          res = res ::: fields :: Nil
         }
       }
-      res should be(List("field1", "field2", raw"field3 says, \o/"))
+      res(0) should be(List("field1", "field2", raw"field3 says, \o/"))
+      res(1) should be(List("field1", "field2", raw"field3 says: \o/"))
     }
 
     it("read simple CSV file with empty quoted fields") {

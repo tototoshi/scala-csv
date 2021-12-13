@@ -140,7 +140,9 @@ object CSVParser {
                   state = Field
                   pos += 2
                 } else {
-                  throw new MalformedCSVException(buf.mkString)
+                  field += '\\'
+                  state = Field
+                  pos += 1
                 }
               } else {
                 state = QuoteEnd
