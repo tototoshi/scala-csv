@@ -149,6 +149,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       }
       res(0) should be(List("field1", "field2", raw"field3 says, \o/"))
       res(1) should be(List("field1", "field2", raw"field3 says: \o/"))
+      res(2) should be(List("field1", "field2", raw"\N"))
     }
 
     it("read simple CSV file with empty quoted fields") {

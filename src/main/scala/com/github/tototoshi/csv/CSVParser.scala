@@ -98,6 +98,10 @@ object CSVParser {
                 field += buf(pos + 1)
                 state = Field
                 pos += 2
+              } else if (pos + 1 < buflen) {
+                field += '\\'
+                state = Field
+                pos += 1
               } else {
                 throw new MalformedCSVException(buf.mkString)
               }
