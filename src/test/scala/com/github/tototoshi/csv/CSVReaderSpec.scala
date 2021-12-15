@@ -152,6 +152,19 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       res(2) should be(List("field1", "field2", raw"\N"))
     }
 
+    it("should read postgres CSV") {
+      // Explanation of PostgreSQL CSV by @AlexCharlton
+      // https://github.com/tototoshi/scala-csv/pull/227#issuecomment-993683685
+      implicit val format = new DefaultCSVFormat {}
+      var res: List[Seq[String]] = Nil
+      using(CSVReader.open(new FileReader("src/test/resources/postgresql.csv"))(format)) { reader =>
+        reader.foreach { fields =>
+          res = res ::: fields :: Nil
+        }
+      }
+      res(0) should be(List("Alex", raw"\N", raw"\x4D"))
+    }
+
     it("read simple CSV file with empty quoted fields") {
       var res: List[String] = Nil
       using(CSVReader.open("src/test/resources/issue30.csv")) { reader =>
