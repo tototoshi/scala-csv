@@ -246,6 +246,15 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       }
     }
 
+    it("parses an unquoted line with quotes in it") {
+      val r = new StringReader(
+        """a,b,c
+          |a,"b",c
+          |a,a"b"c,c
+          |""".stripMargin)
+      CSVReader.open(r)(new DefaultCSVFormat {}).all()(2)(1).equals("""a"b"c""")
+    }
+
     describe("iterator fetched from #iterator") {
 
       it("has #hasNext") {

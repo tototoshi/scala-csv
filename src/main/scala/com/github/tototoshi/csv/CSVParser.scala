@@ -136,23 +136,6 @@ object CSVParser {
         }
         case Field => {
           c match {
-            case `escapeChar` => {
-              if (pos + 1 < buflen) {
-                if (buf(pos + 1) == escapeChar
-                  || buf(pos + 1) == delimiter) {
-                  field += buf(pos + 1)
-                  state = Field
-                  pos += 2
-                } else {
-                  field += '\\'
-                  state = Field
-                  pos += 1
-                }
-              } else {
-                state = QuoteEnd
-                pos += 1
-              }
-            }
             case `delimiter` => {
               fields :+= field.toString
               field = new StringBuilder
