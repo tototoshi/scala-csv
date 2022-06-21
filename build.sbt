@@ -8,7 +8,7 @@ version := "1.3.11-SNAPSHOT"
 
 scalaVersion := "2.13.8"
 
-crossScalaVersions := Seq("2.12.16", "2.11.12", "2.10.7", "2.13.8", "3.1.2")
+crossScalaVersions := Seq("2.12.16", "2.11.12", "2.10.7", "2.13.8", "3.1.3")
 
 TaskKey[Unit]("checkScalariform") := {
   val diff = "git diff".!!
