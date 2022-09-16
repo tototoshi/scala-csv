@@ -23,7 +23,7 @@ libraryDependencies ++= {
   Seq(
     "org.scalatest" %% "scalatest" % "3.2.13" % Test,
     if (scalaVersion.value.startsWith("2.")) "org.scalacheck" %% "scalacheck" % "1.14.3" % Test
-    else "org.scalacheck" %% "scalacheck" % "1.16.0" % Test
+    else "org.scalacheck" %% "scalacheck" % "1.17.0" % Test
   )
 }
 
