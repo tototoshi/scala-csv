@@ -53,7 +53,7 @@ scalacOptions ++= Seq(
 )
 
 scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
-  case Some((2, v)) if v >= 11 => Seq("-Ywarn-unused")
+  case Some((2, v)) if v >= 11 => Seq("-Ywarn-unused", "-Xsource:3")
 }.toList.flatten
 
 Test / sources := {
