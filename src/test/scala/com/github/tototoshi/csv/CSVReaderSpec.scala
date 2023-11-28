@@ -52,7 +52,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       }
     }
 
-    it("should throws UnsupportedEncodingException when unsupprted encoding is specified") {
+    it("should throw UnsupportedEncodingException when unsupported encoding is specified") {
       intercept[UnsupportedEncodingException] {
         using(CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", "unknown")) { reader =>
           val map = reader.allWithHeaders()
