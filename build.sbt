@@ -123,7 +123,7 @@ pomExtra := <url>http://github.com/tototoshi/scala-csv</url>
   <developer>
     <id>tototoshi</id>
     <name>Toshiyuki Takahashi</name>
-    <url>http://tototoshi.github.com</url>
+    <url>https://tototoshi.github.io</url>
   </developer>
 </developers>
 
