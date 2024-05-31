@@ -2,9 +2,10 @@ package com.github.tototoshi.csv
 
 import java.io.{ UnsupportedEncodingException, FileReader, File, StringReader }
 
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class CSVReaderSpec extends FunSpec with Matchers with Using {
+class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
 
   def fixture = new {
 
@@ -51,7 +52,7 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       }
     }
 
-    it("should throws UnsupportedEncodingException when unsupprted encoding is specified") {
+    it("should throw UnsupportedEncodingException when unsupported encoding is specified") {
       intercept[UnsupportedEncodingException] {
         using(CSVReader.open("src/test/resources/hash-separated-dollar-quote.csv", "unknown")) { reader =>
           val map = reader.allWithHeaders()
@@ -136,6 +137,34 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       res should be(List("field1", "field2", "field3 says, \"escaped with backslash\""))
     }
 
+    it("should read csv file whose escape char is in the content without escaping a char") {
+      var res: List[Seq[String]] = Nil
+      implicit val format = new DefaultCSVFormat {
+        override val escapeChar: Char = '\\'
+      }
+      using(CSVReader.open(new FileReader("src/test/resources/backslash-content.csv"))(format)) { reader =>
+        reader.foreach { fields =>
+          res = res ::: fields :: Nil
+        }
+      }
+      res(0) should be(List("field1", "field2", raw"field3 says, \o/"))
+      res(1) should be(List("field1", "field2", raw"field3 says: \o/"))
+      res(2) should be(List("field1", "field2", raw"\N"))
+    }
+
+    it("should read postgres CSV") {
+      // Explanation of PostgreSQL CSV by @AlexCharlton
+      // https://github.com/tototoshi/scala-csv/pull/227#issuecomment-993683685
+      implicit val format = new DefaultCSVFormat {}
+      var res: List[Seq[String]] = Nil
+      using(CSVReader.open(new FileReader("src/test/resources/postgresql.csv"))(format)) { reader =>
+        reader.foreach { fields =>
+          res = res ::: fields :: Nil
+        }
+      }
+      res(0) should be(List("Alex", raw"\N", raw"\x4D"))
+    }
+
     it("read simple CSV file with empty quoted fields") {
       var res: List[String] = Nil
       using(CSVReader.open("src/test/resources/issue30.csv")) { reader =>
@@ -207,13 +236,13 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
     it("has #readNext") {
       using(CSVReader.open(new File("src/test/resources/simple.csv"))) { reader =>
         reader.readNext()
-        reader.readNext.get.mkString should be("def")
+        reader.readNext().get.mkString should be("def")
       }
     }
 
     it("has #all") {
       using(CSVReader.open(new FileReader("src/test/resources/simple.csv"))) { reader =>
-        reader.all should be(List(List("a", "b", "c"), List("d", "e", "f")))
+        reader.all() should be(List(List("a", "b", "c"), List("d", "e", "f")))
       }
     }
 
@@ -234,17 +263,17 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
         it("should return the next line") {
           using(CSVReader.open("src/test/resources/simple.csv")) { reader =>
             val it = reader.iterator
-            it.next should be(List("a", "b", "c"))
-            it.next should be(List("d", "e", "f"))
+            it.next() should be(List("a", "b", "c"))
+            it.next() should be(List("d", "e", "f"))
           }
         }
         it("should throw NoSuchElementException") {
           using(CSVReader.open("src/test/resources/simple.csv")) { reader =>
             val it = reader.iterator
-            it.next
-            it.next
+            it.next()
+            it.next()
             intercept[java.util.NoSuchElementException] {
-              it.next
+              it.next()
             }
           }
         }
@@ -293,14 +322,14 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       describe("When the file is empty") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/empty.csv"))) { reader =>
-            reader.iteratorWithHeaders should be('empty)
+            reader.iteratorWithHeaders should be(Symbol("empty"))
           }
         }
       }
       describe("When the file has only one line") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
-            reader.iteratorWithHeaders should be('empty)
+            reader.iteratorWithHeaders should be(Symbol("empty"))
           }
         }
       }
@@ -319,21 +348,21 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       describe("When the file is empty") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/empty.csv"))) { reader =>
-            reader.allWithHeaders should be('empty)
+            reader.allWithHeaders() should be(Symbol("empty"))
           }
         }
       }
       describe("When the file has only one line") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
-            reader.allWithHeaders should be('empty)
+            reader.allWithHeaders() should be(Symbol("empty"))
           }
         }
       }
       describe("When the file has many lines") {
         it("returns a List of Map[String, String]") {
           using(CSVReader.open(new FileReader("src/test/resources/with-headers.csv"))) { reader =>
-            reader.allWithHeaders should be(List(Map("Foo" -> "a", "Bar" -> "b", "Baz" -> "c"), Map("Foo" -> "d", "Bar" -> "e", "Baz" -> "f")))
+            reader.allWithHeaders() should be(List(Map("Foo" -> "a", "Bar" -> "b", "Baz" -> "c"), Map("Foo" -> "d", "Bar" -> "e", "Baz" -> "f")))
           }
         }
       }
@@ -350,7 +379,7 @@ class CSVReaderSpec extends FunSpec with Matchers with Using {
       describe("When the file has only header line") {
         it("returns only header names") {
           using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
-            reader.allWithOrderedHeaders should be((List("foo", "bar"), Nil))
+            reader.allWithOrderedHeaders() should be((List("foo", "bar"), Nil))
           }
         }
       }

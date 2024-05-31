@@ -7,6 +7,7 @@ import java.io.IOException;
 public class SourceLineReader implements LineReader {
 
     private Source source;
+    private int currentChar = -1;
 
     public SourceLineReader(Source source) {
         this.source = source;
@@ -16,14 +17,20 @@ public class SourceLineReader implements LineReader {
     public String readLineWithTerminator() throws IOException {
         StringBuilder sb = new StringBuilder();
         while(true) {
-            if (!source.hasNext()) {
+            if (!source.hasNext() && currentChar == -1) {
                 if (sb.length() == 0) {
                     return null;
                 } else {
                     break;
                 }
             }
-            int c = source.next();
+            int c;
+            if (currentChar > -1) {
+                c = currentChar;
+                currentChar = -1;
+            } else {
+                c = source.next();
+            }
 
             sb.append((char) c);
 
@@ -39,10 +46,10 @@ public class SourceLineReader implements LineReader {
                     break;
                 }
                 c = source.next();
-                sb.append(c);
-                if (c == '\n') {
-                    break;
+                if (c != '\n') {
+                    currentChar = c;
                 }
+                break;
             }
         }
         return sb.toString();

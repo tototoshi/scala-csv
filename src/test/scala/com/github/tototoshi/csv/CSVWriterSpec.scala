@@ -3,12 +3,14 @@ package com.github.tototoshi.csv
 import java.io.{ FileOutputStream, UnsupportedEncodingException, FileWriter, File }
 
 import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class CSVWriterSpec extends FunSpec with Matchers with BeforeAndAfter with Using {
+class CSVWriterSpec extends AnyFunSpec with Matchers with BeforeAndAfter with Using {
 
   def readFileAsString(file: String) = {
     using(io.Source.fromFile(file)) { src =>
-      src.getLines.mkString("", "\n", "\n")
+      src.getLines().mkString("", "\n", "\n")
     }
   }
 
@@ -249,7 +251,7 @@ class CSVWriterSpec extends FunSpec with Matchers with BeforeAndAfter with Using
           writer.writeRow(List("a", "b", "c"))
           writer.flush()
           val content = using(CSVReader.open("test.csv")) { reader =>
-            reader.all
+            reader.all()
           }
           content should be(List(List("a", "b", "c")))
         }

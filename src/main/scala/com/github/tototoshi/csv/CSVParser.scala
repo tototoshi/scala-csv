@@ -98,6 +98,10 @@ object CSVParser {
                 field += buf(pos + 1)
                 state = Field
                 pos += 2
+              } else if (pos + 1 < buflen) {
+                field += '\\'
+                state = Field
+                pos += 1
               } else {
                 throw new MalformedCSVException(buf.mkString)
               }
@@ -140,7 +144,9 @@ object CSVParser {
                   state = Field
                   pos += 2
                 } else {
-                  throw new MalformedCSVException(buf.mkString)
+                  field += '\\'
+                  state = Field
+                  pos += 1
                 }
               } else {
                 state = QuoteEnd
@@ -246,7 +252,10 @@ object CSVParser {
                   state = QuotedField
                   pos += 2
                 } else {
-                  throw new MalformedCSVException(buf.mkString)
+                  field += buf(pos)
+                  field += buf(pos + 1)
+                  state = QuotedField
+                  pos += 2
                 }
               } else {
                 throw new MalformedCSVException(buf.mkString)

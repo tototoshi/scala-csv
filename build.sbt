@@ -1,12 +1,14 @@
 import scala.sys.process._
 
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
 name := "scala-csv"
 
-version := "1.3.6"
+version := "1.3.11-SNAPSHOT"
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.13.13"
 
-crossScalaVersions := Seq("2.12.8", "2.11.12", "2.10.7", "2.13.0")
+crossScalaVersions := Seq("2.12.19", "2.11.12", "2.10.7", "2.13.13", "3.3.3")
 
 TaskKey[Unit]("checkScalariform") := {
   val diff = "git diff".!!
@@ -19,33 +21,49 @@ organization := "com.github.tototoshi"
 
 libraryDependencies ++= {
   Seq(
-    "org.scalatest" %% "scalatest" % "3.1.0-SNAP13" % Test,
-    "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
+    "org.scalatest" %% "scalatest-funspec" % "3.2.18" % Test,
+    "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.18" % Test,
+    if (scalaVersion.value.startsWith("2.")) "org.scalacheck" %% "scalacheck" % "1.14.3" % Test
+    else "org.scalacheck" %% "scalacheck" % "1.18.0" % Test
   )
 }
 
-libraryDependencies ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
-  case Some((2, v)) if v <= 12 =>
-    Seq("com.storm-enroute" %% "scalameter" % "0.8.2" % "test")
-}.toList.flatten
+val enableScalameter = settingKey[Boolean]("")
+
+enableScalameter := {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, v)) =>
+      11 <= v && v <= 13
+    case _ =>
+      false
+  }
+}
+
+libraryDependencies ++= {
+  if (enableScalameter.value) {
+    Seq("com.storm-enroute" %% "scalameter" % "0.19" % "test")
+  } else {
+    Nil
+  }
+}
 
 scalacOptions ++= Seq(
   "-deprecation",
-  "-language:_"
+  "-feature",
+  "-language:implicitConversions"
 )
 
 scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
-  case Some((2, v)) if v >= 11 => Seq("-Ywarn-unused")
+  case Some((2, v)) if v >= 11 => Seq("-Ywarn-unused", "-Xsource:3")
 }.toList.flatten
 
-(sources in Test) := {
-  val s = (sources in Test).value
+Test / sources := {
+  val s = (Test / sources).value
   val exclude = Set("CsvBenchmark.scala")
-  CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, v)) if v <= 12 =>
-      s
-    case _ =>
-      s.filterNot(f => exclude(f.getName))
+  if (enableScalameter.value) {
+    s
+  } else {
+    s.filterNot(f => exclude(f.getName))
   }
 }
 
@@ -53,13 +71,13 @@ testFrameworks += new TestFramework(
   "org.scalameter.ScalaMeterFramework"
 )
 
-parallelExecution in Test := false
+Test / parallelExecution := false
 
 logBuffered := false
 
-javacOptions in compile += "-Xlint"
+compile / javacOptions += "-Xlint"
 
-javacOptions in compile ++= {
+compile / javacOptions ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, v)) if v <= 11 =>
       Seq("-target", "6", "-source", "6")
@@ -87,7 +105,7 @@ publishTo := {
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
-publishArtifact in Test := false
+Test / publishArtifact := false
 
 pomExtra := <url>http://github.com/tototoshi/scala-csv</url>
 <licenses>
@@ -105,6 +123,16 @@ pomExtra := <url>http://github.com/tototoshi/scala-csv</url>
   <developer>
     <id>tototoshi</id>
     <name>Toshiyuki Takahashi</name>
-    <url>http://tototoshi.github.com</url>
+    <url>https://tototoshi.github.io</url>
   </developer>
 </developers>
+
+Compile / unmanagedSourceDirectories += {
+  val dir = CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, v)) if v <= 12 =>
+      "scala-2.13-"
+    case _ =>
+      "scala-2.13+"
+  }
+  baseDirectory.value / "src" / "main" / dir
+}

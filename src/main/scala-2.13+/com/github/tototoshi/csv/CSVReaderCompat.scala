@@ -16,30 +16,11 @@
 
 package com.github.tototoshi.csv
 
-import java.io.Closeable
-import scala.io.BufferedSource
+trait CSVReaderCompat { self: CSVReader =>
 
-trait CanClose[A] {
-  def close(a: A): Unit
-}
+  def toLazyListWithHeaders(): LazyList[Map[String, String]] = iteratorWithHeaders.to(LazyList)
 
-object CanClose {
-  def instance[A](f: A => Unit): CanClose[A] =
-    new CanClose[A] {
-      override def close(a: A) = f(a)
-    }
-
-  implicit def closeable[A <: Closeable]: CanClose[A] =
-    instance(_.close())
-
-  implicit val source: CanClose[BufferedSource] =
-    instance(_.close())
-}
-
-protected trait Using {
-
-  def using[A, R](r: R)(f: R => A)(implicit c: CanClose[R]): A =
-    try { f(r) } finally { c.close(r) }
+  def toLazyList(): LazyList[List[String]] =
+    LazyList.continually(readNext()).takeWhile(_.isDefined).map(_.get)
 
 }
-

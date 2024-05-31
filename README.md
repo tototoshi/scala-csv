@@ -1,11 +1,9 @@
 # scala-csv
 
-[![Build Status](https://travis-ci.org/tototoshi/scala-csv.png)](https://travis-ci.org/tototoshi/scala-csv)
-
 ## build.sbt
 
 ```scala
-libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.6"
+libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.10"
 ```
 
 ## Example
@@ -198,7 +196,7 @@ reader: com.github.tototoshi.csv.CSVReader = com.github.tototoshi.csv.CSVReader@
 ```
 $ git clone https://github.com/tototoshi/scala-csv.git
 $ cd scala-csv
-$ ./sbt
+$ sbt
 > test
 ```
 

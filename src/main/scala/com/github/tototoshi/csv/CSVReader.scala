@@ -21,7 +21,7 @@ import java.util.NoSuchElementException
 
 import scala.io.Source
 
-class CSVReader protected (private val lineReader: LineReader)(implicit format: CSVFormat) extends Closeable {
+class CSVReader protected (private val lineReader: LineReader)(implicit format: CSVFormat) extends Closeable with CSVReaderCompat {
 
   private val parser = new CSVParser(format)
   private var maybeNextIterator: Option[Iterator[Seq[String]]] = None
@@ -66,7 +66,7 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
 
     def hasNext: Boolean = {
       _next match {
-        case Some(row) => true
+        case Some(_) => true
         case None => _next = readNext(); _next.isDefined
       }
     }
@@ -101,7 +101,7 @@ class CSVReader protected (private val lineReader: LineReader)(implicit format: 
   }
 
   def allWithHeaders(): List[Map[String, String]] = {
-    allWithOrderedHeaders._2
+    allWithOrderedHeaders()._2
   }
 
   def allWithOrderedHeaders(): (List[String], List[Map[String, String]]) = {
