@@ -81,7 +81,7 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
         while (i < field.length) {
           val char = field(i)
           if (char == format.quoteChar || (format.quoting == QUOTE_NONE && char == format.delimiter)) {
-            printWriter.print(format.quoteChar)
+            printWriter.print(format.escapeChar)
           }
           printWriter.print(char)
           i += 1

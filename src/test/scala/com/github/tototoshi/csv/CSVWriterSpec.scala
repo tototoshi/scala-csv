@@ -116,7 +116,7 @@ class CSVWriterSpec extends AnyFunSpec with Matchers with BeforeAndAfter with Us
       }
     }
 
-    describe("#writeNext") {
+    describe("#writeRow") {
       it("write single line to file") {
         using(CSVWriter.open(new FileWriter("test.csv"))) { writer =>
           writer.writeRow(List("a", "b", "c"))
@@ -141,18 +141,36 @@ class CSVWriterSpec extends AnyFunSpec with Matchers with BeforeAndAfter with Us
 
         readFileAsString("test.csv") should be(expected)
       }
-      describe("When a field contains quoteChar in it") {
-        it("should escape the quoteChar") {
-          using(CSVWriter.open(new FileWriter("test.csv"))) { writer =>
-            writer.writeRow(List("a", "b\"", "c"))
-            writer.writeRow(List("d", "e", "f"))
-          }
 
-          val expected = "a,\"b\"\"\",c\nd,e,f\n"
-
-          readFileAsString("test.csv") should be(expected)
+      it("should escape the quoteChar with escapeChar when it is included in the field") {
+        using(CSVWriter.open(new FileWriter("test.csv"))) { writer =>
+          writer.writeRow(List("a", "b\"", "c"))
+          writer.writeRow(List("d", "e", "f"))
         }
+
+        val expected = "a,\"b\"\"\",c\nd,e,f\n"
+
+        readFileAsString("test.csv") should be(expected)
       }
+
+      it("should escape the quoteChar with customized escapeChar when it is included in the field and escapeChar is changed from default value") {
+
+        object escapeCharChangedFormat extends DefaultCSVFormat {
+          override val escapeChar: Char = '\\'
+        }
+
+        using(CSVWriter.open(new FileWriter("test.csv"))(escapeCharChangedFormat)) { writer =>
+          writer.writeRow(List("a", "b\"", "c"))
+          writer.writeRow(List("d", "e", "f"))
+        }
+
+        val expected = """|a,"b\"",c
+                        |d,e,f
+                        |""".stripMargin
+
+        readFileAsString("test.csv") should be(expected)
+      }
+
       describe("When a field contains delimiter in it") {
         it("should escape the delimiter") {
           using(CSVWriter.open(new FileWriter("test.csv"))) { writer =>
@@ -243,6 +261,7 @@ class CSVWriterSpec extends AnyFunSpec with Matchers with BeforeAndAfter with Us
           }
         }
       }
+
     }
 
     describe("#flush") {
