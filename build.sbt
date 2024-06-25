@@ -107,7 +107,7 @@ publishTo := {
 
 Test / publishArtifact := false
 
-pomExtra := <url>http://github.com/tototoshi/scala-csv</url>
+pomExtra := <url>https://github.com/tototoshi/scala-csv</url>
 <licenses>
   <license>
     <name>Apache License, Version 2.0</name>
