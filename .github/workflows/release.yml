@@ -18,7 +18,7 @@ jobs:
     - uses: coursier/cache-action@v6
     - name: Setup GPG
       run: |
-        echo "$GPG_PRIVATE_KEY" | gpg --import
+        echo "$GPG_PRIVATE_KEY" | gpg --batch --import
       env:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
@@ -27,4 +27,4 @@ jobs:
         SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      run: sbt clean +test publishSigned sonatypeRelease
+      run: sbt clean +test +publishSigned sonatypeRelease
