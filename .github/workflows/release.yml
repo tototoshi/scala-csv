@@ -26,5 +26,5 @@ jobs:
       env:
         SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       run: sbt clean +test +publishSigned sonatypeRelease
