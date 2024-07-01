@@ -30,3 +30,7 @@ trait CSVFormat extends Serializable {
   val treatEmptyLineAsNil: Boolean
 
 }
+
+object CSVFormat {
+  implicit val defaultCSVFormat: DefaultCSVFormat = new DefaultCSVFormat {}
+}
