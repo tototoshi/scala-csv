@@ -4,7 +4,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 name := "scala-csv"
 
-version := "1.4.2-SNAPSHOT"
+version := "2.0.0"
 
 scalaVersion := "2.13.14"
 

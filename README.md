@@ -3,7 +3,7 @@
 ## build.sbt
 
 ```scala
-libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.4.1"
+libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "2.0.0"
 ```
 
 ## Example
