@@ -24,7 +24,7 @@ libraryDependencies ++= {
     "org.scalatest" %% "scalatest-funspec" % "3.2.19" % Test,
     "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % Test,
     if (scalaVersion.value.startsWith("2.")) "org.scalacheck" %% "scalacheck" % "1.14.3" % Test
-    else "org.scalacheck" %% "scalacheck" % "1.18.0" % Test
+    else "org.scalacheck" %% "scalacheck" % "1.18.1" % Test
   )
 }
 
