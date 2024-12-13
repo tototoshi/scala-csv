@@ -1,6 +1,6 @@
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
 
-addSbtPlugin("io.github.sbt-doctest" % "sbt-doctest" % "0.11.0")
+addSbtPlugin("io.github.sbt-doctest" % "sbt-doctest" % "0.11.1")
 
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.21")
 
