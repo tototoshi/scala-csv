@@ -6,10 +6,13 @@ ThisBuild / version := "2.0.0"
 
 ThisBuild / scalaVersion := "2.13.15"
 
-lazy val scalaCsv = project.in(file(".")).settings(
+val defaultCrossScalaVersions = Seq("2.12.20", "2.11.12", "2.10.7", "2.13.15", "3.3.4")
+val nativeScalaCrossVersions = Seq("2.12.20", "2.13.15", "3.3.4")
+
+lazy val scalaCsv = crossProject(JVMPlatform, NativePlatform).crossType(CrossType.Pure).in(file(".")).settings(
   name := "scala-csv",
 
-  crossScalaVersions := Seq("2.12.20", "2.11.12", "2.10.7", "2.13.15", "3.3.4"),
+  crossScalaVersions := defaultCrossScalaVersions,
 
   TaskKey[Unit]("checkScalariform") := {
     val diff = "git diff".!!
@@ -126,13 +129,32 @@ lazy val scalaCsv = project.in(file(".")).settings(
       case _ =>
         "scala-2.13+"
     }
-    baseDirectory.value / "src" / "main" / dir
+    crossProjectBaseDirectory.value / "src" / "main" / dir
+  },
+  Compile / unmanagedSourceDirectories += {
+    val dir = crossProjectPlatform.value match {
+      case JVMPlatform => "java" // for binary compatibility with previous JVM publications, to be deprecated
+      case _ => "scala-readers"
+    }
+    crossProjectBaseDirectory.value / "src" / "main" / dir
   }
+).nativeSettings(
+  crossScalaVersions := nativeScalaCrossVersions
 )
 
 val enableScalameter = Def.setting(
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, v)) => 11 <= v && v <= 13
-      case _ => false
-    }
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, v)) => 11 <= v && v <= 13 && crossProjectPlatform.value == JVMPlatform
+    case _ => false
+  }
 )
+
+// an aggregate project to pass commands into platform projects
+lazy val root = (project in file("."))
+  .aggregate(scalaCsv.jvm, scalaCsv.native)
+  .settings(
+    Compile / sources := Seq.empty,
+    Test / sources := Seq.empty,
+    artifacts := Seq.empty,
+    publish / skip := true,
+  )
