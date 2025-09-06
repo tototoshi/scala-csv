@@ -6,9 +6,9 @@ name := "scala-csv"
 
 version := "2.0.0"
 
-scalaVersion := "2.13.15"
+scalaVersion := "2.13.16"
 
-crossScalaVersions := Seq("2.12.20", "2.11.12", "2.10.7", "2.13.15", "3.3.4")
+crossScalaVersions := Seq("2.12.20", "2.11.12", "2.10.7", "2.13.16", "3.3.6")
 
 TaskKey[Unit]("checkScalariform") := {
   val diff = "git diff".!!
