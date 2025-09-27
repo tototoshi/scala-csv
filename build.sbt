@@ -86,7 +86,7 @@ compile / javacOptions += "-Xlint"
 
 compile / javacOptions ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, v)) if v <= 11 =>
+    case Some((2, v)) if v <= 11 && !sys.env.isDefinedAt("GITHUB_ACTION") =>
       Seq("-target", "6", "-source", "6")
     case _ =>
       Seq("-target", "8", "-source", "8")
