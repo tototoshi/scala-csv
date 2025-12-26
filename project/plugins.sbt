@@ -1,6 +1,6 @@
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
 
-addSbtPlugin("io.github.sbt-doctest" % "sbt-doctest" % "0.12.2")
+addSbtPlugin("io.github.sbt-doctest" % "sbt-doctest" % "0.12.3")
 
 addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.3.1")
 
