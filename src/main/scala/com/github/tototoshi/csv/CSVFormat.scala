@@ -29,6 +29,8 @@ trait CSVFormat extends Serializable {
 
   val treatEmptyLineAsNil: Boolean
 
+  val trimUnquoted: Boolean
+
 }
 
 object CSVFormat {
