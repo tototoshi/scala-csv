@@ -254,7 +254,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
           it.hasNext should be(true)
           it.hasNext should be(true)
           it.hasNext should be(true)
-          it.foreach(x => ()) // consume
+          it.foreach(_ => ()) // consume
           it.hasNext should be(false)
         }
       }
@@ -283,7 +283,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
         var lineCount = 0
         using(CSVReader.open("src/test/resources/simple.csv")) { reader =>
           val it = reader.iterator
-          it.foreach { line => lineCount += 1 }
+          it.foreach { _ => lineCount += 1 }
         }
         lineCount should be(2)
       }
@@ -299,7 +299,7 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
           }
           var count = 0
           using(CSVReader.open(tmpfile)) { reader =>
-            reader.foreach { row =>
+            reader.foreach { _ =>
               count += 1
             }
           }
@@ -312,14 +312,14 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       describe("When the file is empty") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/empty.csv"))) { reader =>
-            reader.iteratorWithHeaders should be(Symbol("empty"))
+            reader.iteratorWithHeaders.isEmpty should be(true)
           }
         }
       }
       describe("When the file has only one line") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
-            reader.iteratorWithHeaders should be(Symbol("empty"))
+            reader.iteratorWithHeaders.isEmpty should be(true)
           }
         }
       }
@@ -338,14 +338,14 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       describe("When the file is empty") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/empty.csv"))) { reader =>
-            reader.allWithHeaders() should be(Symbol("empty"))
+            reader.allWithHeaders().isEmpty should be(true)
           }
         }
       }
       describe("When the file has only one line") {
         it("returns an empty list") {
           using(CSVReader.open(new FileReader("src/test/resources/only-header.csv"))) { reader =>
-            reader.allWithHeaders() should be(Symbol("empty"))
+            reader.allWithHeaders().isEmpty should be(true)
           }
         }
       }
