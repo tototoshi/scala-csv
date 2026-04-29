@@ -28,25 +28,6 @@ libraryDependencies ++= {
   )
 }
 
-val enableScalameter = settingKey[Boolean]("")
-
-enableScalameter := {
-  CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, v)) =>
-      11 <= v && v <= 13
-    case _ =>
-      false
-  }
-}
-
-libraryDependencies ++= {
-  if (enableScalameter.value) {
-    Seq("com.storm-enroute" %% "scalameter" % "0.19" % "test")
-  } else {
-    Nil
-  }
-}
-
 scalacOptions ++= Seq(
   "-deprecation",
   "-feature",
@@ -63,20 +44,6 @@ scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersi
   case Some((2, 13)) =>
     Seq("-Xsource:3-cross")
 }.toList.flatten
-
-Test / sources := {
-  val s = (Test / sources).value
-  val exclude = Set("CsvBenchmark.scala")
-  if (enableScalameter.value) {
-    s
-  } else {
-    s.filterNot(f => exclude(f.getName))
-  }
-}
-
-testFrameworks += new TestFramework(
-  "org.scalameter.ScalaMeterFramework"
-)
 
 Test / parallelExecution := false
 
