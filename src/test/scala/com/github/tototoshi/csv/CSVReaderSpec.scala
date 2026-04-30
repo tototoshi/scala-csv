@@ -288,6 +288,16 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
         lineCount should be(2)
       }
 
+      describe("When the iterator method is called") {
+        it("should return the new iterator pointing to the CSV head everytime") {
+          using(CSVReader.open("src/test/resources/simple.csv")) { reader =>
+            Range(0, (new scala.util.Random).nextInt(9) + 2).foreach { iteratorX =>
+              reader.iterator.toList.size should be(2)
+            }
+          }
+        }
+      }
+
       describe("When the file to be parsed is huge") {
         it("should iterate all lines without any trouble") {
           val tmpfile: File = File.createTempFile("csv", "test")
