@@ -34,6 +34,26 @@ scalacOptions ++= Seq(
   "-language:implicitConversions"
 )
 
+scalacOptions ++= {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, 12 | 13)) =>
+      Seq(
+        "-release:8",
+      )
+    case Some((2, _)) =>
+      Nil
+    case _ =>
+      if (scalaVersion.value.startsWith("3.3.")) {
+        Seq(
+          "-release:11",
+          "-Yfuture-lazy-vals",
+        )
+      } else {
+        Nil
+      }
+  }
+}
+
 scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
   case Some((2, v)) if v >= 11 => Seq("-Ywarn-unused")
 }.toList.flatten
