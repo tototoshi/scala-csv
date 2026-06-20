@@ -71,7 +71,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf(1) == '\n') {
+              if (pos + 1 < buflen && buf(pos + 1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -119,7 +119,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf(1) == '\n') {
+              if (pos + 1 < buflen && buf(pos + 1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -166,7 +166,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf(1) == '\n') {
+              if (pos + 1 < buflen && buf(pos + 1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
@@ -229,7 +229,7 @@ object CSVParser {
               pos += 1
             }
             case '\r' => {
-              if (pos + 1 < buflen && buf(1) == '\n') {
+              if (pos + 1 < buflen && buf(pos + 1) == '\n') {
                 pos += 1
               }
               fields :+= field.toString
