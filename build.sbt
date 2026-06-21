@@ -1,7 +1,3 @@
-import scala.sys.process._
-
-Global / onChangedBuildSource := ReloadOnSourceChanges
-
 name := "scala-csv"
 
 version := "2.0.1-SNAPSHOT"
@@ -9,13 +5,6 @@ version := "2.0.1-SNAPSHOT"
 scalaVersion := "2.13.18"
 
 crossScalaVersions := Seq("2.12.21", "2.11.12", "2.10.7", "2.13.18", "3.3.8")
-
-TaskKey[Unit]("checkScalariform") := {
-  val diff = "git diff".!!
-  if(diff.nonEmpty){
-    sys.error("Working directory is dirty!\n" + diff)
-  }
-}
 
 organization := "com.github.tototoshi"
 
@@ -74,7 +63,7 @@ compile / javacOptions += "-Xlint"
 compile / javacOptions ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, v)) if v <= 11 && !sys.env.isDefinedAt("GITHUB_ACTION") =>
-      Seq("-target", "6", "-source", "6")
+      Seq("-target", "7", "-source", "7")
     case _ =>
       Seq("-target", "8", "-source", "8")
   }
