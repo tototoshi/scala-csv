@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v6
     - uses: actions/setup-java@ad2b38190b15e4d6bdf0c97fb4fca8412226d287 # v5.3.0
       with:
-        java-version: 11
+        java-version: 17
         distribution: adopt
     - uses: coursier/cache-action@v8
     - name: Setup GPG
@@ -27,4 +27,4 @@ jobs:
         SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      run: sbt clean +test +publishSigned sonaRelease
+      run: sbt -v --server cleanFull +test +publishSigned sonaRelease
