@@ -99,7 +99,7 @@ object CSVParser {
                 state = Field
                 pos += 2
               } else if (pos + 1 < buflen) {
-                field += '\\'
+                field += escapeChar
                 state = Field
                 pos += 1
               } else {
@@ -144,7 +144,7 @@ object CSVParser {
                   state = Field
                   pos += 2
                 } else {
-                  field += '\\'
+                  field += escapeChar
                   state = Field
                   pos += 1
                 }
