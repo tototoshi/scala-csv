@@ -2,9 +2,9 @@ name := "scala-csv"
 
 version := "2.0.1-SNAPSHOT"
 
-scalaVersion := "2.13.18"
+scalaVersion := "3.9.0"
 
-crossScalaVersions := Seq("2.12.21", "2.11.12", "2.10.7", "2.13.18", "3.3.8")
+crossScalaVersions := Seq("2.12.21", "2.11.12", "2.10.7", "3.9.0", "3.3.8")
 
 organization := "com.github.tototoshi"
 
