@@ -218,6 +218,32 @@ class CSVWriterSpec extends AnyFunSpec with Matchers with BeforeAndAfter with Us
 
           readFileAsString("test.csv") should be(expected)
         }
+
+        it("should escape the delimiter when it appears in a field") {
+          object quoteNoneFormat extends DefaultCSVFormat {
+            override val quoting: Quoting = QUOTE_NONE
+            override val escapeChar: Char = '\\'
+          }
+
+          using(CSVWriter.open(new FileWriter("test.csv"))(quoteNoneFormat)) { writer =>
+            writer.writeRow(List("a,b", "c"))
+          }
+
+          readFileAsString("test.csv") should be("a\\,b,c\n")
+        }
+
+        it("should escape the escape char when it appears in a field") {
+          object quoteNoneFormat extends DefaultCSVFormat {
+            override val quoting: Quoting = QUOTE_NONE
+            override val escapeChar: Char = '\\'
+          }
+
+          using(CSVWriter.open(new FileWriter("test.csv"))(quoteNoneFormat)) { writer =>
+            writer.writeRow(List("a\\b", "c"))
+          }
+
+          readFileAsString("test.csv") should be("a\\\\b,c\n")
+        }
       }
       describe("When quoting is set to QUOTE_NONNUMERIC") {
         it("should quote only nonnumeric fields") {

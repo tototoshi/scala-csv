@@ -80,13 +80,23 @@ class CSVWriter(protected val writer: Writer)(implicit val format: CSVFormat) ex
         var i = 0
         while (i < field.length) {
           val char = field(i)
-          if (char == format.quoteChar || (format.quoting == QUOTE_NONE && char == format.delimiter)) {
+          if (char == format.quoteChar) {
             printWriter.print(format.escapeChar)
           }
           printWriter.print(char)
           i += 1
         }
         printWriter.print(format.quoteChar)
+      } else if (format.quoting == QUOTE_NONE) {
+        var i = 0
+        while (i < field.length) {
+          val char = field(i)
+          if (char == format.delimiter || char == format.escapeChar) {
+            printWriter.print(format.escapeChar)
+          }
+          printWriter.print(char)
+          i += 1
+        }
       } else {
         printWriter.print(field)
       }
