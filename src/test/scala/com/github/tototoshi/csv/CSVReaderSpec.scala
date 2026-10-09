@@ -384,4 +384,17 @@ class CSVReaderSpec extends AnyFunSpec with Matchers with Using {
       }
     }
   }
+
+  describe("CSVReader.open(Source) and CSVReader.open(Reader)") {
+
+    it("should agree on a CRLF file, embedded newlines included") {
+      val csv = "a,\"line1\r\nline2\",c\r\nd,e,f\r\n"
+      val viaSource = CSVReader.open(scala.io.Source.fromString(csv)).all()
+      val viaReader = CSVReader.open(new java.io.StringReader(csv)).all()
+      viaSource should be(viaReader)
+      viaSource should be(List(List("a", "line1\r\nline2", "c"), List("d", "e", "f")))
+    }
+
+  }
+
 }
