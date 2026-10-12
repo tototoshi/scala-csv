@@ -4,7 +4,7 @@ version := "2.0.1-SNAPSHOT"
 
 scalaVersion := "2.13.18"
 
-crossScalaVersions := Seq("2.12.21", "2.11.12", "2.10.7", "2.13.18", "3.3.8")
+crossScalaVersions := Seq("2.12.21", "2.11.12", "2.10.7", "2.13.18", "3.9.0")
 
 organization := "com.github.tototoshi"
 
