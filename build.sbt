@@ -4,14 +4,19 @@ ThisBuild / scalaVersion := "2.13.18"
 
 ThisBuild / organization := "com.github.tototoshi"
 
+val jvmScalaVersions = Seq("2.12.21", "2.11.12", "2.10.7", "2.13.18", "3.3.8")
+val nativeScalaVersions = Seq("2.12.21", "2.13.18", "3.3.8")
+
+val scalatestVersion = "3.2.20"
+
 lazy val scalaCsv = (projectMatrix in file("."))
   .settings(
     name := "scala-csv",
 
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest-funspec" % "3.2.20" % Test,
-      "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.20" % Test,
-      if (scalaVersion.value.startsWith("2.")) "org.scalacheck" %% "scalacheck" % "1.14.3" % Test
+      "org.scalatest" %% "scalatest-funspec" % scalatestVersion % Test,
+      "org.scalatest" %% "scalatest-shouldmatchers" % scalatestVersion % Test,
+      if (scalaVersion.value.startsWith("2.") && isJvm.value) "org.scalacheck" %% "scalacheck" % "1.14.3" % Test
       else "org.scalacheck" %% "scalacheck" % "1.20.0" % Test
     ),
 
@@ -21,8 +26,10 @@ lazy val scalaCsv = (projectMatrix in file("."))
       "-language:implicitConversions"
     ),
 
+    // the Scala Native compiler plugin fails on -Yfuture-lazy-vals
     scalacOptions ++= {
-      CrossVersion.partialVersion(scalaVersion.value) match {
+      if (!isJvm.value) Nil
+      else CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 12 | 13)) =>
           Seq(
             "-release:8",
@@ -53,6 +60,8 @@ lazy val scalaCsv = (projectMatrix in file("."))
     }.toList.flatten,
 
     doctestTestFramework := DoctestTestFramework.ScalaTest,
+
+    doctestScalaTestVersion := Some(scalatestVersion),
 
     Test / parallelExecution := false,
 
@@ -109,7 +118,18 @@ lazy val scalaCsv = (projectMatrix in file("."))
       (Compile / sourceDirectory).value / dir
     }
   )
-  .jvmPlatform(scalaVersions = Seq("2.12.21", "2.11.12", "2.10.7", "2.13.18", "3.3.8"))
+  .jvmPlatform(scalaVersions = jvmScalaVersions)
+  .nativePlatform(
+    scalaVersions = nativeScalaVersions,
+    settings = Seq(
+      // the JVM build keeps the Java readers for binary compatibility with previous publications,
+      // the native build uses their Scala counterparts from src/main/scalanative
+      Compile / unmanagedSourceDirectories -= (Compile / javaSource).value,
+      // scalatest is built against an older 0.5.x test-interface
+      libraryDependencySchemes +=
+        "org.scala-native" % s"test-interface_${platform.value}_${scalaBinaryVersion.value}" % VersionScheme.EarlySemVer
+    )
+  )
 
 lazy val root = (project in file("."))
   .aggregate(scalaCsv.projectRefs*)
@@ -118,3 +138,5 @@ lazy val root = (project in file("."))
     Test / sources := Nil,
     publish / skip := true,
   )
+
+def isJvm = Def.setting(virtualAxes.value.contains(VirtualAxis.jvm))
