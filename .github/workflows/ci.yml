@@ -24,5 +24,5 @@ jobs:
     - run: sbt
            -v
            --server
-           "+ Test/compile"
-           "+ test"
+           "Test/compile"
+           "test"
