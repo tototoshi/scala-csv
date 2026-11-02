@@ -15,7 +15,7 @@ jobs:
       with:
         java-version: 17
         distribution: temurin
-    - uses: coursier/cache-action@v8
+    - uses: coursier/cache-action@v9
     - name: Setup GPG
       run: |
         echo "$GPG_PRIVATE_KEY" | gpg --batch --import
