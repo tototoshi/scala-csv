@@ -1,3 +1,3 @@
-addSbtPlugin("io.github.sbt-doctest" % "sbt-doctest" % "0.13.2")
+addSbtPlugin("io.github.sbt-doctest" % "sbt-doctest" % "0.13.3")
 
 addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.3.2")
